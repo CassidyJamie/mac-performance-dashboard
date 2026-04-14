@@ -466,15 +466,15 @@
 </div>
 
 <!-- Upload zone -->
-<label class="upload-zone" id="uploadZone" for="fileInput">
+<div class="upload-zone" id="uploadZone" onclick="zoneClick(event)">
   <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
   <div class="icon">📊</div>
   <h2>Upload Weekly Export</h2>
   <p>Drop your ag-grid export (.xlsx) here, or click to browse</p>
-  <span class="btn">Choose File</span>
+  <button class="btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose File</button>
   <div id="viewSavedLink" style="display:none;margin-top:16px">
     <div style="color:var(--text-muted);font-size:12px;margin-bottom:10px">— or —</div>
-    <button onclick="viewSavedData()"
+    <button onclick="event.stopPropagation(); viewSavedData()"
       style="background:none;border:1.5px solid var(--border);color:var(--text-muted);padding:8px 20px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s"
       onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--accent');this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--accent')"
       onmouseout="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--border');this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text-muted')">
@@ -482,7 +482,7 @@
     </button>
     <div id="savedWeekSummary" style="margin-top:8px;font-size:12px;color:var(--text-muted)"></div>
   </div>
-</label>
+</div>
 
 <!-- Dashboard (hidden until file loaded) -->
 <div class="dashboard" id="dashboard">
@@ -643,6 +643,11 @@ const SUBPRODUCTS = {
 let familyChart = null, velChart = null;
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
+function zoneClick(e) {
+  // Only open picker if the click wasn't on a child button
+  if (e.target.closest('button')) return;
+  document.getElementById('fileInput').click();
+}
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
