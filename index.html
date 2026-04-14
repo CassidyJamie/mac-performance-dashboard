@@ -673,7 +673,7 @@ function renderKPIs(families, byDim) {
 
   const kpis = [
     { label: 'Total ST', value: fmt(st), sub: `JST: ${fmt(jst)}`, cls: '' },
-    { label: 'vs JST', value: fmtD(delta), sub: pct(r.pctD), cls: delta >= 0 ? 'green' : 'red' },
+    { label: 'vs JST', value: `${fmtD(delta)} <span style="font-size:16px;font-weight:500;opacity:0.8">(${pct(r.pctD)})</span>`, sub: `ST ${fmt(st)} · JST ${fmt(jst)}`, cls: delta >= 0 ? 'green' : 'red' },
     { label: 'Portfolio Velocity', value: isNaN(vel) ? '—' : pct(vel), sub: 'Blended CW-1', cls: 'blue' },
     yoy !== null ? { label: 'YoY', value: pct(yoy), sub: 'CQ vs prior year', cls: yoy >= 0 ? 'green' : 'red' } : null,
     { label: 'Families Beating', value: beats, sub: 'vs JST', cls: 'green' },
@@ -775,7 +775,7 @@ function renderProductCards(families, byDim) {
     <div class="product-card">
       <div class="name">
         ${f.label}
-        <span class="delta-pill ${pillCls}">${fmtD(r.delta)}</span>
+        <span class="delta-pill ${pillCls}">${fmtD(r.delta)}<span style="font-size:10px;font-weight:500;opacity:0.8;margin-left:3px">(${pct(r.pctD)})</span></span>
       </div>
       <div class="stats">
         <div class="stat"><div class="lbl">ST</div><div class="val">${fmt(r.st)}</div></div>
@@ -926,7 +926,7 @@ function drawCountryTable(rows, byDim) {
     const velCol = c.vel >= 0.6 ? '#ff9500' : c.vel >= 0.4 ? '#0071e3' : '#30a14e';
     return `<tr>
       <td>${c.name}</td>
-      <td class="${c.delta >= 0 ? 'pos' : 'neg'}">${fmtD(c.delta)}</td>
+      <td class="${c.delta >= 0 ? 'pos' : 'neg'}">${fmtD(c.delta)}<span style="font-size:10px;opacity:0.7;margin-left:3px">(${c.jst > 0 ? pct(c.delta/c.jst) : '—'})</span></td>
       <td>
         <div class="vel-bar">
           <div class="vel-track"><div class="vel-fill" style="width:${velPct}%;background:${velCol}"></div></div>
@@ -1049,7 +1049,7 @@ function drawCountryProductCards(rows) {
         <div style="font-weight:600;font-size:12px">${r.product}</div>
         <div style="font-size:10px;color:#6e6e73">${r.family}</div>
       </td>
-      <td class="${r.delta >= 0 ? 'pos' : 'neg'}">${fmtD(r.delta)}</td>
+      <td class="${r.delta >= 0 ? 'pos' : 'neg'}">${fmtD(r.delta)}<span style="font-size:10px;opacity:0.7;margin-left:3px">(${r.jst > 0 ? pct(r.delta/r.jst) : '—'})</span></td>
       <td style="font-size:11px;color:#6e6e73">${fmt(r.st)}</td>
       <td>
         <div class="vel-bar">
@@ -1115,7 +1115,7 @@ function renderInsights(families, rows, byDim) {
     let signalCls = isBeat ? 'good' : 'bad';
 
     // 1. Headline beat/miss
-    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(r.delta)}</strong> &nbsp;·&nbsp; ST ${fmt(r.st)} vs JST ${fmt(r.jst)} (${pct(r.pctD)})`);
+    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(r.delta)} <span style='color:${isBeat?'#30a14e':'#d73a49'}'>(${pct(r.pctD)})</span></strong> &nbsp;·&nbsp; ST ${fmt(r.st)} vs JST ${fmt(r.jst)}`);
 
     // 2. Velocity signal
     if (velPct !== null) {
