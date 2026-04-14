@@ -145,6 +145,17 @@
   }
   .upload-zone .btn:hover { background: var(--accent-hover); }
 
+  /* File input stretches over the entire zone — user clicks it directly, no JS needed */
+  .upload-zone { position: relative; }
+  .file-input-overlay {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    font-size: 0;
+    z-index: 1;
+  }
+
   .cw-badge {
     display: inline-block;
     background: var(--accent);
@@ -466,15 +477,15 @@
 </div>
 
 <!-- Upload zone -->
-<div class="upload-zone" id="uploadZone" onclick="zoneClick(event)">
-  <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
+<div class="upload-zone" id="uploadZone">
   <div class="icon">📊</div>
   <h2>Upload Weekly Export</h2>
   <p>Drop your ag-grid export (.xlsx) here, or click to browse</p>
-  <button class="btn" onclick="event.stopPropagation(); document.getElementById('fileInput').click()">Choose File</button>
-  <div id="viewSavedLink" style="display:none;margin-top:16px">
+  <span class="btn">Choose File</span>
+  <input type="file" id="fileInput" accept=".xlsx,.xls" class="file-input-overlay">
+  <div id="viewSavedLink" style="display:none;margin-top:16px;position:relative;z-index:2">
     <div style="color:var(--text-muted);font-size:12px;margin-bottom:10px">— or —</div>
-    <button onclick="event.stopPropagation(); viewSavedData()"
+    <button onclick="viewSavedData()"
       style="background:none;border:1.5px solid var(--border);color:var(--text-muted);padding:8px 20px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s"
       onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--accent');this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--accent')"
       onmouseout="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--border');this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text-muted')">
@@ -643,11 +654,6 @@ const SUBPRODUCTS = {
 let familyChart = null, velChart = null;
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
-function zoneClick(e) {
-  // Only open picker if the click wasn't on a child button
-  if (e.target.closest('button')) return;
-  document.getElementById('fileInput').click();
-}
 const zone = document.getElementById('uploadZone');
 zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag'); });
 zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
@@ -1338,7 +1344,7 @@ function renderInsights(families, rows, byDim) {
     let signalCls = isBeat ? 'good' : 'bad';
 
     // 1. Headline beat/miss
-    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(r.delta)}</strong> &nbsp;·&nbsp; ST ${fmt(r.st)} vs JST ${fmt(r.jst)} (${pct(r.pctD)})`);
+    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(r.delta)}</strong>  ·  ST ${fmt(r.st)} vs JST ${fmt(r.jst)} (${pct(r.pctD)})`);
 
     // 2. Velocity signal
     if (velPct !== null) {
@@ -1391,8 +1397,8 @@ function renderInsights(families, rows, byDim) {
     const topBeats  = sorted.filter(([,d]) => d > 0).slice(0, 2).map(([n,d]) => `${n} <span class="pos">${fmtD(d)}</span>`);
     const topMisses = sorted.filter(([,d]) => d < 0).slice(-2).reverse().map(([n,d]) => `${n} <span class="neg">${fmtD(d)}</span>`);
 
-    if (topBeats.length)  signals.push(`🟢 ${topBeats.join(' &nbsp;·&nbsp; ')}`);
-    if (topMisses.length) signals.push(`🔴 ${topMisses.join(' &nbsp;·&nbsp; ')}`);
+    if (topBeats.length)  signals.push(`🟢 ${topBeats.join('  ·  ')}`);
+    if (topMisses.length) signals.push(`🔴 ${topMisses.join('  ·  ')}`);
 
     return { cls: signalCls, title: f.label, body: signals.join('<br>') };
   }).filter(Boolean);
@@ -1547,11 +1553,11 @@ function renderTrend(history) {
     </table>
     <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap">
       <span style="font-size:11px;color:#6e6e73">
-        <span style="display:inline-block;width:12px;height:12px;background:#30a14e;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Strong beat (&gt;5k)
+        <span style="display:inline-block;width:12px;height:12px;background:#30a14e;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Strong beat (>5k)
         <span style="display:inline-block;width:12px;height:12px;background:#e6f4ea;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Beat
         <span style="display:inline-block;width:12px;height:12px;background:#fde8e8;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Miss
-        <span style="display:inline-block;width:12px;height:12px;background:#d73a49;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Strong miss (&gt;5k)
-        &nbsp;·&nbsp; ▲/▼ = consecutive week streak &nbsp;·&nbsp; 🔁 = JST review recommended
+        <span style="display:inline-block;width:12px;height:12px;background:#d73a49;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Strong miss (>5k)
+         ·  ▲/▼ = consecutive week streak  ·  🔁 = JST review recommended
       </span>
     </div>`;
 
@@ -1674,7 +1680,7 @@ function renderTrendCountry(weeks, cwLabels, labelMap) {
         <span style="display:inline-block;width:12px;height:12px;background:#e6f4ea;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Beat
         <span style="display:inline-block;width:12px;height:12px;background:#fde8e8;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Miss
         <span style="display:inline-block;width:12px;height:12px;background:#d73a49;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Strong miss (>2k)
-        &nbsp;·&nbsp; ▲/▼ = streak &nbsp;·&nbsp; Values = Δ JST · Velocity shown small
+         ·  ▲/▼ = streak  ·  Values = Δ JST · Velocity shown small
       </span>
     </div>`;
 }
