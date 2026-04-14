@@ -469,22 +469,20 @@
 
 <!-- Upload zone -->
 <div class="upload-zone" id="uploadZone">
+  <input type="file" id="fileInput" accept=".xlsx,.xls">
   <div class="icon">📊</div>
   <h2>Upload Weekly Export</h2>
   <p>Drop your ag-grid export (.xlsx) here, or click to browse</p>
-  <label class="btn" style="cursor:pointer">
-    Choose File
-    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
-  </label>
+  <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
   <div id="viewSavedLink" style="display:none;margin-top:16px">
-    <div style="color:var(--text-muted);font-size:12px;margin-bottom:10px">— or —</div>
+    <div style="color:#c7c7cc;font-size:12px;margin-bottom:10px">— or —</div>
     <button onclick="viewSavedData()"
-      style="background:none;border:1.5px solid var(--border);color:var(--text-muted);padding:8px 20px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s"
-      onmouseover="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--accent');this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--accent')"
-      onmouseout="this.style.borderColor=getComputedStyle(document.documentElement).getPropertyValue('--border');this.style.color=getComputedStyle(document.documentElement).getPropertyValue('--text-muted')">
+      style="background:none;border:1.5px solid #c7c7cc;color:#6e6e73;padding:8px 20px;border-radius:980px;font-size:13px;font-weight:500;cursor:pointer;transition:all 0.15s"
+      onmouseover="this.style.borderColor='#0071e3';this.style.color='#0071e3'"
+      onmouseout="this.style.borderColor='#c7c7cc';this.style.color='#6e6e73'">
       View Saved Data
     </button>
-    <div id="savedWeekSummary" style="margin-top:8px;font-size:12px;color:var(--text-muted)"></div>
+    <div id="savedWeekSummary" style="margin-top:8px;font-size:12px;color:#6e6e73"></div>
   </div>
 </div>
 
@@ -652,6 +650,7 @@ zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add(
 zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
 zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
 document.getElementById('fileInput').addEventListener('change', e => handleFile(e.target.files[0]));
+
 
 // ─── FILE HANDLER ─────────────────────────────────────────────────────────────
 function handleFile(file) {
