@@ -127,7 +127,7 @@
     transition: all 0.2s;
   }
   .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: var(--surface-2); }
-  .upload-zone input { opacity: 0; position: absolute; width: 0; height: 0; }
+  .upload-zone input { display: none; }
   .upload-zone .icon { font-size: 40px; margin-bottom: 12px; }
   .upload-zone h2 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
   .upload-zone p { font-size: 13px; color: var(--text-muted); }
@@ -469,11 +469,13 @@
 
 <!-- Upload zone -->
 <div class="upload-zone" id="uploadZone">
-  <input type="file" id="fileInput" accept=".xlsx,.xls">
   <div class="icon">📊</div>
   <h2>Upload Weekly Export</h2>
   <p>Drop your ag-grid export (.xlsx) here, or click to browse</p>
-  <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
+  <label class="btn" style="cursor:pointer;display:inline-block">
+    Choose File
+    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
+  </label>
   <div id="viewSavedLink" style="display:none;margin-top:16px">
     <div style="color:#c7c7cc;font-size:12px;margin-bottom:10px">— or —</div>
     <button onclick="viewSavedData()"
