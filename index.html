@@ -7,134 +7,39 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <style>
-  /* ── CSS Custom Properties (Light defaults) ─────────────────────────────── */
-  :root {
-    --bg:          #f5f5f7;
-    --surface:     #ffffff;
-    --surface-2:   #f2f2f7;
-    --border:      #e5e5ea;
-    --text:        #1d1d1f;
-    --text-2:      #3a3a3c;
-    --text-muted:  #6e6e73;
-    --header-bg:   #1d1d1f;
-    --header-text: #f5f5f7;
-    --header-sub:  #a1a1a6;
-    --history-bg:  #1d1d1f;
-    --history-chip:#2c2c2e;
-    --history-border:#3a3a3c;
-    --accent:      #0071e3;
-    --accent-hover:#0077ed;
-    --shadow:      0 1px 4px rgba(0,0,0,0.07);
-    --upload-border:#c7c7cc;
-    --pos:         #30a14e;
-    --neg:         #d73a49;
-    --pill-green-bg:#e6f4ea;
-    --pill-green-fg:#30a14e;
-    --pill-red-bg:  #fde8e8;
-    --pill-red-fg:  #d73a49;
-    --heatmap-beat-strong:#30a14e;
-    --heatmap-beat-strong-text:#fff;
-    --heatmap-beat:#e6f4ea;
-    --heatmap-beat-text:#1a7f37;
-    --heatmap-miss:#fde8e8;
-    --heatmap-miss-text:#b91c1c;
-    --heatmap-miss-strong:#d73a49;
-    --heatmap-miss-strong-text:#fff;
-    --heatmap-empty:#f5f5f7;
-    --heatmap-empty-text:#c7c7cc;
-    --share-bg:    #fff;
-    --insight-border:#e5e5ea;
-    --chart-grid:  #f0f0f5;
-    --vel-track:   #e5e5ea;
-    --streak-beat-bg:#e6f4ea;
-    --streak-beat-fg:#1a7f37;
-    --streak-miss-bg:#fde8e8;
-    --streak-miss-fg:#b91c1c;
-  }
-
-  /* ── Dark palette ─────────────────────────────────────────────────────────── */
-  [data-theme="dark"] {
-    --bg:          #000000;
-    --surface:     #1c1c1e;
-    --surface-2:   #2c2c2e;
-    --border:      #3a3a3c;
-    --text:        #f5f5f7;
-    --text-2:      #d1d1d6;
-    --text-muted:  #8e8e93;
-    --header-bg:   #000000;
-    --header-text: #f5f5f7;
-    --header-sub:  #636366;
-    --history-bg:  #000000;
-    --history-chip:#2c2c2e;
-    --history-border:#3a3a3c;
-    --accent:      #0a84ff;
-    --accent-hover:#409cff;
-    --shadow:      0 1px 6px rgba(0,0,0,0.4);
-    --upload-border:#3a3a3c;
-    --pos:         #32d74b;
-    --neg:         #ff453a;
-    --pill-green-bg:#0d2e18;
-    --pill-green-fg:#32d74b;
-    --pill-red-bg:  #2e0d0d;
-    --pill-red-fg:  #ff453a;
-    --heatmap-beat-strong:#1a7f37;
-    --heatmap-beat-strong-text:#d1fae5;
-    --heatmap-beat:#0d2e18;
-    --heatmap-beat-text:#32d74b;
-    --heatmap-miss:#2e0d0d;
-    --heatmap-miss-text:#ff453a;
-    --heatmap-miss-strong:#7f1d1d;
-    --heatmap-miss-strong-text:#fecaca;
-    --heatmap-empty:#1c1c1e;
-    --heatmap-empty-text:#48484a;
-    --share-bg:    #1c1c1e;
-    --insight-border:#3a3a3c;
-    --chart-grid:  #2c2c2e;
-    --vel-track:   #3a3a3c;
-    --streak-beat-bg:#0d2e18;
-    --streak-beat-fg:#32d74b;
-    --streak-miss-bg:#2e0d0d;
-    --streak-miss-fg:#ff453a;
-  }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    transition: background 0.25s, color 0.25s;
-  }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Helvetica Neue', sans-serif; background: #f5f5f7; color: #1d1d1f; }
 
   header {
-    background: var(--header-bg);
-    color: var(--header-text);
+    background: #1d1d1f;
+    color: #f5f5f7;
     padding: 20px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
   }
   header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
-  header span { font-size: 13px; color: var(--header-sub); }
+  header span { font-size: 13px; color: #a1a1a6; }
 
   .upload-zone {
     margin: 28px 32px;
-    border: 2px dashed var(--upload-border);
+    border: 2px dashed #c7c7cc;
     border-radius: 16px;
-    background: var(--surface);
+    background: #fff;
     padding: 40px;
     text-align: center;
     cursor: pointer;
     transition: all 0.2s;
   }
-  .upload-zone:hover, .upload-zone.drag { border-color: var(--accent); background: var(--surface-2); }
+  .upload-zone:hover, .upload-zone.drag { border-color: #0071e3; background: #f0f7ff; }
   .upload-zone input { display: none; }
   .upload-zone .icon { font-size: 40px; margin-bottom: 12px; }
   .upload-zone h2 { font-size: 17px; font-weight: 600; margin-bottom: 6px; }
-  .upload-zone p { font-size: 13px; color: var(--text-muted); }
+  .upload-zone p { font-size: 13px; color: #6e6e73; }
   .upload-zone .btn {
     display: inline-block;
     margin-top: 16px;
-    background: var(--accent);
+    background: #0071e3;
     color: #fff;
     padding: 10px 22px;
     border-radius: 980px;
@@ -143,13 +48,11 @@
     cursor: pointer;
     border: none;
   }
-  .upload-zone .btn:hover { background: var(--accent-hover); }
-
-
+  .upload-zone .btn:hover { background: #0077ed; }
 
   .cw-badge {
     display: inline-block;
-    background: var(--accent);
+    background: #0071e3;
     color: #fff;
     border-radius: 8px;
     padding: 3px 10px;
@@ -159,7 +62,7 @@
     vertical-align: middle;
     transition: background 0.15s;
   }
-  .cw-badge:hover { background: var(--accent-hover); }
+  .cw-badge:hover { background: #0077ed; }
   .cw-badge::after { content: ' ✎'; font-size: 10px; opacity: 0.7; }
 
   .dashboard { padding: 0 32px 40px; display: none; }
@@ -167,24 +70,24 @@
   /* KPI row */
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
   .kpi {
-    background: var(--surface);
+    background: #fff;
     border-radius: 14px;
     padding: 18px 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
-  .kpi .label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .kpi .label { font-size: 11px; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
   .kpi .value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-  .kpi .sub { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
-  .kpi.green .value { color: var(--pos); }
-  .kpi.red .value { color: var(--neg); }
-  .kpi.blue .value { color: var(--accent); }
+  .kpi .sub { font-size: 12px; color: #6e6e73; margin-top: 4px; }
+  .kpi.green .value { color: #30a14e; }
+  .kpi.red .value { color: #d73a49; }
+  .kpi.blue .value { color: #0071e3; }
 
   /* Section titles */
   .section-title {
     font-size: 15px;
     font-weight: 600;
     margin: 28px 0 14px;
-    color: var(--text);
+    color: #1d1d1f;
     display: flex;
     align-items: center;
     gap: 8px;
@@ -193,16 +96,16 @@
     content: '';
     flex: 1;
     height: 1px;
-    background: var(--border);
+    background: #e5e5ea;
   }
 
   /* Product cards */
   .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .product-card {
-    background: var(--surface);
+    background: #fff;
     border-radius: 14px;
     padding: 18px 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
   .product-card .name { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
   .product-card .delta-pill {
@@ -211,10 +114,10 @@
     padding: 3px 10px;
     border-radius: 980px;
   }
-  .pill-green { background: #e6f4ea; color: var(--pos); }
-  .pill-red { background: #fde8e8; color: var(--neg); }
+  .pill-green { background: #e6f4ea; color: #30a14e; }
+  .pill-red { background: #fde8e8; color: #d73a49; }
   .product-card .stats { display: flex; gap: 20px; margin-bottom: 12px; }
-  .product-card .stat .lbl { font-size: 10px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; }
+  .product-card .stat .lbl { font-size: 10px; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.4px; }
   .product-card .stat .val { font-size: 15px; font-weight: 600; }
   .product-card canvas { width: 100% !important; }
 
@@ -222,183 +125,117 @@
   .filter-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
   .pill {
     padding: 5px 13px; border-radius: 980px; font-size: 12px; font-weight: 500;
-    border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; color: var(--text-2);
+    border: 1.5px solid #e5e5ea; background: #fff; cursor: pointer; color: #3a3a3c;
     transition: all 0.15s;
   }
-  .pill:hover { border-color: var(--accent); color: var(--accent); }
-  .pill.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .pill:hover { border-color: #0071e3; color: #0071e3; }
+  .pill.active { background: #0071e3; border-color: #0071e3; color: #fff; }
 
   /* Country table */
   .country-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .country-table-wrap {
-    background: var(--surface);
+    background: #fff;
     border-radius: 14px;
     padding: 18px 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
     overflow: hidden;
   }
-  .country-table-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: var(--text); }
+  .country-table-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1d1d1f; }
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
-  th { text-align: left; color: var(--text-muted); font-weight: 500; padding: 4px 8px 8px; border-bottom: 1px solid var(--border); }
-  td { padding: 7px 8px; border-bottom: 1px solid var(--surface-2); }
+  th { text-align: left; color: #6e6e73; font-weight: 500; padding: 4px 8px 8px; border-bottom: 1px solid #e5e5ea; }
+  td { padding: 7px 8px; border-bottom: 1px solid #f2f2f7; }
   tr:last-child td { border-bottom: none; }
-  .pos { color: var(--pos); font-weight: 600; }
-  .neg { color: var(--neg); font-weight: 600; }
+  .pos { color: #30a14e; font-weight: 600; }
+  .neg { color: #d73a49; font-weight: 600; }
   .vel-bar { display: flex; align-items: center; gap: 6px; }
-  .vel-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .vel-track { flex: 1; height: 5px; background: #e5e5ea; border-radius: 3px; overflow: hidden; }
   .vel-fill { height: 100%; border-radius: 3px; }
 
   /* Country → Product view */
   /* Country-product view reuses .country-section and .country-table-wrap styles */
   .share-bar {
-    background: var(--surface); border-top: 1px solid var(--border);
+    background: #fff; border-top: 1px solid #e5e5ea;
     padding: 12px 32px; display: flex; align-items: center; gap: 10px;
     flex-wrap: wrap; font-size: 12px; position: sticky; bottom: 0; z-index: 10;
     box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
   }
-  .share-bar .share-label { color: var(--text-muted); font-size: 12px; margin-right: 4px; }
+  .share-bar .share-label { color: #6e6e73; font-size: 12px; margin-right: 4px; }
   .share-btn {
     display: inline-flex; align-items: center; gap: 5px;
-    border: 1.5px solid var(--border); border-radius: 980px;
-    background: var(--surface); color: var(--text); padding: 5px 14px;
+    border: 1.5px solid #e5e5ea; border-radius: 980px;
+    background: #fff; color: #1d1d1f; padding: 5px 14px;
     font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s;
   }
-  .share-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .share-btn.primary { background: var(--accent); color: #fff; border-color: var(--accent); }
-  .share-btn.primary:hover { background: var(--accent-hover); }
+  .share-btn:hover { border-color: #0071e3; color: #0071e3; }
+  .share-btn.primary { background: #0071e3; color: #fff; border-color: #0071e3; }
+  .share-btn.primary:hover { background: #0077ed; }
 
   /* Insight cards */
   .insights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
   .insight-card {
-    background: var(--surface);
+    background: #fff;
     border-radius: 14px;
     padding: 16px 18px;
-    box-shadow: var(--shadow);
-    border-left: 4px solid var(--insight-border);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    border-left: 4px solid #e5e5ea;
   }
   .insight-card.warn { border-left-color: #f59e0b; }
-  .insight-card.good { border-left-color: var(--pos); }
-  .insight-card.bad  { border-left-color: var(--neg); }
+  .insight-card.good { border-left-color: #30a14e; }
+  .insight-card.bad  { border-left-color: #d73a49; }
   .insight-card .title { font-size: 13px; font-weight: 600; margin-bottom: 5px; }
-  .insight-card .body { font-size: 12px; color: var(--text-2); line-height: 1.5; }
+  .insight-card .body { font-size: 12px; color: #3a3a3c; line-height: 1.5; }
 
   /* Bar chart wrapper */
   .chart-wrap {
-    background: var(--surface);
+    background: #fff;
     border-radius: 14px;
     padding: 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
   }
-  .chart-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: var(--text); }
+  .chart-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: #1d1d1f; }
 
   @media (max-width: 700px) {
     .country-section { grid-template-columns: 1fr; }
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
   }
 
-  /* ── System-aware dark mode (auto) ───────────────────────────────────────── */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg:          #000000;
-      --surface:     #1c1c1e;
-      --surface-2:   #2c2c2e;
-      --border:      #3a3a3c;
-      --text:        #f5f5f7;
-      --text-2:      #d1d1d6;
-      --text-muted:  #8e8e93;
-      --header-bg:   #000000;
-      --header-text: #f5f5f7;
-      --header-sub:  #636366;
-      --history-bg:  #000000;
-      --history-chip:#2c2c2e;
-      --history-border:#3a3a3c;
-      --accent:      #0a84ff;
-      --accent-hover:#409cff;
-      --shadow:      0 1px 6px rgba(0,0,0,0.4);
-      --upload-border:#3a3a3c;
-      --pos:         #32d74b;
-      --neg:         #ff453a;
-      --pill-green-bg:#0d2e18;
-      --pill-green-fg:#32d74b;
-      --pill-red-bg:  #2e0d0d;
-      --pill-red-fg:  #ff453a;
-      --heatmap-beat-strong:#1a7f37;
-      --heatmap-beat-strong-text:#d1fae5;
-      --heatmap-beat:#0d2e18;
-      --heatmap-beat-text:#32d74b;
-      --heatmap-miss:#2e0d0d;
-      --heatmap-miss-text:#ff453a;
-      --heatmap-miss-strong:#7f1d1d;
-      --heatmap-miss-strong-text:#fecaca;
-      --heatmap-empty:#1c1c1e;
-      --heatmap-empty-text:#48484a;
-      --share-bg:    #1c1c1e;
-      --insight-border:#3a3a3c;
-      --chart-grid:  #2c2c2e;
-      --vel-track:   #3a3a3c;
-      --streak-beat-bg:#0d2e18;
-      --streak-beat-fg:#32d74b;
-      --streak-miss-bg:#2e0d0d;
-      --streak-miss-fg:#ff453a;
-    }
-  }
-
-  /* ── Dark mode toggle button ─────────────────────────────────────────────── */
-  .theme-toggle {
-    display: inline-flex; align-items: center; justify-content: center;
-    width: 34px; height: 34px; border-radius: 50%;
-    background: rgba(255,255,255,0.1);
-    border: 1.5px solid rgba(255,255,255,0.18);
-    cursor: pointer; font-size: 16px; line-height: 1;
-    transition: background 0.2s, border-color 0.2s;
-    color: var(--header-text);
-  }
-  .theme-toggle:hover { background: rgba(255,255,255,0.18); }
-
-  /* ── KPI / surface transitions ───────────────────────────────────────────── */
-  .kpi, .product-card, .chart-wrap, .heatmap-wrap,
-  .country-table-wrap, .insight-card, .share-bar,
-  .upload-zone, .history-bar {
-    transition: background 0.25s, border-color 0.25s, box-shadow 0.25s, color 0.25s;
-  }
-
   /* ── Trend history bar ───────────────────────────────────────────────── */
   .history-bar {
-    background: var(--history-bg);
-    color: var(--header-text);
+    background: #1d1d1f;
+    color: #f5f5f7;
     padding: 10px 32px;
     display: flex;
     align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     font-size: 12px;
-    border-top: 1px solid var(--history-border);
+    border-top: 1px solid #3a3a3c;
   }
-  .history-bar .hw-label { color: var(--header-sub); white-space: nowrap; }
+  .history-bar .hw-label { color: #a1a1a6; white-space: nowrap; }
   .hw-chip {
     display: inline-flex; align-items: center; gap: 6px;
-    background: var(--history-chip); border-radius: 8px; padding: 4px 10px;
+    background: #2c2c2e; border-radius: 8px; padding: 4px 10px;
     font-size: 11px; font-weight: 500; cursor: default;
   }
   .hw-chip .hw-del {
-    cursor: pointer; color: var(--header-sub); font-size: 13px; line-height: 1;
+    cursor: pointer; color: #a1a1a6; font-size: 13px; line-height: 1;
     padding: 0 2px;
   }
   .hw-chip .hw-del:hover { color: #ff453a; }
-  .hw-chip.active-week { background: var(--accent); }
+  .hw-chip.active-week { background: #0071e3; }
 
   /* ── Trend heatmap ───────────────────────────────────────────────────── */
   .heatmap-wrap {
-    background: var(--surface);
+    background: #fff;
     border-radius: 14px;
     padding: 20px;
-    box-shadow: var(--shadow);
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
     overflow-x: auto;
   }
   .heatmap-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 14px; }
   .heatmap-table { border-collapse: collapse; width: 100%; min-width: 500px; }
   .heatmap-table th {
-    font-size: 11px; font-weight: 500; color: var(--text-muted);
+    font-size: 11px; font-weight: 500; color: #6e6e73;
     padding: 4px 10px; text-align: center; white-space: nowrap;
   }
   .heatmap-table th.row-label { text-align: left; min-width: 140px; }
@@ -407,34 +244,34 @@
     border-radius: 6px; min-width: 70px;
   }
   .heatmap-table td.row-label {
-    text-align: left; font-size: 12px; font-weight: 500; color: var(--text);
+    text-align: left; font-size: 12px; font-weight: 500; color: #1d1d1f;
     padding-right: 16px; background: transparent !important;
   }
-  .heatmap-table td.row-label .sub { font-size: 10px; color: var(--text-muted); font-weight: 400; }
-  .cell-beat   { background: var(--heatmap-beat); color: var(--heatmap-beat-text); }
-  .cell-beat-strong { background: var(--heatmap-beat-strong); color: var(--heatmap-beat-strong-text); }
-  .cell-miss   { background: var(--heatmap-miss); color: var(--heatmap-miss-text); }
-  .cell-miss-strong { background: var(--heatmap-miss-strong); color: var(--heatmap-miss-strong-text); }
-  .cell-empty  { background: var(--heatmap-empty); color: var(--heatmap-empty-text); }
+  .heatmap-table td.row-label .sub { font-size: 10px; color: #6e6e73; font-weight: 400; }
+  .cell-beat   { background: #e6f4ea; color: #1a7f37; }
+  .cell-beat-strong { background: #30a14e; color: #fff; }
+  .cell-miss   { background: #fde8e8; color: #b91c1c; }
+  .cell-miss-strong { background: #d73a49; color: #fff; }
+  .cell-empty  { background: #f5f5f7; color: #c7c7cc; }
   .streak-badge {
     display: inline-block; font-size: 10px; font-weight: 700;
     padding: 1px 6px; border-radius: 980px; margin-left: 6px; vertical-align: middle;
   }
-  .streak-miss { background: var(--streak-miss-bg); color: var(--streak-miss-fg); }
-  .streak-beat { background: var(--streak-beat-bg); color: var(--streak-beat-fg); }
+  .streak-miss { background: #fde8e8; color: #b91c1c; }
+  .streak-beat { background: #e6f4ea; color: #1a7f37; }
   #trendTabProduct.tab-active, #trendTabCountry.tab-active {
-    background: var(--surface) !important; color: var(--text) !important;
+    background: #fff !important; color: #1d1d1f !important;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   }
   #trendTabProduct:not(.tab-active), #trendTabCountry:not(.tab-active) {
-    background: transparent !important; color: var(--text-muted) !important;
+    background: transparent !important; color: #6e6e73 !important;
     box-shadow: none;
   }
 
   /* ── Sparkline on product cards ──────────────────────────────────────── */
   .sparkline-wrap { margin-top: 10px; }
   .sparkline-wrap canvas { display: block; }
-  .sparkline-label { font-size: 10px; color: var(--text-muted); margin-bottom: 3px; }
+  .sparkline-label { font-size: 10px; color: #6e6e73; margin-bottom: 3px; }
 </style>
 </head>
 <body>
@@ -446,16 +283,15 @@
   </div>
   <div style="display:flex;align-items:center;gap:12px">
     <div id="cw-label" style="display:none">
-      <span style="color:var(--header-sub);font-size:13px;">Current week:</span>
+      <span style="color:#a1a1a6;font-size:13px;">Current week:</span>
       <span class="cw-badge" id="cw-badge" title="Click to rename" onclick="renameCurrentWeek()" style="cursor:pointer">CW-1</span>
     </div>
     <label id="uploadNewBtn" style="display:none;cursor:pointer">
       <input type="file" id="fileInputHeader" accept=".xlsx,.xls" style="display:none">
-      <span style="background:var(--accent);color:#fff;padding:7px 16px;border-radius:980px;font-size:13px;font-weight:500;white-space:nowrap">
+      <span style="background:#0071e3;color:#fff;padding:7px 16px;border-radius:980px;font-size:13px;font-weight:500;white-space:nowrap">
         ＋ Upload CW Data
       </span>
     </label>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle dark/light mode" aria-label="Toggle dark mode">🌙</button>
   </div>
 </header>
 
@@ -464,18 +300,16 @@
 <div class="history-bar" id="historyBar" style="display:none">
   <span class="hw-label">History:</span>
   <div id="historyChips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
-  <button onclick="clearAllHistory()" style="margin-left:auto;background:none;border:1px solid var(--history-border);color:var(--header-sub);border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer">Clear All</button>
+  <button onclick="clearAllHistory()" style="margin-left:auto;background:none;border:1px solid #3a3a3c;color:#a1a1a6;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer">Clear All</button>
 </div>
 
 <!-- Upload zone -->
 <div class="upload-zone" id="uploadZone">
+  <input type="file" id="fileInput" accept=".xlsx,.xls">
   <div class="icon">📊</div>
   <h2>Upload Weekly Export</h2>
   <p>Drop your ag-grid export (.xlsx) here, or click to browse</p>
-  <label class="btn" style="cursor:pointer;display:inline-block">
-    Choose File
-    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none">
-  </label>
+  <button class="btn" onclick="document.getElementById('fileInput').click()">Choose File</button>
   <div id="viewSavedLink" style="display:none;margin-top:16px">
     <div style="color:#c7c7cc;font-size:12px;margin-bottom:10px">— or —</div>
     <button onclick="viewSavedData()"
@@ -519,19 +353,19 @@
   <div class="heatmap-wrap" id="trendHeatmap" style="display:none">
     <!-- View tabs -->
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="display:flex;background:var(--surface-2);border-radius:8px;padding:3px;gap:2px">
+      <div style="display:flex;background:#f5f5f7;border-radius:8px;padding:3px;gap:2px">
         <button id="trendTabProduct" onclick="setTrendTab('product')"
-          style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,0.15)">
+          style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
           Product Family
         </button>
         <button id="trendTabCountry" onclick="setTrendTab('country')"
-          style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text-muted)">
+          style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:#6e6e73">
           By Country
         </button>
       </div>
       <!-- Country tab: product filter -->
       <div id="trendCountryFilter" style="display:none;align-items:center;gap:6px;flex-wrap:wrap">
-        <span style="font-size:11px;color:var(--text-muted);white-space:nowrap">Filter by product:</span>
+        <span style="font-size:11px;color:#6e6e73;white-space:nowrap">Filter by product:</span>
         <div class="filter-row" id="trendProductPills" style="margin:0"></div>
       </div>
     </div>
@@ -558,61 +392,11 @@
     ⬆ Import weeks (.json)
     <input type="file" accept=".json" style="display:none" onchange="importHistory(event)">
   </label>
-  <span id="shareStatus" style="font-size:11px;color:var(--text-muted);margin-left:6px"></span>
+  <span id="shareStatus" style="font-size:11px;color:#6e6e73;margin-left:6px"></span>
 </div>
 
 <script>
-// ─── THEME MANAGEMENT ────────────────────────────────────────────────────────
-const THEME_KEY = 'macDashTheme';
-
-function getSystemDark() {
-  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-}
-
-function getEffectiveDark() {
-  const saved = localStorage.getItem(THEME_KEY);
-  if (saved === 'dark') return true;
-  if (saved === 'light') return false;
-  return getSystemDark(); // 'auto' or unset → follow system
-}
-
-function applyTheme(dark) {
-  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
-  const btn = document.getElementById('themeToggle');
-  if (btn) btn.textContent = dark ? '☀️' : '🌙';
-  // Update Chart.js global defaults
-  const textColor = dark ? '#8e8e93' : '#6e6e73';
-  const gridColor = dark ? '#2c2c2e' : '#f0f0f5';
-  if (window.Chart) {
-    Chart.defaults.color = textColor;
-    Chart.defaults.borderColor = gridColor;
-  }
-  // Re-render charts if they exist (so colours pick up)
-  if (typeof _families !== 'undefined' && _families.length) {
-    try { renderFamilyChart(_families); } catch(e) {}
-    try { renderVelChart(_families); } catch(e) {}
-    try { renderSparklines(window._sparkData || {}, window._sparkLabels || [], window._sparkLabelMap || {}); } catch(e) {}
-  }
-}
-
-function toggleTheme() {
-  const nowDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const next = nowDark ? 'light' : 'dark';
-  localStorage.setItem(THEME_KEY, next);
-  applyTheme(next === 'dark');
-}
-
-// Init theme on load
-(function initTheme() {
-  const dark = getEffectiveDark();
-  applyTheme(dark);
-  // Listen for system changes (when pref is 'auto')
-  if (window.matchMedia) {
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
-      if (!localStorage.getItem(THEME_KEY)) applyTheme(e.matches);
-    });
-  }
-})();
+// ─── COLUMN MAP ───────────────────────────────────────────────────────────────
 // Col 0 = Dimension, 1 = ST, 2 = JST, 3 = Delta, 4 = %Δ, 5 = Velocity, 6 = FwdAvg, 7 = BwdAvg
 // Optionally: 8=JST_CQ, 9=ECF_CQ, 10=JST_vs_ECF, 11=CQ_YoY
 
@@ -652,7 +436,6 @@ zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add(
 zone.addEventListener('dragleave', () => zone.classList.remove('drag'));
 zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag'); handleFile(e.dataTransfer.files[0]); });
 document.getElementById('fileInput').addEventListener('change', e => handleFile(e.target.files[0]));
-
 
 // ─── FILE HANDLER ─────────────────────────────────────────────────────────────
 function handleFile(file) {
@@ -733,7 +516,7 @@ function startRename(cw) {
   const current = nameSpan.textContent.trim();
   const input = document.createElement('input');
   input.value = current;
-  input.style.cssText = 'background:transparent;border:none;border-bottom:1px solid var(--header-sub);color:var(--header-text);font-size:11px;font-weight:500;width:70px;outline:none;';
+  input.style.cssText = 'background:transparent;border:none;border-bottom:1px solid #a1a1a6;color:#f5f5f7;font-size:11px;font-weight:500;width:70px;outline:none;';
   nameSpan.replaceWith(input);
   input.focus();
   input.select();
@@ -765,7 +548,7 @@ function renameCurrentWeek() {
   // Replace badge with inline input
   const input = document.createElement('input');
   input.value = current;
-  input.style.cssText = 'background:var(--accent);border:none;border-bottom:2px solid #fff;color:#fff;font-size:12px;font-weight:600;width:90px;outline:none;border-radius:0;padding:0 2px;';
+  input.style.cssText = 'background:#0071e3;border:none;border-bottom:2px solid #fff;color:#fff;font-size:12px;font-weight:600;width:90px;outline:none;border-radius:0;padding:0 2px;';
   badge.replaceWith(input);
   input.focus();
   input.select();
@@ -905,14 +688,12 @@ function renderKPIs(families, byDim) {
     </div>`).join('');
 }
 
+// ─── FAMILY CHART ─────────────────────────────────────────────────────────────
 function renderFamilyChart(families) {
   const data = families.filter(f => f.key !== 'Mac');
   const labels = data.map(f => f.label);
   const deltas = data.map(f => f.row.delta);
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const colors = deltas.map(d => d >= 0
-    ? (dark ? 'rgba(50,215,75,0.85)' : 'rgba(48,161,78,0.85)')
-    : (dark ? 'rgba(255,69,58,0.85)' : 'rgba(215,58,73,0.85)'));
+  const colors = deltas.map(d => d >= 0 ? 'rgba(48,161,78,0.85)' : 'rgba(215,58,73,0.85)');
 
   if (familyChart) familyChart.destroy();
   familyChart = new Chart(document.getElementById('familyChart'), {
@@ -934,7 +715,7 @@ function renderFamilyChart(families) {
       scales: {
         x: { grid: { display: false }, ticks: { font: { size: 11 } } },
         y: {
-          grid: { color: dark ? '#2c2c2e' : '#f0f0f5' },
+          grid: { color: '#f0f0f5' },
           ticks: { callback: v => fmtD(v), font: { size: 11 } }
         }
       }
@@ -947,11 +728,7 @@ function renderVelChart(families) {
   const data = families.filter(f => f.key !== 'Mac' && !isNaN(f.row.vel));
   const labels = data.map(f => f.label);
   const vels = data.map(f => Math.round(f.row.vel * 100));
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const colors = vels.map(v =>
-    v >= 60 ? 'rgba(255,149,0,0.85)' :
-    v >= 40 ? (dark ? 'rgba(10,132,255,0.8)' : 'rgba(0,113,227,0.75)') :
-    (dark ? 'rgba(120,120,130,0.5)' : 'rgba(100,100,110,0.5)'));
+  const colors = vels.map(v => v >= 60 ? 'rgba(255,149,0,0.85)' : v >= 40 ? 'rgba(0,113,227,0.75)' : 'rgba(100,100,110,0.5)');
 
   if (velChart) velChart.destroy();
   velChart = new Chart(document.getElementById('velChart'), {
@@ -969,7 +746,7 @@ function renderVelChart(families) {
       scales: {
         x: { grid: { display: false }, ticks: { font: { size: 11 } } },
         y: {
-          grid: { color: dark ? '#2c2c2e' : '#f0f0f5' },
+          grid: { color: '#f0f0f5' },
           max: 100,
           ticks: { callback: v => `${v}%`, font: { size: 11 } }
         }
@@ -989,7 +766,7 @@ function renderProductCards(families, byDim) {
 
     const subRows = subs.map(s => `
       <tr>
-        <td style="font-size:11px;color:var(--text-2)">${s.dim}</td>
+        <td style="font-size:11px;color:#3a3a3c">${s.dim}</td>
         <td class="${s.delta >= 0 ? 'pos' : 'neg'}" style="font-size:11px">${fmtD(s.delta)}</td>
         <td style="font-size:11px;color:#6e6e73">${isNaN(s.vel) ? '—' : pct(s.vel)}</td>
       </tr>`).join('');
@@ -1146,14 +923,14 @@ function drawCountryTable(rows, byDim) {
 
   const tableRows = (arr) => arr.map(c => {
     const velPct = isNaN(c.vel) ? 0 : Math.min(c.vel * 100, 100);
-    const velCol = c.vel >= 0.6 ? "#ff9500" : c.vel >= 0.4 ? (document.documentElement.getAttribute("data-theme")==="dark"?"#0a84ff":"#0071e3") : (document.documentElement.getAttribute("data-theme")==="dark"?"#32d74b":"#30a14e");
+    const velCol = c.vel >= 0.6 ? '#ff9500' : c.vel >= 0.4 ? '#0071e3' : '#30a14e';
     return `<tr>
       <td>${c.name}</td>
-      <td class="${c.delta >= 0 ? 'pos' : 'neg'}">${fmtD(c.delta)}${c.jst > 0 ? ` <span style="font-size:10px;opacity:0.7">(${pct(c.delta/c.jst)})</span>` : ""}</td>
+      <td class="${c.delta >= 0 ? 'pos' : 'neg'}">${fmtD(c.delta)}</td>
       <td>
         <div class="vel-bar">
           <div class="vel-track"><div class="vel-fill" style="width:${velPct}%;background:${velCol}"></div></div>
-          <span style="font-size:11px;color:var(--text-muted);width:34px;text-align:right">${isNaN(c.vel) ? '—' : pct(c.vel)}</span>
+          <span style="font-size:11px;color:#6e6e73;width:34px;text-align:right">${isNaN(c.vel) ? '—' : pct(c.vel)}</span>
         </div>
       </td>
     </tr>`;
@@ -1251,7 +1028,7 @@ function drawCountryProductCards(rows) {
 
   if (!results.length) {
     document.getElementById('countryProductSection').innerHTML =
-      `<div class="country-table-wrap"><p style="font-size:13px;color:var(--text-muted);padding:8px 0">No data found${isAll ? '' : ' for ' + country}.</p></div>`;
+      `<div class="country-table-wrap"><p style="font-size:13px;color:#6e6e73;padding:8px 0">No data found${isAll ? '' : ' for ' + country}.</p></div>`;
     return;
   }
 
@@ -1266,18 +1043,18 @@ function drawCountryProductCards(rows) {
 
   const tableRows = (arr) => arr.map(r => {
     const velPct = isNaN(r.vel) ? 0 : Math.min(r.vel * 100, 100);
-    const velCol = r.vel >= 0.6 ? "#ff9500" : r.vel >= 0.4 ? (document.documentElement.getAttribute("data-theme")==="dark"?"#0a84ff":"#0071e3") : (document.documentElement.getAttribute("data-theme")==="dark"?"#32d74b":"#30a14e");
+    const velCol = r.vel >= 0.6 ? '#ff9500' : r.vel >= 0.4 ? '#0071e3' : '#30a14e';
     return `<tr>
       <td>
         <div style="font-weight:600;font-size:12px">${r.product}</div>
-        <div style="font-size:10px;color:var(--text-muted)">${r.family}</div>
+        <div style="font-size:10px;color:#6e6e73">${r.family}</div>
       </td>
-      <td class="${r.delta >= 0 ? 'pos' : 'neg'}">${fmtD(r.delta)}${r.jst > 0 ? ` <span style="font-size:10px;opacity:0.7">(${pct(r.delta/r.jst)})</span>` : ""}</td>
-      <td style="font-size:11px;color:var(--text-muted)">${fmt(r.st)}</td>
+      <td class="${r.delta >= 0 ? 'pos' : 'neg'}">${fmtD(r.delta)}</td>
+      <td style="font-size:11px;color:#6e6e73">${fmt(r.st)}</td>
       <td>
         <div class="vel-bar">
           <div class="vel-track"><div class="vel-fill" style="width:${velPct}%;background:${velCol}"></div></div>
-          <span style="font-size:11px;color:var(--text-muted);width:34px;text-align:right">${isNaN(r.vel) ? '—' : pct(r.vel)}</span>
+          <span style="font-size:11px;color:#6e6e73;width:34px;text-align:right">${isNaN(r.vel) ? '—' : pct(r.vel)}</span>
         </div>
       </td>
     </tr>`;
@@ -1287,7 +1064,7 @@ function drawCountryProductCards(rows) {
     <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:14px">
       <span style="font-size:15px;font-weight:600">${viewTitle}</span>
       <span class="delta-pill ${totalDelta >= 0 ? 'pill-green' : 'pill-red'}">${fmtD(totalDelta)} vs JST</span>
-      <span style="font-size:12px;color:var(--text-muted)">ST ${fmt(totalST)} · JST ${fmt(totalJST)}</span>
+      <span style="font-size:12px;color:#6e6e73">ST ${fmt(totalST)} · JST ${fmt(totalJST)}</span>
     </div>
     <div class="country-section">
       <div class="country-table-wrap">
@@ -1338,7 +1115,7 @@ function renderInsights(families, rows, byDim) {
     let signalCls = isBeat ? 'good' : 'bad';
 
     // 1. Headline beat/miss
-    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(r.delta)}</strong>  ·  ST ${fmt(r.st)} vs JST ${fmt(r.jst)} (${pct(r.pctD)})`);
+    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(r.delta)}</strong> &nbsp;·&nbsp; ST ${fmt(r.st)} vs JST ${fmt(r.jst)} (${pct(r.pctD)})`);
 
     // 2. Velocity signal
     if (velPct !== null) {
@@ -1391,8 +1168,8 @@ function renderInsights(families, rows, byDim) {
     const topBeats  = sorted.filter(([,d]) => d > 0).slice(0, 2).map(([n,d]) => `${n} <span class="pos">${fmtD(d)}</span>`);
     const topMisses = sorted.filter(([,d]) => d < 0).slice(-2).reverse().map(([n,d]) => `${n} <span class="neg">${fmtD(d)}</span>`);
 
-    if (topBeats.length)  signals.push(`🟢 ${topBeats.join('  ·  ')}`);
-    if (topMisses.length) signals.push(`🔴 ${topMisses.join('  ·  ')}`);
+    if (topBeats.length)  signals.push(`🟢 ${topBeats.join(' &nbsp;·&nbsp; ')}`);
+    if (topMisses.length) signals.push(`🔴 ${topMisses.join(' &nbsp;·&nbsp; ')}`);
 
     return { cls: signalCls, title: f.label, body: signals.join('<br>') };
   }).filter(Boolean);
@@ -1498,7 +1275,7 @@ function renderTrend(history) {
   // Build heatmap HTML
   const headerCells = cwLabels.map(cw => {
     const lbl = labelMap[cw];
-    return `<th>${cw === _currentCW ? `<span style="color:var(--accent);font-weight:700">${lbl}</span>` : lbl}</th>`;
+    return `<th>${cw === _currentCW ? `<span style="color:#0071e3;font-weight:700">${lbl}</span>` : lbl}</th>`;
   }).join('');
 
   const bodyRows = familyKeys.map(f => {
@@ -1531,7 +1308,7 @@ function renderTrend(history) {
     }, 0) / weeks.filter(w => data[f.key][w.cw] && !isNaN(data[f.key][w.cw].vel)).length;
 
     const jstFlag = consecMisses >= 3 && avgVel < 0.3
-      ? `<span style="font-size:10px;color:var(--neg);margin-left:4px" title="3+ week miss at low velocity — JST review recommended">🔁</span>`
+      ? `<span style="font-size:10px;color:#b91c1c;margin-left:4px" title="3+ week miss at low velocity — JST review recommended">🔁</span>`
       : '';
 
     return `<tr>
@@ -1547,11 +1324,11 @@ function renderTrend(history) {
     </table>
     <div style="display:flex;gap:16px;margin-top:12px;flex-wrap:wrap">
       <span style="font-size:11px;color:#6e6e73">
-        <span style="display:inline-block;width:12px;height:12px;background:#30a14e;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Strong beat (>5k)
+        <span style="display:inline-block;width:12px;height:12px;background:#30a14e;border-radius:3px;vertical-align:middle;margin-right:4px"></span>Strong beat (&gt;5k)
         <span style="display:inline-block;width:12px;height:12px;background:#e6f4ea;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Beat
         <span style="display:inline-block;width:12px;height:12px;background:#fde8e8;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Miss
-        <span style="display:inline-block;width:12px;height:12px;background:#d73a49;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Strong miss (>5k)
-         ·  ▲/▼ = consecutive week streak  ·  🔁 = JST review recommended
+        <span style="display:inline-block;width:12px;height:12px;background:#d73a49;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Strong miss (&gt;5k)
+        &nbsp;·&nbsp; ▲/▼ = consecutive week streak &nbsp;·&nbsp; 🔁 = JST review recommended
       </span>
     </div>`;
 
@@ -1614,7 +1391,7 @@ function renderTrendCountry(weeks, cwLabels, labelMap) {
 
   if (!countries.length) {
     document.getElementById('heatmapInner').innerHTML =
-      '<p style="font-size:13px;color:var(--text-muted);padding:8px 0">No country data available for this selection.</p>';
+      '<p style="font-size:13px;color:#6e6e73;padding:8px 0">No country data available for this selection.</p>';
     return;
   }
 
@@ -1674,7 +1451,7 @@ function renderTrendCountry(weeks, cwLabels, labelMap) {
         <span style="display:inline-block;width:12px;height:12px;background:#e6f4ea;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Beat
         <span style="display:inline-block;width:12px;height:12px;background:#fde8e8;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Miss
         <span style="display:inline-block;width:12px;height:12px;background:#d73a49;border-radius:3px;vertical-align:middle;margin:0 4px 0 12px"></span>Strong miss (>2k)
-         ·  ▲/▼ = streak  ·  Values = Δ JST · Velocity shown small
+        &nbsp;·&nbsp; ▲/▼ = streak &nbsp;·&nbsp; Values = Δ JST · Velocity shown small
       </span>
     </div>`;
 }
@@ -1736,9 +1513,6 @@ function getCountryRowsForScope(scopeKey, rows) {
 let _sparkCharts = {};
 
 function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
-  // Cache for theme re-renders
-  window._sparkData = data; window._sparkLabels = cwLabels; window._sparkLabelMap = labelMap;
-  const dark = document.documentElement.getAttribute('data-theme') === 'dark';
   FAMILIES.filter(f => f.key !== 'Mac').forEach(f => {
     const canvas = document.getElementById(`spark-${f.key}`);
     if (!canvas) return;
@@ -1746,20 +1520,16 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
     if (vals.every(v => v === null)) return;
 
     if (_sparkCharts[f.key]) _sparkCharts[f.key].destroy();
-    const last = vals.filter(v => v !== null).pop();
-    const lineColor = last >= 0
-      ? (dark ? '#32d74b' : '#30a14e')
-      : (dark ? '#ff453a' : '#d73a49');
     _sparkCharts[f.key] = new Chart(canvas, {
       type: 'line',
       data: {
         labels: cwLabels.map(cw => labelMap[cw] || cw),
         datasets: [{
           data: vals,
-          borderColor: lineColor,
+          borderColor: vals[vals.length-1] >= 0 ? '#30a14e' : '#d73a49',
           borderWidth: 2,
           pointRadius: 3,
-          pointBackgroundColor: vals.map(v => v === null ? 'transparent' : v >= 0 ? (dark ? '#32d74b' : '#30a14e') : (dark ? '#ff453a' : '#d73a49')),
+          pointBackgroundColor: vals.map(v => v === null ? 'transparent' : v >= 0 ? '#30a14e' : '#d73a49'),
           tension: 0.3,
           fill: false,
           spanGaps: true,
@@ -1771,7 +1541,7 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
           callbacks: { label: ctx => ` ${fmtD(ctx.raw)} vs JST` }
         }},
         scales: {
-          x: { display: true, ticks: { font: { size: 9 }, color: dark ? '#636366' : '#a1a1a6' }, grid: { display: false } },
+          x: { display: true, ticks: { font: { size: 9 }, color: '#a1a1a6' }, grid: { display: false } },
           y: { display: false, grid: { display: false } }
         }
       }
