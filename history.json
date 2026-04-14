@@ -1,1 +1,3825 @@
-[]
+[
+  {
+    "cw": "CW-1776181071836",
+    "ts": 1776181071836,
+    "rows": [
+      {
+        "dim": "Accessories",
+        "st": 269.0000000298,
+        "jst": 449,
+        "delta": -180,
+        "pctD": -0.400891,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Studio Display",
+        "st": 269.0000000298,
+        "jst": 449,
+        "delta": -180,
+        "pctD": -0.400891,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Studio Display J327",
+        "st": 77.0000000298,
+        "jst": 195,
+        "delta": -118,
+        "pctD": -0.605128,
+        "vel": 0.03,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 3,
+        "jst": 1,
+        "delta": 2,
+        "pctD": 2,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 2,
+        "jst": 2,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 5.0000000298,
+        "jst": 27,
+        "delta": -22,
+        "pctD": -0.814815,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 0,
+        "jst": 1,
+        "delta": -1,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 1,
+        "jst": 1,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.03,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 1,
+        "jst": 1,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.03,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 3,
+        "jst": 13,
+        "delta": -10,
+        "pctD": -0.769231,
+        "vel": 0.01,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 14,
+        "jst": 25,
+        "delta": -11,
+        "pctD": -0.44,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 0,
+        "jst": 5,
+        "delta": -5,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 0,
+        "jst": 1,
+        "delta": -1,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 2,
+        "jst": 1,
+        "delta": 1,
+        "pctD": 1,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 7,
+        "jst": 17,
+        "delta": -10,
+        "pctD": -0.588235,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 0,
+        "jst": 1,
+        "delta": -1,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 3,
+        "jst": 7,
+        "delta": -4,
+        "pctD": -0.571429,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 3,
+        "jst": 5,
+        "delta": -2,
+        "pctD": -0.4,
+        "vel": 0.04,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 0,
+        "jst": 3,
+        "delta": -3,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 3,
+        "jst": 7,
+        "delta": -4,
+        "pctD": -0.571429,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 7,
+        "jst": 7,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 1,
+        "jst": 2,
+        "delta": -1,
+        "pctD": -0.5,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Russia",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 14,
+        "jst": 13,
+        "delta": 1,
+        "pctD": 0.0769231,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 4,
+        "jst": 15,
+        "delta": -11,
+        "pctD": -0.733333,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 0,
+        "jst": 12,
+        "delta": -12,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 2,
+        "jst": 3,
+        "delta": -1,
+        "pctD": -0.333333,
+        "vel": 0.03,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 2,
+        "jst": 5,
+        "delta": -3,
+        "pctD": -0.6,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 0,
+        "jst": 20,
+        "delta": -20,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Studio Display XDR",
+        "st": 192,
+        "jst": 254,
+        "delta": -62,
+        "pctD": -0.244094,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 2,
+        "jst": 2,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 1,
+        "jst": 5,
+        "delta": -4,
+        "pctD": -0.8,
+        "vel": 1,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 6,
+        "jst": 9,
+        "delta": -3,
+        "pctD": -0.333333,
+        "vel": 0.35,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 1,
+        "jst": 1,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 8,
+        "jst": 17,
+        "delta": -9,
+        "pctD": -0.529412,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 5,
+        "jst": 1,
+        "delta": 4,
+        "pctD": 4,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 2,
+        "jst": 6,
+        "delta": -4,
+        "pctD": -0.666667,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 2,
+        "jst": 7,
+        "delta": -5,
+        "pctD": -0.714286,
+        "vel": 0.06,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 53,
+        "jst": 92,
+        "delta": -39,
+        "pctD": -0.423913,
+        "vel": 0.53,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 1,
+        "jst": 0,
+        "delta": 1,
+        "pctD": 0,
+        "vel": 0.08,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 5,
+        "jst": 8,
+        "delta": -3,
+        "pctD": -0.375,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 8,
+        "jst": 6,
+        "delta": 2,
+        "pctD": 0.333333,
+        "vel": 0.67,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 1,
+        "jst": 5,
+        "delta": -4,
+        "pctD": -0.8,
+        "vel": 0.01,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 15,
+        "jst": 6,
+        "delta": 9,
+        "pctD": 1.5,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 2,
+        "jst": 0,
+        "delta": 2,
+        "pctD": 0,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 2,
+        "jst": 11,
+        "delta": -9,
+        "pctD": -0.818182,
+        "vel": 0.03,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 0,
+        "jst": 2,
+        "delta": -2,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 5,
+        "jst": 4,
+        "delta": 1,
+        "pctD": 0.25,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 3,
+        "jst": 1,
+        "delta": 2,
+        "pctD": 2,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 7,
+        "jst": 0,
+        "delta": 7,
+        "pctD": 0,
+        "vel": 3.5,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 2,
+        "jst": 0,
+        "delta": 2,
+        "pctD": 0,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Russia",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 1,
+        "jst": 0,
+        "delta": 1,
+        "pctD": 0,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 0,
+        "jst": 1,
+        "delta": -1,
+        "pctD": -1,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 5,
+        "jst": 3,
+        "delta": 2,
+        "pctD": 0.666667,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 2,
+        "jst": 1,
+        "delta": 1,
+        "pctD": 1,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 28,
+        "jst": 31,
+        "delta": -3,
+        "pctD": -0.0967742,
+        "vel": 0.64,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 6,
+        "jst": 19,
+        "delta": -13,
+        "pctD": -0.684211,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 2,
+        "jst": 3,
+        "delta": -1,
+        "pctD": -0.333333,
+        "vel": 0.33,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 17,
+        "jst": 13,
+        "delta": 4,
+        "pctD": 0.307692,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Mac",
+        "st": 153943.4499948993,
+        "jst": 180068,
+        "delta": -26124.55,
+        "pctD": -0.145084,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "iMac 24",
+        "st": 2964.0000004321,
+        "jst": 3003,
+        "delta": -39,
+        "pctD": -0.012987,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "iMac 24 M4 High",
+        "st": 1721.9999999404,
+        "jst": 1448,
+        "delta": 274,
+        "pctD": 0.189227,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 23,
+        "jst": 0,
+        "delta": 23,
+        "pctD": 0,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 15,
+        "jst": 12,
+        "delta": 3,
+        "pctD": 0.25,
+        "vel": 0.6,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 49.0000002384,
+        "jst": 93,
+        "delta": -44,
+        "pctD": -0.473118,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 1,
+        "jst": 23,
+        "delta": -22,
+        "pctD": -0.956522,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 17,
+        "jst": 0,
+        "delta": 17,
+        "pctD": 0,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 4,
+        "jst": 0,
+        "delta": 4,
+        "pctD": 0,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 18,
+        "jst": 0,
+        "delta": 18,
+        "pctD": 0,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 105,
+        "jst": 95,
+        "delta": 10,
+        "pctD": 0.105263,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 249,
+        "jst": 245,
+        "delta": 4,
+        "pctD": 0.0163265,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 25,
+        "jst": 5,
+        "delta": 20,
+        "pctD": 4,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 3,
+        "jst": 0,
+        "delta": 3,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 228,
+        "jst": 118,
+        "delta": 110,
+        "pctD": 0.932203,
+        "vel": 0.39,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 4,
+        "jst": 0,
+        "delta": 4,
+        "pctD": 0,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 16,
+        "jst": 0,
+        "delta": 16,
+        "pctD": 0,
+        "vel": 0.08,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 86,
+        "jst": 127,
+        "delta": -41,
+        "pctD": -0.322835,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 9,
+        "jst": 12,
+        "delta": -3,
+        "pctD": -0.25,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 6,
+        "jst": 0,
+        "delta": 6,
+        "pctD": 0,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 30,
+        "jst": 6,
+        "delta": 24,
+        "pctD": 4,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 116,
+        "jst": 113,
+        "delta": 3,
+        "pctD": 0.0265487,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 2,
+        "jst": 35,
+        "delta": -33,
+        "pctD": -0.942857,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 7,
+        "jst": 7,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.08,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 40,
+        "jst": 28,
+        "delta": 12,
+        "pctD": 0.428571,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 52,
+        "jst": 21,
+        "delta": 31,
+        "pctD": 1.47619,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 33,
+        "jst": 13,
+        "delta": 20,
+        "pctD": 1.53846,
+        "vel": 1.65,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 16,
+        "jst": 14,
+        "delta": 2,
+        "pctD": 0.142857,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Russia",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 36,
+        "jst": 14,
+        "delta": 22,
+        "pctD": 1.57143,
+        "vel": 0.04,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 24,
+        "jst": 24,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 165.999999702,
+        "jst": 75,
+        "delta": 91,
+        "pctD": 1.21333,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 8,
+        "jst": 0,
+        "delta": 8,
+        "pctD": 0,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 105,
+        "jst": 97,
+        "delta": 8,
+        "pctD": 0.0824742,
+        "vel": 0.4,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 73,
+        "jst": 36,
+        "delta": 37,
+        "pctD": 1.02778,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 10,
+        "jst": 2,
+        "delta": 8,
+        "pctD": 4,
+        "vel": 0.34,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 146,
+        "jst": 233,
+        "delta": -87,
+        "pctD": -0.373391,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "iMac 24 M4 Low",
+        "st": 1242.0000004917,
+        "jst": 1555,
+        "delta": -313,
+        "pctD": -0.201286,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 4,
+        "jst": 4,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 2,
+        "jst": 18,
+        "delta": -16,
+        "pctD": -0.888889,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 50.0000006109,
+        "jst": 44,
+        "delta": 6,
+        "pctD": 0.136364,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 1,
+        "jst": 17,
+        "delta": -16,
+        "pctD": -0.941176,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 27,
+        "jst": 9,
+        "delta": 18,
+        "pctD": 2,
+        "vel": 1.12,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 16,
+        "jst": 9,
+        "delta": 7,
+        "pctD": 0.777778,
+        "vel": 0.32,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 23,
+        "jst": 13,
+        "delta": 10,
+        "pctD": 0.769231,
+        "vel": 1.21,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 171,
+        "jst": 267,
+        "delta": -96,
+        "pctD": -0.359551,
+        "vel": 0.13,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 131,
+        "jst": 374,
+        "delta": -243,
+        "pctD": -0.649733,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 62,
+        "jst": 10,
+        "delta": 52,
+        "pctD": 5.2,
+        "vel": 0.65,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 5,
+        "jst": 0,
+        "delta": 5,
+        "pctD": 0,
+        "vel": -2.5,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 103,
+        "jst": 46,
+        "delta": 57,
+        "pctD": 1.23913,
+        "vel": 0.46,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 9,
+        "jst": 3,
+        "delta": 6,
+        "pctD": 2,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 6,
+        "jst": 17,
+        "delta": -11,
+        "pctD": -0.647059,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 97,
+        "jst": 220,
+        "delta": -123,
+        "pctD": -0.559091,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 6,
+        "jst": 8,
+        "delta": -2,
+        "pctD": -0.25,
+        "vel": 0.11,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 0,
+        "jst": 7,
+        "delta": -7,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 10,
+        "jst": 0,
+        "delta": 10,
+        "pctD": 0,
+        "vel": 0.06,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 80,
+        "jst": 64,
+        "delta": 16,
+        "pctD": 0.25,
+        "vel": 0.47,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 26,
+        "delta": -26,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 27,
+        "jst": 16,
+        "delta": 11,
+        "pctD": 0.6875,
+        "vel": 0.31,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 16,
+        "jst": 19,
+        "delta": -3,
+        "pctD": -0.157895,
+        "vel": 0.11,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 54,
+        "jst": 12,
+        "delta": 42,
+        "pctD": 3.5,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 24,
+        "jst": 9,
+        "delta": 15,
+        "pctD": 1.66667,
+        "vel": 12,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 24,
+        "jst": 5,
+        "delta": 19,
+        "pctD": 3.8,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "Russia",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 11,
+        "jst": 16,
+        "delta": -5,
+        "pctD": -0.3125,
+        "vel": 0.06,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 11,
+        "jst": 12,
+        "delta": -1,
+        "pctD": -0.0833333,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 111.9999998808,
+        "jst": 65,
+        "delta": 47,
+        "pctD": 0.723077,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 5,
+        "jst": 4,
+        "delta": 1,
+        "pctD": 0.25,
+        "vel": 0.33,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 18,
+        "jst": 65,
+        "delta": -47,
+        "pctD": -0.723077,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 13,
+        "jst": 15,
+        "delta": -2,
+        "pctD": -0.133333,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 7,
+        "jst": 4,
+        "delta": 3,
+        "pctD": 0.75,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 117,
+        "jst": 157,
+        "delta": -40,
+        "pctD": -0.254777,
+        "vel": 0.24,
+        "yoy": null
+      },
+      {
+        "dim": "Mac Mini",
+        "st": 5136.000000149,
+        "jst": 10914,
+        "delta": -5778,
+        "pctD": -0.529412,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Mac Mini M4",
+        "st": 5136.000000149,
+        "jst": 10914,
+        "delta": -5778,
+        "pctD": -0.529412,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 12,
+        "jst": 58,
+        "delta": -46,
+        "pctD": -0.793103,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 12,
+        "jst": 88,
+        "delta": -76,
+        "pctD": -0.863636,
+        "vel": 0.92,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 98.9999999702,
+        "jst": 175,
+        "delta": -76,
+        "pctD": -0.434286,
+        "vel": 0.63,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 17,
+        "jst": 44,
+        "delta": -27,
+        "pctD": -0.613636,
+        "vel": 0.59,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 91,
+        "jst": 178,
+        "delta": -87,
+        "pctD": -0.488764,
+        "vel": 5.69,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 57,
+        "jst": 118,
+        "delta": -61,
+        "pctD": -0.516949,
+        "vel": 0.67,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 144,
+        "jst": 114,
+        "delta": 30,
+        "pctD": 0.263158,
+        "vel": 0.6,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 322,
+        "jst": 482,
+        "delta": -160,
+        "pctD": -0.33195,
+        "vel": 0.36,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 332,
+        "jst": 1947,
+        "delta": -1615,
+        "pctD": -0.829481,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 134,
+        "jst": 155,
+        "delta": -21,
+        "pctD": -0.135484,
+        "vel": 0.74,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 4,
+        "jst": 16,
+        "delta": -12,
+        "pctD": -0.75,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 631,
+        "jst": 1598,
+        "delta": -967,
+        "pctD": -0.605131,
+        "vel": 1.69,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 6,
+        "jst": 8,
+        "delta": -2,
+        "pctD": -0.25,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 110,
+        "jst": 251,
+        "delta": -141,
+        "pctD": -0.561753,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 237,
+        "jst": 1224,
+        "delta": -987,
+        "pctD": -0.806373,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 65,
+        "jst": 72,
+        "delta": -7,
+        "pctD": -0.0972222,
+        "vel": 0.19,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 7,
+        "jst": 60,
+        "delta": -53,
+        "pctD": -0.883333,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 55,
+        "jst": 36,
+        "delta": 19,
+        "pctD": 0.527778,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 626,
+        "jst": 652,
+        "delta": -26,
+        "pctD": -0.0398773,
+        "vel": 1.23,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 7,
+        "delta": -7,
+        "pctD": -1,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 92,
+        "jst": 273,
+        "delta": -181,
+        "pctD": -0.663004,
+        "vel": 0.68,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 108,
+        "jst": 498,
+        "delta": -390,
+        "pctD": -0.783133,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 79,
+        "jst": 123,
+        "delta": -44,
+        "pctD": -0.357724,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 25,
+        "jst": 71,
+        "delta": -46,
+        "pctD": -0.647887,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 45,
+        "jst": 140,
+        "delta": -95,
+        "pctD": -0.678571,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "Russia",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 60,
+        "jst": 76,
+        "delta": -16,
+        "pctD": -0.210526,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 57,
+        "jst": 101,
+        "delta": -44,
+        "pctD": -0.435644,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 291.0000001788,
+        "jst": 596,
+        "delta": -305,
+        "pctD": -0.511745,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 254,
+        "jst": 92,
+        "delta": 162,
+        "pctD": 1.76087,
+        "vel": 0.67,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 96,
+        "jst": 247,
+        "delta": -151,
+        "pctD": -0.611336,
+        "vel": 0.52,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 170,
+        "jst": 252,
+        "delta": -82,
+        "pctD": -0.325397,
+        "vel": 0.11,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 78,
+        "jst": 29,
+        "delta": 49,
+        "pctD": 1.68966,
+        "vel": 0.44,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 820,
+        "jst": 1133,
+        "delta": -313,
+        "pctD": -0.276258,
+        "vel": 0.51,
+        "yoy": null
+      },
+      {
+        "dim": "Mac Studio",
+        "st": 665.0000000596,
+        "jst": 886,
+        "delta": -221,
+        "pctD": -0.249436,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Mac Studio M3/M4",
+        "st": 665.0000000596,
+        "jst": 886,
+        "delta": -221,
+        "pctD": -0.249436,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 3,
+        "jst": 13,
+        "delta": -10,
+        "pctD": -0.769231,
+        "vel": 0.11,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 1,
+        "jst": 23,
+        "delta": -22,
+        "pctD": -0.956522,
+        "vel": 1,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 19.0000000596,
+        "jst": 21,
+        "delta": -2,
+        "pctD": -0.0952381,
+        "vel": 0.59,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 1,
+        "jst": 16,
+        "delta": -15,
+        "pctD": -0.9375,
+        "vel": 0.03,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 23,
+        "jst": 30,
+        "delta": -7,
+        "pctD": -0.233333,
+        "vel": 4.6,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 3,
+        "jst": 2,
+        "delta": 1,
+        "pctD": 0.5,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 6,
+        "jst": 0,
+        "delta": 6,
+        "pctD": 0,
+        "vel": 6,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 46,
+        "jst": 48,
+        "delta": -2,
+        "pctD": -0.0416667,
+        "vel": 0.65,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 88,
+        "jst": 220,
+        "delta": -132,
+        "pctD": -0.6,
+        "vel": 0.63,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 1,
+        "jst": 11,
+        "delta": -10,
+        "pctD": -0.909091,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 74,
+        "jst": 63,
+        "delta": 11,
+        "pctD": 0.174603,
+        "vel": 1.28,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 3,
+        "jst": 0,
+        "delta": 3,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 11,
+        "jst": 12,
+        "delta": -1,
+        "pctD": -0.0833333,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 41,
+        "jst": 35,
+        "delta": 6,
+        "pctD": 0.171429,
+        "vel": 0.56,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 47,
+        "jst": 0,
+        "delta": 47,
+        "pctD": 0,
+        "vel": 0.76,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 7,
+        "jst": 0,
+        "delta": 7,
+        "pctD": 0,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 8,
+        "jst": 6,
+        "delta": 2,
+        "pctD": 0.333333,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 31,
+        "jst": 27,
+        "delta": 4,
+        "pctD": 0.148148,
+        "vel": 1.35,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 4,
+        "delta": -4,
+        "pctD": -1,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 8,
+        "jst": 10,
+        "delta": -2,
+        "pctD": -0.2,
+        "vel": 0.8,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 28,
+        "jst": 82,
+        "delta": -54,
+        "pctD": -0.658537,
+        "vel": 0.61,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 21,
+        "jst": 8,
+        "delta": 13,
+        "pctD": 1.625,
+        "vel": 2.33,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 9,
+        "jst": 7,
+        "delta": 2,
+        "pctD": 0.285714,
+        "vel": 0.69,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 29,
+        "jst": 25,
+        "delta": 4,
+        "pctD": 0.16,
+        "vel": 0.45,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 10,
+        "jst": 3,
+        "delta": 7,
+        "pctD": 2.33333,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 1,
+        "jst": 10,
+        "delta": -9,
+        "pctD": -0.9,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 61,
+        "jst": 29,
+        "delta": 32,
+        "pctD": 1.10345,
+        "vel": 0.71,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 7,
+        "jst": 11,
+        "delta": -4,
+        "pctD": -0.363636,
+        "vel": 0.35,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 4,
+        "jst": 41,
+        "delta": -37,
+        "pctD": -0.902439,
+        "vel": 0.06,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 14,
+        "jst": 4,
+        "delta": 10,
+        "pctD": 2.5,
+        "vel": 0.34,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 0,
+        "jst": 16,
+        "delta": -16,
+        "pctD": -1,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 60,
+        "jst": 109,
+        "delta": -49,
+        "pctD": -0.449541,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "MacBook Air 13",
+        "st": 44953.5000002012,
+        "jst": 35899,
+        "delta": 9054.5,
+        "pctD": 0.252235,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "MBA 13 M5",
+        "st": 44953.5000002012,
+        "jst": 35899,
+        "delta": 9054.5,
+        "pctD": 0.252235,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 271,
+        "jst": 263,
+        "delta": 8,
+        "pctD": 0.0304183,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 821,
+        "jst": 327,
+        "delta": 494,
+        "pctD": 1.5107,
+        "vel": 0.52,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 544.0000002012,
+        "jst": 388,
+        "delta": 156,
+        "pctD": 0.402062,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 63,
+        "jst": 205,
+        "delta": -142,
+        "pctD": -0.692683,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 1286,
+        "jst": 795,
+        "delta": 491,
+        "pctD": 0.61761,
+        "vel": 0.28,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 824,
+        "jst": 738,
+        "delta": 86,
+        "pctD": 0.116531,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 666,
+        "jst": 354,
+        "delta": 312,
+        "pctD": 0.881356,
+        "vel": 0.28,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 3063,
+        "jst": 2443,
+        "delta": 620,
+        "pctD": 0.253786,
+        "vel": 0.31,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 4189,
+        "jst": 3105,
+        "delta": 1084,
+        "pctD": 0.349114,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 347,
+        "jst": 307,
+        "delta": 40,
+        "pctD": 0.130293,
+        "vel": 0.73,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 439,
+        "jst": 76,
+        "delta": 363,
+        "pctD": 4.77632,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 16908,
+        "jst": 11837,
+        "delta": 5071,
+        "pctD": 0.428402,
+        "vel": 0.44,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 24,
+        "jst": 209,
+        "delta": -185,
+        "pctD": -0.885167,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 162,
+        "jst": 321,
+        "delta": -159,
+        "pctD": -0.495327,
+        "vel": 0.19,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 1351,
+        "jst": 1672,
+        "delta": -321,
+        "pctD": -0.191986,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 1306,
+        "jst": 656,
+        "delta": 650,
+        "pctD": 0.990854,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 87,
+        "jst": 233,
+        "delta": -146,
+        "pctD": -0.626609,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 248,
+        "jst": 289,
+        "delta": -41,
+        "pctD": -0.141869,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 1159,
+        "jst": 1159,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 286,
+        "jst": 348,
+        "delta": -62,
+        "pctD": -0.178161,
+        "vel": 0.11,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 460,
+        "jst": 1047,
+        "delta": -587,
+        "pctD": -0.560649,
+        "vel": 0.06,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 759,
+        "jst": 396,
+        "delta": 363,
+        "pctD": 0.916667,
+        "vel": 0.6,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 485,
+        "jst": 705,
+        "delta": -220,
+        "pctD": -0.312057,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 697,
+        "jst": 425,
+        "delta": 272,
+        "pctD": 0.64,
+        "vel": 0.74,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 582,
+        "jst": 532,
+        "delta": 50,
+        "pctD": 0.093985,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 200,
+        "jst": 232,
+        "delta": -32,
+        "pctD": -0.137931,
+        "vel": 0.13,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 2322.5,
+        "jst": 1736,
+        "delta": 586.5,
+        "pctD": 0.338134,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 559,
+        "jst": 468,
+        "delta": 91,
+        "pctD": 0.194444,
+        "vel": 0.42,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 920,
+        "jst": 924,
+        "delta": -4,
+        "pctD": -0.004329,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 748,
+        "jst": 810,
+        "delta": -62,
+        "pctD": -0.0765432,
+        "vel": 0.11,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 100,
+        "jst": 152,
+        "delta": -52,
+        "pctD": -0.342105,
+        "vel": 0.68,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 3077,
+        "jst": 2747,
+        "delta": 330,
+        "pctD": 0.120131,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "MacBook Air 15",
+        "st": 13685.799996987,
+        "jst": 13896,
+        "delta": -210.2,
+        "pctD": -0.0151123,
+        "vel": 0.24,
+        "yoy": null
+      },
+      {
+        "dim": "MBA 15 M5",
+        "st": 13685.799996987,
+        "jst": 13896,
+        "delta": -210.2,
+        "pctD": -0.0151123,
+        "vel": 0.24,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 131,
+        "jst": 213,
+        "delta": -82,
+        "pctD": -0.384977,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 163,
+        "jst": 183,
+        "delta": -20,
+        "pctD": -0.10929,
+        "vel": 0.44,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 338.799996987,
+        "jst": 263,
+        "delta": 75.8,
+        "pctD": 0.288973,
+        "vel": 0.31,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 121,
+        "jst": 235,
+        "delta": -114,
+        "pctD": -0.485106,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 504,
+        "jst": 323,
+        "delta": 181,
+        "pctD": 0.560372,
+        "vel": 0.46,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 204,
+        "jst": 144,
+        "delta": 60,
+        "pctD": 0.416667,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 178,
+        "jst": 173,
+        "delta": 5,
+        "pctD": 0.0289017,
+        "vel": 0.24,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 1016,
+        "jst": 941,
+        "delta": 75,
+        "pctD": 0.0797024,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 1897,
+        "jst": 1724,
+        "delta": 173,
+        "pctD": 0.100348,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 171,
+        "jst": 212,
+        "delta": -41,
+        "pctD": -0.193396,
+        "vel": 0.85,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 221,
+        "jst": 24,
+        "delta": 197,
+        "pctD": 8.20833,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 1829,
+        "jst": 2527,
+        "delta": -698,
+        "pctD": -0.276217,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 8,
+        "jst": 43,
+        "delta": -35,
+        "pctD": -0.813953,
+        "vel": 0.02,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 113,
+        "jst": 117,
+        "delta": -4,
+        "pctD": -0.034188,
+        "vel": 0.24,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 517,
+        "jst": 734,
+        "delta": -217,
+        "pctD": -0.29564,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 333,
+        "jst": 317,
+        "delta": 16,
+        "pctD": 0.0504732,
+        "vel": 0.43,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 30,
+        "jst": 67,
+        "delta": -37,
+        "pctD": -0.552239,
+        "vel": 0.08,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 119,
+        "jst": 48,
+        "delta": 71,
+        "pctD": 1.47917,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 902,
+        "jst": 461,
+        "delta": 441,
+        "pctD": 0.956616,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 152,
+        "jst": 197,
+        "delta": -45,
+        "pctD": -0.228426,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 323,
+        "jst": 755,
+        "delta": -432,
+        "pctD": -0.572185,
+        "vel": 0.08,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 162,
+        "jst": 132,
+        "delta": 30,
+        "pctD": 0.227273,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 195,
+        "jst": 277,
+        "delta": -82,
+        "pctD": -0.296029,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 199,
+        "jst": 166,
+        "delta": 33,
+        "pctD": 0.198795,
+        "vel": 0.59,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 131,
+        "jst": 64,
+        "delta": 67,
+        "pctD": 1.04688,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 121,
+        "jst": 173,
+        "delta": -52,
+        "pctD": -0.300578,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 819,
+        "jst": 657,
+        "delta": 162,
+        "pctD": 0.246575,
+        "vel": 0.33,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 128,
+        "jst": 300,
+        "delta": -172,
+        "pctD": -0.573333,
+        "vel": 0.39,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 642,
+        "jst": 592,
+        "delta": 50,
+        "pctD": 0.0844595,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 314,
+        "jst": 272,
+        "delta": 42,
+        "pctD": 0.154412,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 169,
+        "jst": 60,
+        "delta": 109,
+        "pctD": 1.81667,
+        "vel": 0.92,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 1535,
+        "jst": 1502,
+        "delta": 33,
+        "pctD": 0.0219707,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "MacBook Neo 13",
+        "st": 52963.8999988437,
+        "jst": 78869,
+        "delta": -25905.1,
+        "pctD": -0.328456,
+        "vel": 0.43,
+        "yoy": null
+      },
+      {
+        "dim": "Neo 13",
+        "st": 52963.8999988437,
+        "jst": 78869,
+        "delta": -25905.1,
+        "pctD": -0.328456,
+        "vel": 0.43,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 345,
+        "jst": 582,
+        "delta": -237,
+        "pctD": -0.407216,
+        "vel": 0.59,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 283,
+        "jst": 952,
+        "delta": -669,
+        "pctD": -0.702731,
+        "vel": 0.61,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 557.8999988437,
+        "jst": 1045,
+        "delta": -487.1,
+        "pctD": -0.466029,
+        "vel": 0.43,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 643,
+        "jst": 1300,
+        "delta": -657,
+        "pctD": -0.505385,
+        "vel": 0.54,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 2284,
+        "jst": 1906,
+        "delta": 378,
+        "pctD": 0.198321,
+        "vel": 1.28,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 469,
+        "jst": 1290,
+        "delta": -821,
+        "pctD": -0.636434,
+        "vel": 0.35,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 426,
+        "jst": 818,
+        "delta": -392,
+        "pctD": -0.479218,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 3545,
+        "jst": 6492,
+        "delta": -2947,
+        "pctD": -0.453943,
+        "vel": 0.49,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 6433,
+        "jst": 7369,
+        "delta": -936,
+        "pctD": -0.127019,
+        "vel": 0.47,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 279,
+        "jst": 1122,
+        "delta": -843,
+        "pctD": -0.751337,
+        "vel": 0.89,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 390,
+        "jst": 5,
+        "delta": 385,
+        "pctD": 77,
+        "vel": -6.72,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 16112,
+        "jst": 15454,
+        "delta": 658,
+        "pctD": 0.042578,
+        "vel": 0.36,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 157,
+        "jst": 315,
+        "delta": -158,
+        "pctD": -0.501587,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 416,
+        "jst": 987,
+        "delta": -571,
+        "pctD": -0.578521,
+        "vel": 0.41,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 2443,
+        "jst": 4245,
+        "delta": -1802,
+        "pctD": -0.424499,
+        "vel": 0.71,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 1413,
+        "jst": 1997,
+        "delta": -584,
+        "pctD": -0.292439,
+        "vel": 0.95,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 139,
+        "jst": 648,
+        "delta": -509,
+        "pctD": -0.785494,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 712,
+        "jst": 1038,
+        "delta": -326,
+        "pctD": -0.314066,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 1316,
+        "jst": 3025,
+        "delta": -1709,
+        "pctD": -0.564959,
+        "vel": 0.55,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 38,
+        "jst": 3,
+        "delta": 35,
+        "pctD": 11.6667,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 367,
+        "jst": 906,
+        "delta": -539,
+        "pctD": -0.594923,
+        "vel": 0.57,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 1877,
+        "jst": 3200,
+        "delta": -1323,
+        "pctD": -0.413437,
+        "vel": 0.49,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 641,
+        "jst": 1298,
+        "delta": -657,
+        "pctD": -0.506163,
+        "vel": 0.61,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 977,
+        "jst": 1492,
+        "delta": -515,
+        "pctD": -0.345174,
+        "vel": 0.64,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 78,
+        "jst": 1429,
+        "delta": -1351,
+        "pctD": -0.945416,
+        "vel": 0.96,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 654,
+        "jst": 1932,
+        "delta": -1278,
+        "pctD": -0.661491,
+        "vel": 0.64,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 332,
+        "jst": 1127,
+        "delta": -795,
+        "pctD": -0.705413,
+        "vel": 0.47,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 2052,
+        "jst": 4405,
+        "delta": -2353,
+        "pctD": -0.534166,
+        "vel": 0.42,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 363,
+        "jst": 554,
+        "delta": -191,
+        "pctD": -0.344765,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 885,
+        "jst": 1721,
+        "delta": -836,
+        "pctD": -0.485764,
+        "vel": 0.58,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 1599,
+        "jst": 1762,
+        "delta": -163,
+        "pctD": -0.0925085,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 217,
+        "jst": 649,
+        "delta": -432,
+        "pctD": -0.665639,
+        "vel": 1,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 4521,
+        "jst": 7801,
+        "delta": -3280,
+        "pctD": -0.420459,
+        "vel": 0.42,
+        "yoy": null
+      },
+      {
+        "dim": "MacBook Pro 14",
+        "st": 20378.3499975428,
+        "jst": 24913,
+        "delta": -4534.65,
+        "pctD": -0.182033,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "MBP 14 M5 High",
+        "st": 10132.9999984279,
+        "jst": 13390,
+        "delta": -3257,
+        "pctD": -0.243241,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 91,
+        "jst": 74,
+        "delta": 17,
+        "pctD": 0.22973,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 332,
+        "jst": 138,
+        "delta": 194,
+        "pctD": 1.4058,
+        "vel": 0.47,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 158.9999984279,
+        "jst": 127,
+        "delta": 32,
+        "pctD": 0.251969,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 70,
+        "jst": 49,
+        "delta": 21,
+        "pctD": 0.428571,
+        "vel": 0.09,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 573,
+        "jst": 214,
+        "delta": 359,
+        "pctD": 1.67757,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 92,
+        "jst": 122,
+        "delta": -30,
+        "pctD": -0.245902,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 98,
+        "jst": 159,
+        "delta": -61,
+        "pctD": -0.383648,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 645,
+        "jst": 434,
+        "delta": 211,
+        "pctD": 0.486175,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 1589,
+        "jst": 1902,
+        "delta": -313,
+        "pctD": -0.164564,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 86,
+        "jst": 126,
+        "delta": -40,
+        "pctD": -0.31746,
+        "vel": 0.61,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 2,
+        "jst": 9,
+        "delta": -7,
+        "pctD": -0.777778,
+        "vel": -0.2,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 1961,
+        "jst": 3743,
+        "delta": -1782,
+        "pctD": -0.476089,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 168,
+        "jst": 73,
+        "delta": 95,
+        "pctD": 1.30137,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 135,
+        "jst": 136,
+        "delta": -1,
+        "pctD": -0.00735294,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 214,
+        "jst": 295,
+        "delta": -81,
+        "pctD": -0.274576,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 122,
+        "jst": 76,
+        "delta": 46,
+        "pctD": 0.605263,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 17,
+        "jst": 112,
+        "delta": -95,
+        "pctD": -0.848214,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 121,
+        "jst": 62,
+        "delta": 59,
+        "pctD": 0.951613,
+        "vel": 0.28,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 534,
+        "jst": 662,
+        "delta": -128,
+        "pctD": -0.193353,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 2,
+        "jst": 0,
+        "delta": 2,
+        "pctD": 0,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 153,
+        "jst": 122,
+        "delta": 31,
+        "pctD": 0.254098,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 367,
+        "jst": 562,
+        "delta": -195,
+        "pctD": -0.346975,
+        "vel": 0.13,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 120,
+        "jst": 195,
+        "delta": -75,
+        "pctD": -0.384615,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 152,
+        "jst": 236,
+        "delta": -84,
+        "pctD": -0.355932,
+        "vel": 0.19,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 99,
+        "jst": 221,
+        "delta": -122,
+        "pctD": -0.552036,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 75,
+        "jst": 51,
+        "delta": 24,
+        "pctD": 0.470588,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 27,
+        "jst": 51,
+        "delta": -24,
+        "pctD": -0.470588,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 259,
+        "jst": 501,
+        "delta": -242,
+        "pctD": -0.483034,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 203,
+        "jst": 525,
+        "delta": -322,
+        "pctD": -0.613333,
+        "vel": 0.21,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 312,
+        "jst": 652,
+        "delta": -340,
+        "pctD": -0.521472,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 224,
+        "jst": 208,
+        "delta": 16,
+        "pctD": 0.0769231,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 207,
+        "jst": 65,
+        "delta": 142,
+        "pctD": 2.18462,
+        "vel": 0.8,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 924,
+        "jst": 1488,
+        "delta": -564,
+        "pctD": -0.379032,
+        "vel": 0.1,
+        "yoy": null
+      },
+      {
+        "dim": "MBP 14 M5 Low",
+        "st": 10245.3499991149,
+        "jst": 11523,
+        "delta": -1277.65,
+        "pctD": -0.110909,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 50,
+        "jst": 47,
+        "delta": 3,
+        "pctD": 0.0638298,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 94,
+        "jst": 145,
+        "delta": -51,
+        "pctD": -0.351724,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 149.7999986261,
+        "jst": 188,
+        "delta": -38.2,
+        "pctD": -0.202128,
+        "vel": 0.19,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 468,
+        "jst": 93,
+        "delta": 375,
+        "pctD": 4.03226,
+        "vel": 0.69,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 152,
+        "jst": 237,
+        "delta": -85,
+        "pctD": -0.35865,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 234,
+        "jst": 286,
+        "delta": -52,
+        "pctD": -0.181818,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 164,
+        "jst": 159,
+        "delta": 5,
+        "pctD": 0.0314465,
+        "vel": 0.31,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 547,
+        "jst": 680,
+        "delta": -133,
+        "pctD": -0.195588,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 936,
+        "jst": 1738,
+        "delta": -802,
+        "pctD": -0.46145,
+        "vel": 0.17,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 128,
+        "jst": 151,
+        "delta": -23,
+        "pctD": -0.152318,
+        "vel": 0.35,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": null,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 2547,
+        "jst": 1919,
+        "delta": 628,
+        "pctD": 0.327254,
+        "vel": 0.7,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 16,
+        "jst": 8,
+        "delta": 8,
+        "pctD": 1,
+        "vel": 0.14,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 147,
+        "jst": 239,
+        "delta": -92,
+        "pctD": -0.384937,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 884,
+        "jst": 652,
+        "delta": 232,
+        "pctD": 0.355828,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 118,
+        "jst": 144,
+        "delta": -26,
+        "pctD": -0.180556,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 40,
+        "jst": 117,
+        "delta": -77,
+        "pctD": -0.65812,
+        "vel": 0.05,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 130,
+        "jst": 196,
+        "delta": -66,
+        "pctD": -0.336735,
+        "vel": 0.07,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 337,
+        "jst": 278,
+        "delta": 59,
+        "pctD": 0.21223,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 139,
+        "jst": 171,
+        "delta": -32,
+        "pctD": -0.187135,
+        "vel": 0.13,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 149,
+        "jst": 319,
+        "delta": -170,
+        "pctD": -0.532915,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 228,
+        "jst": 222,
+        "delta": 6,
+        "pctD": 0.027027,
+        "vel": 0.51,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 112,
+        "jst": 151,
+        "delta": -39,
+        "pctD": -0.258278,
+        "vel": 0.32,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 123,
+        "jst": 273,
+        "delta": -150,
+        "pctD": -0.549451,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 160,
+        "jst": 88,
+        "delta": 72,
+        "pctD": 0.818182,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 113,
+        "jst": 273,
+        "delta": -160,
+        "pctD": -0.586081,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 399.5500004888,
+        "jst": 498,
+        "delta": -98.45,
+        "pctD": -0.196787,
+        "vel": 0.29,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 145,
+        "jst": 138,
+        "delta": 7,
+        "pctD": 0.0507246,
+        "vel": 0.35,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 206,
+        "jst": 276,
+        "delta": -70,
+        "pctD": -0.253623,
+        "vel": 0.18,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 324,
+        "jst": 391,
+        "delta": -67,
+        "pctD": -0.171356,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 99,
+        "jst": 48,
+        "delta": 51,
+        "pctD": 1.0625,
+        "vel": 0.73,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 906,
+        "jst": 1398,
+        "delta": -492,
+        "pctD": -0.351931,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "MacBook Pro 15/16 Retina",
+        "st": 13196.900000684,
+        "jst": 11688,
+        "delta": 1508.9,
+        "pctD": 0.129107,
+        "vel": 0.32,
+        "yoy": null
+      },
+      {
+        "dim": "MBP 16 M5",
+        "st": 13196.900000684,
+        "jst": 11688,
+        "delta": 1508.9,
+        "pctD": 0.129107,
+        "vel": 0.32,
+        "yoy": null
+      },
+      {
+        "dim": "Austria",
+        "st": 103,
+        "jst": 61,
+        "delta": 42,
+        "pctD": 0.688525,
+        "vel": 0.26,
+        "yoy": null
+      },
+      {
+        "dim": "Baltics",
+        "st": 116,
+        "jst": 148,
+        "delta": -32,
+        "pctD": -0.216216,
+        "vel": 0.49,
+        "yoy": null
+      },
+      {
+        "dim": "Belgium and Luxembourg",
+        "st": 169.900000684,
+        "jst": 130,
+        "delta": 39.9,
+        "pctD": 0.307692,
+        "vel": 0.4,
+        "yoy": null
+      },
+      {
+        "dim": "Commonwealth of Indep States",
+        "st": 94,
+        "jst": 81,
+        "delta": 13,
+        "pctD": 0.160494,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Czech Republic and Slovakia",
+        "st": 503,
+        "jst": 160,
+        "delta": 343,
+        "pctD": 2.14375,
+        "vel": 0.62,
+        "yoy": null
+      },
+      {
+        "dim": "Denmark",
+        "st": 74,
+        "jst": 147,
+        "delta": -73,
+        "pctD": -0.496599,
+        "vel": 0.12,
+        "yoy": null
+      },
+      {
+        "dim": "Finland",
+        "st": 108,
+        "jst": 215,
+        "delta": -107,
+        "pctD": -0.497674,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "France",
+        "st": 287,
+        "jst": 361,
+        "delta": -74,
+        "pctD": -0.204986,
+        "vel": 0.23,
+        "yoy": null
+      },
+      {
+        "dim": "Germany",
+        "st": 1739,
+        "jst": 1436,
+        "delta": 303,
+        "pctD": 0.211003,
+        "vel": 0.34,
+        "yoy": null
+      },
+      {
+        "dim": "Greece Cyprus",
+        "st": 83,
+        "jst": 187,
+        "delta": -104,
+        "pctD": -0.55615,
+        "vel": 0.5,
+        "yoy": null
+      },
+      {
+        "dim": "Iceland",
+        "st": 0,
+        "jst": 0,
+        "delta": 0,
+        "pctD": 0,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "India (132)",
+        "st": 4387,
+        "jst": 2973,
+        "delta": 1414,
+        "pctD": 0.475614,
+        "vel": 0.28,
+        "yoy": null
+      },
+      {
+        "dim": "Ireland",
+        "st": 77,
+        "jst": 264,
+        "delta": -187,
+        "pctD": -0.708333,
+        "vel": 0.2,
+        "yoy": null
+      },
+      {
+        "dim": "Israel",
+        "st": 116,
+        "jst": 306,
+        "delta": -190,
+        "pctD": -0.620915,
+        "vel": 0.16,
+        "yoy": null
+      },
+      {
+        "dim": "Italy",
+        "st": 310,
+        "jst": 366,
+        "delta": -56,
+        "pctD": -0.153005,
+        "vel": 0.3,
+        "yoy": null
+      },
+      {
+        "dim": "ME FZCO",
+        "st": 111,
+        "jst": 178,
+        "delta": -67,
+        "pctD": -0.376404,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "MedAfrica",
+        "st": 0,
+        "jst": 59,
+        "delta": -59,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Middle East",
+        "st": 88,
+        "jst": 60,
+        "delta": 28,
+        "pctD": 0.466667,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Netherlands",
+        "st": 757,
+        "jst": 461,
+        "delta": 296,
+        "pctD": 0.642082,
+        "vel": 0.35,
+        "yoy": null
+      },
+      {
+        "dim": "Nigeria",
+        "st": 0,
+        "jst": 12,
+        "delta": -12,
+        "pctD": -1,
+        "vel": 0,
+        "yoy": null
+      },
+      {
+        "dim": "Norway",
+        "st": 291,
+        "jst": 297,
+        "delta": -6,
+        "pctD": -0.020202,
+        "vel": 0.58,
+        "yoy": null
+      },
+      {
+        "dim": "Poland",
+        "st": 341,
+        "jst": 549,
+        "delta": -208,
+        "pctD": -0.378871,
+        "vel": 0.22,
+        "yoy": null
+      },
+      {
+        "dim": "Portugal",
+        "st": 190,
+        "jst": 174,
+        "delta": 16,
+        "pctD": 0.091954,
+        "vel": 0.55,
+        "yoy": null
+      },
+      {
+        "dim": "Rest of Eastern Europe",
+        "st": 152,
+        "jst": 216,
+        "delta": -64,
+        "pctD": -0.296296,
+        "vel": 0.33,
+        "yoy": null
+      },
+      {
+        "dim": "Romania Bulgaria",
+        "st": 116,
+        "jst": 202,
+        "delta": -86,
+        "pctD": -0.425743,
+        "vel": 0.36,
+        "yoy": null
+      },
+      {
+        "dim": "Saudi Arabia",
+        "st": 70,
+        "jst": 32,
+        "delta": 38,
+        "pctD": 1.1875,
+        "vel": 0.25,
+        "yoy": null
+      },
+      {
+        "dim": "Southern Africa",
+        "st": 35,
+        "jst": 59,
+        "delta": -24,
+        "pctD": -0.40678,
+        "vel": 0.51,
+        "yoy": null
+      },
+      {
+        "dim": "Spain",
+        "st": 266,
+        "jst": 506,
+        "delta": -240,
+        "pctD": -0.474308,
+        "vel": 0.38,
+        "yoy": null
+      },
+      {
+        "dim": "Sweden",
+        "st": 154,
+        "jst": 339,
+        "delta": -185,
+        "pctD": -0.545723,
+        "vel": 0.55,
+        "yoy": null
+      },
+      {
+        "dim": "Switzerland",
+        "st": 164,
+        "jst": 248,
+        "delta": -84,
+        "pctD": -0.33871,
+        "vel": 0.15,
+        "yoy": null
+      },
+      {
+        "dim": "Turkiye",
+        "st": 150,
+        "jst": 199,
+        "delta": -49,
+        "pctD": -0.246231,
+        "vel": 0.27,
+        "yoy": null
+      },
+      {
+        "dim": "Ukraine",
+        "st": 279,
+        "jst": 55,
+        "delta": 224,
+        "pctD": 4.07273,
+        "vel": 0.77,
+        "yoy": null
+      },
+      {
+        "dim": "United Kingdom",
+        "st": 1866,
+        "jst": 1207,
+        "delta": 659,
+        "pctD": 0.545982,
+        "vel": 0.41,
+        "yoy": null
+      }
+    ],
+    "label": "Q3Wk3"
+  }
+]
