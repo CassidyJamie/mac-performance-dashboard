@@ -451,9 +451,20 @@ function handleFile(file) {
 }
 
 // ─── PARSE ────────────────────────────────────────────────────────────────────
-// ─── PRELOADED HISTORY (replace [] with exported JSON to pre-seed for all users) ──
-// To update: export your history, paste the array here, redeploy to GitHub Pages
-const PRELOADED_HISTORY = [];
+// ─── REMOTE HISTORY CONFIG ───────────────────────────────────────────────────
+// GitHub raw URL for history.json — auto-detected from window.location on GitHub Pages
+// Falls back to null (local-only mode) when running from file://
+function getRemoteHistoryURL() {
+  const loc = window.location.href;
+  if (loc.includes('github.io')) {
+    // Derive: https://USERNAME.github.io/REPO/ → raw content URL
+    const match = loc.match(/https:\/\/([^.]+)\.github\.io\/([^/]+)/);
+    if (match) {
+      return `https://raw.githubusercontent.com/${match[1]}/${match[2]}/main/history.json`;
+    }
+  }
+  return null;
+}
 
 // ─── LOCAL STORAGE ───────────────────────────────────────────────────────────
 const LS_KEY = 'macDashHistory_v2';
@@ -1540,13 +1551,10 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
 
 // ─── ON LOAD: restore history chips ──────────────────────────────────────────
 (function initHistory() {
-  // Seed from PRELOADED_HISTORY if localStorage is empty (shared/GitHub Pages mode)
-  let history = loadHistory();
-  if (!history.length && typeof PRELOADED_HISTORY !== 'undefined' && PRELOADED_HISTORY.length) {
-    try { localStorage.setItem(LS_KEY, JSON.stringify(PRELOADED_HISTORY)); } catch(e) {}
-    history = PRELOADED_HISTORY;
-  }
-  if (history.length) {
+  const remoteURL = getRemoteHistoryURL();
+
+  function applyHistory(history) {
+    if (!history.length) return;
     renderHistoryChips(history);
     if (history.length >= 2) renderTrend(history);
     const link = document.getElementById('viewSavedLink');
@@ -1557,6 +1565,36 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
       document.getElementById('savedWeekSummary').textContent =
         `${history.length} week${history.length > 1 ? 's' : ''} saved: ${labels.join(', ')}`;
     }
+  }
+
+  const local = loadHistory();
+
+  if (remoteURL) {
+    // Show local data immediately while fetching remote
+    if (local.length) applyHistory(local);
+
+    // Fetch latest history.json from GitHub
+    fetch(remoteURL + '?t=' + Date.now()) // cache-bust
+      .then(r => { if (!r.ok) throw new Error('No history.json yet'); return r.json(); })
+      .then(remote => {
+        if (!Array.isArray(remote) || !remote.length) return;
+        // Merge: remote is the source of truth, but keep any local-only weeks too
+        const merged = [...remote];
+        local.forEach(lw => {
+          if (!merged.find(rw => rw.cw === lw.cw)) merged.push(lw);
+        });
+        merged.sort((a, b) => a.cw.localeCompare(b.cw, undefined, { numeric: true }));
+        if (merged.length > 8) merged.splice(0, merged.length - 8);
+        try { localStorage.setItem(LS_KEY, JSON.stringify(merged)); } catch(e) {}
+        applyHistory(merged);
+      })
+      .catch(() => {
+        // No remote file yet — just use local
+        if (local.length) applyHistory(local);
+      });
+  } else {
+    // Local file:// mode — just use localStorage
+    applyHistory(local);
   }
 })();
 
@@ -1575,15 +1613,16 @@ function viewSavedData() {
 function exportHistory() {
   const history = loadHistory();
   if (!history.length) { alert('No saved weeks to export.'); return; }
-  const blob = new Blob([JSON.stringify(history, null, 2)], { type: 'application/json' });
+  const json = JSON.stringify(history, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
   const url  = URL.createObjectURL(blob);
   const a    = document.createElement('a');
-  const labels = history.map(w => w.label || w.cw).join('_');
+  // Always export as history.json so it can be dropped straight into the repo
   a.href = url;
-  a.download = `mac_dashboard_history_${labels}.json`;
+  a.download = 'history.json';
   a.click();
   URL.revokeObjectURL(url);
-  setShareStatus('✅ Exported ' + history.length + ' week' + (history.length > 1 ? 's' : ''));
+  setShareStatus('✅ Exported ' + history.length + ' week' + (history.length > 1 ? 's' : '') + ' — drop history.json into your repo folder and push');
 }
 
 function importHistory(event) {
