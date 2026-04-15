@@ -13,12 +13,13 @@
   header {
     background: #1d1d1f;
     color: #f5f5f7;
-    padding: 20px 32px;
+    padding: 22px 32px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    border-bottom: 1px solid #2c2c2e;
   }
-  header h1 { font-size: 20px; font-weight: 600; letter-spacing: -0.3px; }
+  header h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.4px; }
   header span { font-size: 13px; color: #a1a1a6; }
 
   .upload-zone {
@@ -71,10 +72,14 @@
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 24px; }
   .kpi {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 18px 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    border-top: 3px solid #e5e5ea;
   }
+  .kpi.green { border-top-color: #30a14e; }
+  .kpi.red   { border-top-color: #d73a49; }
+  .kpi.blue  { border-top-color: #0071e3; }
   .kpi .label { font-size: 11px; color: #6e6e73; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
   .kpi .value { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
   .kpi .sub { font-size: 12px; color: #6e6e73; margin-top: 4px; }
@@ -85,8 +90,8 @@
   /* Section titles */
   .section-title {
     font-size: 15px;
-    font-weight: 600;
-    margin: 28px 0 14px;
+    font-weight: 700;
+    margin: 24px 0 12px;
     color: #1d1d1f;
     display: flex;
     align-items: center;
@@ -103,9 +108,9 @@
   .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; }
   .product-card {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 18px 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   .product-card .name { font-size: 14px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
   .product-card .delta-pill {
@@ -135,9 +140,9 @@
   .country-section { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
   .country-table-wrap {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 18px 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     overflow: hidden;
   }
   .country-table-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 12px; color: #1d1d1f; }
@@ -174,9 +179,9 @@
   .insights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
   .insight-card {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 16px 18px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     border-left: 4px solid #e5e5ea;
   }
   .insight-card.warn { border-left-color: #f59e0b; }
@@ -188,11 +193,66 @@
   /* Bar chart wrapper */
   .chart-wrap {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   .chart-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 16px; color: #1d1d1f; }
+
+  /* ── Performance Summary Table ───────────────────────────────────────────── */
+  .perf-table-wrap {
+    background: #fff;
+    border-radius: 16px;
+    padding: 0;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .perf-table { width: 100%; border-collapse: collapse; }
+  .perf-table thead tr { background: #f9f9fb; border-bottom: 1px solid #e5e5ea; }
+  .perf-table th {
+    font-size: 11px; color: #6e6e73; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 12px 18px; text-align: right; white-space: nowrap;
+  }
+  .perf-table th:first-child { text-align: left; }
+  .perf-table td {
+    padding: 11px 18px; text-align: right;
+    font-size: 13px; border-bottom: 1px solid #f2f2f7;
+    vertical-align: middle;
+  }
+  .perf-table td:first-child { text-align: left; }
+  .perf-table tr:last-child td { border-bottom: none; }
+
+  /* Summary (Mac Total) row */
+  .perf-table tr.pt-summary td {
+    font-weight: 700; font-size: 14px;
+    background: #f9f9fb;
+    border-bottom: 2px solid #e5e5ea;
+  }
+  .perf-table tr.pt-summary td:first-child { font-size: 14px; }
+
+  /* Beat / miss accent */
+  .perf-table tr.pt-beat { border-left: 3px solid #30a14e; }
+  .perf-table tr.pt-miss { border-left: 3px solid #d73a49; }
+  .perf-table tr.pt-summary.pt-beat { border-left: 3px solid #30a14e; }
+  .perf-table tr.pt-summary.pt-miss { border-left: 3px solid #d73a49; }
+
+  /* Product name cell */
+  .pt-name { font-weight: 600; color: #1d1d1f; }
+  .pt-name .pt-sub { font-size: 11px; font-weight: 400; color: #6e6e73; margin-top: 1px; }
+
+  /* Status badge */
+  .pt-badge {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    padding: 2px 9px; border-radius: 980px; white-space: nowrap;
+  }
+  .pt-badge.beat { background: #e6f4ea; color: #1a7f37; }
+  .pt-badge.miss { background: #fde8e8; color: #b91c1c; }
+
+  /* Inline velocity bar */
+  .pt-vel { display: flex; align-items: center; gap: 7px; justify-content: flex-end; }
+  .pt-vel-track { width: 52px; height: 4px; background: #e5e5ea; border-radius: 2px; overflow: hidden; flex-shrink: 0; }
+  .pt-vel-fill { height: 100%; border-radius: 2px; }
 
   @media (max-width: 700px) {
     .country-section { grid-template-columns: 1fr; }
@@ -227,9 +287,9 @@
   /* ── Trend heatmap ───────────────────────────────────────────────────── */
   .heatmap-wrap {
     background: #fff;
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
     overflow-x: auto;
   }
   .heatmap-wrap h3 { font-size: 13px; font-weight: 600; margin-bottom: 14px; }
@@ -332,11 +392,9 @@
   <div class="section-title">Key Insights</div>
   <div class="insights-grid" id="insightsGrid"></div>
 
-  <!-- Delta bar chart -->
-  <div class="section-title">Product Family Performance vs JST</div>
-  <div class="chart-wrap">
-    <canvas id="familyChart" height="90"></canvas>
-  </div>
+  <!-- Performance Summary Table (replaces bar chart) -->
+  <div class="section-title">Performance Summary</div>
+  <div class="perf-table-wrap" id="perfTableWrap"></div>
 
   <!-- Velocity chart -->
   <div class="section-title">Velocity by Product Family</div>
@@ -428,7 +486,7 @@ const SUBPRODUCTS = {
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-let familyChart = null, velChart = null;
+let velChart = null;
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
 const zone = document.getElementById('uploadZone');
@@ -652,7 +710,7 @@ function renderDashboard(rows, cwLabel, filename) {
   _activeCountryPicker = null;
 
   renderKPIs(families, byDim);
-  renderFamilyChart(families);
+  renderFamilyTable(families);
   renderVelChart(families);
   renderProductCards(families, byDim);
   renderCountryTables(rows, byDim);
@@ -688,39 +746,64 @@ function renderKPIs(families, byDim) {
     </div>`).join('');
 }
 
-// ─── FAMILY CHART ─────────────────────────────────────────────────────────────
-function renderFamilyChart(families) {
-  const data = families.filter(f => f.key !== 'Mac');
-  const labels = data.map(f => f.label);
-  const deltas = data.map(f => f.row.delta);
-  const colors = deltas.map(d => d >= 0 ? 'rgba(48,161,78,0.85)' : 'rgba(215,58,73,0.85)');
+// ─── PERFORMANCE SUMMARY TABLE ───────────────────────────────────────────────
+function renderFamilyTable(families) {
+  const mac  = families.find(f => f.key === 'Mac');
+  const rest = families.filter(f => f.key !== 'Mac');
 
-  if (familyChart) familyChart.destroy();
-  familyChart = new Chart(document.getElementById('familyChart'), {
-    type: 'bar',
-    data: {
-      labels,
-      datasets: [{ label: 'JST Δ ST', data: deltas, backgroundColor: colors, borderRadius: 6 }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            label: ctx => ` ${fmtD(ctx.raw)} units vs JST`
-          }
-        }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { size: 11 } } },
-        y: {
-          grid: { color: '#f0f0f5' },
-          ticks: { callback: v => fmtD(v), font: { size: 11 } }
-        }
-      }
-    }
-  });
+  function row(f, isSummary) {
+    const r   = f.row;
+    const beat = r.delta >= 0;
+    const cls  = isSummary
+      ? `pt-summary ${beat ? 'pt-beat' : 'pt-miss'}`
+      : beat ? 'pt-beat' : 'pt-miss';
+
+    const velPct  = isNaN(r.vel) ? 0 : Math.min(r.row ? r.row.vel : r.vel, 1) * 100;
+    const velVal  = isNaN(r.vel) ? r.vel : r.vel; // raw 0–1
+    const velBar  = isNaN(r.vel) ? '' : (() => {
+      const pctNum = Math.min(r.vel * 100, 100);
+      const col    = r.vel >= 0.6 ? '#ff9500' : r.vel >= 0.4 ? '#0071e3' : '#6e6e73';
+      return `<div class="pt-vel">
+        <div class="pt-vel-track"><div class="pt-vel-fill" style="width:${pctNum}%;background:${col}"></div></div>
+        <span style="font-size:12px;color:#3a3a3c;min-width:30px;text-align:right">${pct(r.vel)}</span>
+      </div>`;
+    })();
+
+    const badgeCls  = beat ? 'beat' : 'miss';
+    const badgeText = beat ? '▲ Beat' : '▼ Miss';
+    const deltaCol  = beat ? '#1a7f37' : '#b91c1c';
+
+    return `<tr class="${cls}">
+      <td><div class="pt-name">${f.label}</div></td>
+      <td>${fmt(r.jst)}</td>
+      <td>${fmt(r.st)}</td>
+      <td><span class="pt-badge ${badgeCls}">${badgeText}</span></td>
+      <td style="color:${deltaCol};font-weight:600">${fmtD(r.delta)}</td>
+      <td style="color:${deltaCol};font-weight:600">${pct(r.pctD)}</td>
+      <td>${isNaN(r.vel) ? '<span style="color:#c7c7cc">—</span>' : velBar}</td>
+    </tr>`;
+  }
+
+  const html = `
+    <table class="perf-table">
+      <thead>
+        <tr>
+          <th style="min-width:160px">Product</th>
+          <th>JST</th>
+          <th>Actual ST</th>
+          <th>Status</th>
+          <th>Delta</th>
+          <th>Δ %</th>
+          <th style="min-width:120px;text-align:right">Velocity</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${mac ? row(mac, true) : ''}
+        ${rest.map(f => row(f, false)).join('')}
+      </tbody>
+    </table>`;
+
+  document.getElementById('perfTableWrap').innerHTML = html;
 }
 
 // ─── VELOCITY CHART ───────────────────────────────────────────────────────────
