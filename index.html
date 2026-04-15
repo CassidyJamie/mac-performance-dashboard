@@ -217,11 +217,13 @@
   .perf-table td:first-child { text-align:left; }
   .perf-table tr:last-child td { border-bottom:none; }
   .perf-table tr.pt-summary td { font-weight:700; font-size:14px; background:#f9f9fb; border-bottom:2px solid #e5e5ea; }
-  .perf-table tr.pt-beat { border-left:3px solid #30a14e; }
-  .perf-table tr.pt-miss { border-left:3px solid #d73a49; }
+  .perf-table tr.pt-red    { border-left:3px solid #d73a49; }
+  .perf-table tr.pt-amber  { border-left:3px solid #f59e0b; }
+  .perf-table tr.pt-green  { border-left:3px solid #30a14e; }
   .pt-badge { display:inline-block; font-size:11px; font-weight:700; padding:2px 10px; border-radius:980px; white-space:nowrap; }
-  .pt-badge.beat { background:#e6f4ea; color:#1a7f37; }
-  .pt-badge.miss { background:#fde8e8; color:#b91c1c; }
+  .pt-badge.red    { background:#fde8e8; color:#b91c1c; }
+  .pt-badge.amber  { background:#fef3c7; color:#92400e; }
+  .pt-badge.green  { background:#e6f4ea; color:#1a7f37; }
   .pt-vel { display:inline-flex; align-items:center; gap:6px; }
   .pt-vel-track { width:48px; height:4px; background:#e5e5ea; border-radius:2px; overflow:hidden; flex-shrink:0; }
   .pt-vel-fill  { height:100%; border-radius:2px; }
@@ -784,15 +786,24 @@ function renderFamilyTable(families) {
   const rest = families.filter(f => f.key !== 'Mac');
 
   function row(f, isSummary) {
-    const r   = f.row;
-    const beat = r.delta >= 0;
-    const cls  = isSummary
-      ? `pt-summary ${beat ? 'pt-beat' : 'pt-miss'}`
-      : beat ? 'pt-beat' : 'pt-miss';
+    const r    = f.row;
+    const absPct = Math.abs(r.pctD); // absolute % vs JST (already a decimal, e.g. 0.12 = 12%)
 
-    const velPct  = isNaN(r.vel) ? 0 : Math.min(r.row ? r.row.vel : r.vel, 1) * 100;
-    const velVal  = isNaN(r.vel) ? r.vel : r.vel; // raw 0–1
-    const velBar  = isNaN(r.vel) ? '' : (() => {
+    // Materiality band — applies symmetrically to beats and misses
+    // < 5%  → green (on plan)   |  5–20% → amber (watch)   |  > 20% → red (material)
+    const band = absPct < 0.05 ? 'green' : absPct <= 0.20 ? 'amber' : 'red';
+
+    // Row left-border accent colour
+    const rowCls = isSummary ? `pt-summary pt-${band}` : `pt-${band}`;
+
+    // Delta / % text colour matches the band
+    const numCol = band === 'green' ? '#1a7f37' : band === 'amber' ? '#92400e' : '#b91c1c';
+
+    // Badge label — keep directional arrow, colour reflects materiality
+    const arrow      = r.delta >= 0 ? '▲' : '▼';
+    const badgeText  = `${arrow} ${pct(r.pctD)}`;
+
+    const velBar = isNaN(r.vel) ? '<span style="color:#c7c7cc">—</span>' : (() => {
       const pctNum = Math.min(r.vel * 100, 100);
       const col    = r.vel >= 0.6 ? '#ff9500' : r.vel >= 0.4 ? '#0071e3' : '#6e6e73';
       return `<div class="pt-vel">
@@ -801,18 +812,14 @@ function renderFamilyTable(families) {
       </div>`;
     })();
 
-    const badgeCls  = beat ? 'beat' : 'miss';
-    const badgeText = beat ? '▲ Beat' : '▼ Miss';
-    const deltaCol  = beat ? '#1a7f37' : '#b91c1c';
-
-    return `<tr class="${cls}">
+    return `<tr class="${rowCls}">
       <td><div class="pt-name">${f.label}</div></td>
       <td>${fmt(r.jst)}</td>
       <td>${fmt(r.st)}</td>
-      <td><span class="pt-badge ${badgeCls}">${badgeText}</span></td>
-      <td style="color:${deltaCol};font-weight:600">${fmtD(r.delta)}</td>
-      <td style="color:${deltaCol};font-weight:600">${pct(r.pctD)}</td>
-      <td>${isNaN(r.vel) ? '<span style="color:#c7c7cc">—</span>' : velBar}</td>
+      <td><span class="pt-badge ${band}">${badgeText}</span></td>
+      <td style="color:${numCol};font-weight:600">${fmtD(r.delta)}</td>
+      <td style="color:${numCol};font-weight:600">${pct(r.pctD)}</td>
+      <td>${velBar}</td>
     </tr>`;
   }
 
