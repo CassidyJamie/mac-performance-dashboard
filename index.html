@@ -569,9 +569,15 @@ function saveWeek(cwLabel, rows) {
 
 function clearAllHistory() {
   localStorage.removeItem(LS_KEY);
-  document.getElementById('historyBar').style.display = 'none';
+  _currentCW = '';
   document.getElementById('trendSectionTitle').style.display = 'none';
   document.getElementById('trendHeatmap').style.display = 'none';
+  document.getElementById('dashboard').style.display = 'none';
+  document.getElementById('shareBar').style.display = 'none';
+  document.getElementById('cw-label').style.display = 'none';
+  document.getElementById('uploadNewBtn').style.display = 'none';
+  document.getElementById('uploadZone').style.display = 'block';
+  document.getElementById('viewSavedLink').style.display = 'none';
   renderHistoryChips([]);
 }
 
@@ -668,8 +674,23 @@ function deleteWeek(cw) {
   renderHistoryChips(history);
   renderTrend(history);
   if (!history.length) {
+    // No weeks left — go back to upload screen
     document.getElementById('trendSectionTitle').style.display = 'none';
     document.getElementById('trendHeatmap').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('shareBar').style.display = 'none';
+    document.getElementById('cw-label').style.display = 'none';
+    document.getElementById('uploadNewBtn').style.display = 'none';
+    document.getElementById('uploadZone').style.display = 'block';
+    document.getElementById('viewSavedLink').style.display = 'none';
+    _currentCW = '';
+  } else if (cw === _currentCW) {
+    // Deleted the active week — load the most recent remaining week
+    const latest = [...history].sort((a, b) => b.cw.localeCompare(a.cw, undefined, { numeric: true }))[0];
+    _currentCW = latest.cw;
+    renderHistoryChips(history);
+    renderDashboard(latest.rows, latest.cw, latest.label || latest.cw);
+    renderTrend(history);
   }
 }
 
