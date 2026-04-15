@@ -732,7 +732,7 @@ function renderDashboard(rows, cwLabel, filename) {
 
   _families = families;
   _activeCountryFilter = '__all__';
-  _activeCountryPicker = null;
+  _activeCountryPicker = new Set();
 
   renderKPIs(families, byDim);
   renderFamilyTable(families);
@@ -914,7 +914,7 @@ function renderProductCards(families, byDim) {
 
 // ─── SHARED PRODUCT NAME SET ─────────────────────────────────────────────────
 const ALL_PRODUCT_NAMES = new Set([
-  'Mac','iMac 24','Mac Mini','Mac Mini M4','Mac Studio','Mac Studio M3/M4',
+  'Mac','iMac 24','iMac 24 M4 High','iMac 24 M4 Low','Mac Mini','Mac Mini M4','Mac Studio','Mac Studio M3/M4',
   'MacBook Air 13','MacBook Air 15','MacBook Neo 13','MacBook Pro 14',
   'MacBook Pro 15/16 Retina','MBA 13 M4','MBA 13 M5','MBA 15 M4','MBA 15 M5',
   'Neo 13','MBP 14 M4 High','MBP 14 M5 High','MBP 14 M5 Low','MBP 16 M4','MBP 16 M5',
@@ -922,7 +922,7 @@ const ALL_PRODUCT_NAMES = new Set([
 ]);
 
 // ─── COUNTRY TABLE (filterable) ───────────────────────────────────────────────
-let _allRows = [], _families = [], _activeCountryFilter = '__all__', _activeCountryPicker = null;
+let _allRows = [], _families = [], _activeCountryFilter = '__all__', _activeCountryPicker = new Set();
 
 function renderCountryTables(rows, byDim) {
   _allRows = rows;
@@ -1072,16 +1072,22 @@ function drawCountryTable(rows, byDim) {
 
 // ─── COUNTRY → PRODUCT VIEW ───────────────────────────────────────────────────
 function renderCountryProductView(rows) {
-  // Collect all unique country names
   const countries = [...new Set(
     rows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim && r.dim !== 'nan')
         .map(r => r.dim)
   )].sort();
 
-  if (!_activeCountryPicker) _activeCountryPicker = '__all_countries__';
+  if (!_activeCountryPicker.size) countries.forEach(c => _activeCountryPicker.add(c));
 
-  // Render country picker pills — "All Countries" first, then each country
-  const allOpts = [{ key: '__all_countries__', label: 'All Countries' }, ...countries.map(c => ({ key: c, label: c }))];
+  document.getElementById('countryPickerRow').innerHTML =
+    `<div class="pill ${_activeCountryPicker.size === countries.length ? 'active' : ''}" id="pillAllCountries" onclick="selectAllCountries()">All Countries</div>` +
+    countries.map(c =>
+      `<div class="pill ${_activeCountryPicker.has(c) ? 'active' : ''}" data-country="${c.replace(/"/g,'&quot;')}" onclick="toggleCountryPicker('${c.replace(/'/g,"\'")}')"> ${c}</div>`
+    ).join('');
+
+  drawCountryProductCards(rows);
+}
+
   document.getElementById('countryPickerRow').innerHTML = allOpts.map(o => `
     <div class="pill ${o.key === _activeCountryPicker ? 'active' : ''}"
          onclick="setCountryPicker('${o.key.replace(/'/g, "\\'")}')">${o.label}</div>
@@ -1090,17 +1096,40 @@ function renderCountryProductView(rows) {
   drawCountryProductCards(rows);
 }
 
-function setCountryPicker(country) {
-  _activeCountryPicker = country;
-  document.querySelectorAll('#countryPickerRow .pill').forEach(p => {
-    p.classList.toggle('active', p.dataset.key === country || p.textContent.trim() === (country === '__all_countries__' ? 'All Countries' : country));
+function toggleCountryPicker(country) {
+  if (_activeCountryPicker.has(country)) {
+    _activeCountryPicker.delete(country);
+    if (!_activeCountryPicker.size) _activeCountryPicker.add(country); // prevent empty
+  } else {
+    _activeCountryPicker.add(country);
+  }
+  document.querySelectorAll('#countryPickerRow .pill[data-country]').forEach(p =>
+    p.classList.toggle('active', _activeCountryPicker.has(p.dataset.country))
+  );
+  const allPills = document.querySelectorAll('#countryPickerRow .pill[data-country]');
+  const allActive = [...allPills].every(p => _activeCountryPicker.has(p.dataset.country));
+  document.getElementById('pillAllCountries')?.classList.toggle('active', allActive);
+  drawCountryProductCards(_allRows);
+}
+
+function selectAllCountries() {
+  document.querySelectorAll('#countryPickerRow .pill[data-country]').forEach(p => {
+    _activeCountryPicker.add(p.dataset.country);
+    p.classList.add('active');
   });
+  document.getElementById('pillAllCountries')?.classList.add('active');
+  drawCountryProductCards(_allRows);
+}
+
   drawCountryProductCards(_allRows);
 }
 
 function drawCountryProductCards(rows) {
-  const country = _activeCountryPicker;
-  const isAll   = country === '__all_countries__';
+  const selectedCountries = _activeCountryPicker;
+  const allCountryList = [...new Set(
+    _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim && r.dim !== 'nan').map(r => r.dim)
+  )];
+  const isAll = selectedCountries.size >= allCountryList.length;
 
   // Build set of variant names (leaf level) and family-level dims
   const allSubVariants = new Set(Object.values(SUBPRODUCTS).flat());
@@ -1142,8 +1171,15 @@ function drawCountryProductCards(rows) {
         results.push({ product: currentProduct, family: currentFamily, st: r.st, jst: r.jst, delta: r.delta, vel: r.vel,
           _velSum: isNaN(r.vel) ? 0 : r.vel, _velCount: isNaN(r.vel) ? 0 : 1 });
       }
-    } else if (!isAll && r.dim === country) {
-      results.push({ product: currentProduct, family: currentFamily, st: r.st, jst: r.jst, delta: r.delta, vel: r.vel });
+    } else if (!isAll && selectedCountries.has(r.dim)) {
+      const ex = results.find(x => x.product === currentProduct);
+      if (ex) {
+        ex.st += r.st; ex.jst += r.jst; ex.delta += r.delta;
+        if (!isNaN(r.vel)) { ex._velSum += r.vel; ex._velCount++; ex.vel = ex._velSum / ex._velCount; }
+      } else {
+        results.push({ product: currentProduct, family: currentFamily, st: r.st, jst: r.jst, delta: r.delta, vel: r.vel,
+          _velSum: isNaN(r.vel) ? 0 : r.vel, _velCount: isNaN(r.vel) ? 0 : 1 });
+      }
     }
   });
 
@@ -1156,7 +1192,9 @@ function drawCountryProductCards(rows) {
   const totalDelta = results.reduce((s, r) => s + r.delta, 0);
   const totalST    = results.reduce((s, r) => s + r.st, 0);
   const totalJST   = results.reduce((s, r) => s + r.jst, 0);
-  const viewTitle  = isAll ? 'All Markets' : country;
+  const viewTitle = isAll ? 'All Markets'
+    : selectedCountries.size === 1 ? [...selectedCountries][0]
+    : `${selectedCountries.size} Markets`;
 
   // Sort into beats and misses
   const beats  = [...results].filter(r => r.delta > 0).sort((a, b) => b.delta - a.delta).slice(0, 10);
