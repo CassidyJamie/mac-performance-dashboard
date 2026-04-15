@@ -1088,13 +1088,6 @@ function renderCountryProductView(rows) {
   drawCountryProductCards(rows);
 }
 
-  document.getElementById('countryPickerRow').innerHTML = allOpts.map(o => `
-    <div class="pill ${o.key === _activeCountryPicker ? 'active' : ''}"
-         onclick="setCountryPicker('${o.key.replace(/'/g, "\\'")}')">${o.label}</div>
-  `).join('');
-
-  drawCountryProductCards(rows);
-}
 
 function toggleCountryPicker(country) {
   if (_activeCountryPicker.has(country)) {
@@ -1121,8 +1114,6 @@ function selectAllCountries() {
   drawCountryProductCards(_allRows);
 }
 
-  drawCountryProductCards(_allRows);
-}
 
 function drawCountryProductCards(rows) {
   const selectedCountries = _activeCountryPicker;
