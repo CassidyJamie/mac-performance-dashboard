@@ -731,7 +731,7 @@ function renderDashboard(rows, cwLabel, filename) {
   }).filter(f => f.row);
 
   _families = families;
-  _activeCountryFilter = '__all__';
+  _activeCountryFilter = new Set();
   _activeCountryPicker = new Set();
 
   renderKPIs(families, byDim);
@@ -922,58 +922,45 @@ const ALL_PRODUCT_NAMES = new Set([
 ]);
 
 // ─── COUNTRY TABLE (filterable) ───────────────────────────────────────────────
-let _allRows = [], _families = [], _activeCountryFilter = '__all__', _activeCountryPicker = new Set();
+let _allRows = [], _families = [], _activeCountryFilter = new Set(), _activeCountryPicker = new Set();
 
 function renderCountryTables(rows, byDim) {
   _allRows = rows;
 
-  // Build filter options: All Mac + each non-Mac family + each sub-product
-  const filterOptions = [
+  // Build program options: All Mac + each family (no sub-products needed — keep it clean)
+  const progOpts = [
     { key: '__all__', label: 'All Mac' },
-    ..._families.filter(f => f.key !== 'Mac').map(f => ({ key: f.key, label: f.label, isSub: false })),
+    ..._families.filter(f => f.key !== 'Mac').map(f => ({ key: f.key, label: f.label })),
   ];
 
-  // Also add sub-products as options
-  _families.filter(f => f.key !== 'Mac').forEach(f => {
-    (SUBPRODUCTS[f.key] || []).forEach(sub => {
-      if (byDim[sub]) filterOptions.push({ key: '__sub__' + sub, label: sub, isSub: true, parentKey: f.key });
-    });
-  });
-
-  // Render pills
-  document.getElementById('countryFilterRow').innerHTML = filterOptions.map(o => `
-    <div class="pill ${o.key === _activeCountryFilter ? 'active' : ''}"
-         onclick="setCountryFilter('${o.key}')">${o.label}</div>
-  `).join('');
+  // Default: nothing selected = All Mac
+  document.getElementById('countryFilterRow').innerHTML =
+    `<div class="pill ${!_activeCountryFilter.size ? 'active' : ''}" id="pillAllMac" onclick="selectAllPrograms()">All Mac</div>` +
+    progOpts.slice(1).map(o =>
+      `<div class="pill ${_activeCountryFilter.has(o.key) ? 'active' : ''}" data-prog="${o.key}" onclick="toggleProgramFilter('${o.key}')">${o.label}</div>`
+    ).join('');
 
   drawCountryTable(rows, byDim);
 }
 
-function setCountryFilter(key) {
-  _activeCountryFilter = key;
-  // Update active pill
-  document.querySelectorAll('#countryFilterRow .pill').forEach(p => {
-    p.classList.toggle('active', p.textContent.trim() === document.querySelector(`#countryFilterRow .pill[onclick="setCountryFilter('${key}')"]`)?.textContent.trim());
-  });
-  document.querySelectorAll('#countryFilterRow .pill').forEach(p => p.classList.remove('active'));
-  document.querySelector(`#countryFilterRow .pill[onclick="setCountryFilter('${CSS.escape(key)}')"]`)?.classList.add('active');
-  // simpler: re-render pills
-  const pills = document.querySelectorAll('#countryFilterRow .pill');
-  const opts = getFilterOptions();
-  pills.forEach((pill, i) => pill.classList.toggle('active', opts[i]?.key === key));
+function toggleProgramFilter(key) {
+  if (_activeCountryFilter.has(key)) {
+    _activeCountryFilter.delete(key);
+  } else {
+    _activeCountryFilter.add(key);
+  }
+  document.querySelectorAll('#countryFilterRow .pill[data-prog]').forEach(p =>
+    p.classList.toggle('active', _activeCountryFilter.has(p.dataset.prog))
+  );
+  document.getElementById('pillAllMac')?.classList.toggle('active', _activeCountryFilter.size === 0);
   drawCountryTable(_allRows, buildByDim(_allRows));
 }
 
-function getFilterOptions() {
-  const byDim = buildByDim(_allRows);
-  const opts = [{ key: '__all__', label: 'All Mac' },
-    ..._families.filter(f => f.key !== 'Mac').map(f => ({ key: f.key, label: f.label }))];
-  _families.filter(f => f.key !== 'Mac').forEach(f => {
-    (SUBPRODUCTS[f.key] || []).forEach(sub => {
-      if (byDim[sub]) opts.push({ key: '__sub__' + sub, label: sub });
-    });
-  });
-  return opts;
+function selectAllPrograms() {
+  _activeCountryFilter.clear();
+  document.querySelectorAll('#countryFilterRow .pill[data-prog]').forEach(p => p.classList.remove('active'));
+  document.getElementById('pillAllMac')?.classList.add('active');
+  drawCountryTable(_allRows, buildByDim(_allRows));
 }
 
 function buildByDim(rows) {
@@ -1038,7 +1025,29 @@ function getCountryDeltasForFilter(key, rows) {
 }
 
 function drawCountryTable(rows, byDim) {
-  const data = getCountryDeltasForFilter(_activeCountryFilter, rows);
+  // Aggregate across all selected programs (empty set = All Mac)
+  let data;
+  if (!_activeCountryFilter.size) {
+    data = getCountryDeltasForFilter('__all__', rows);
+  } else if (_activeCountryFilter.size === 1) {
+    data = getCountryDeltasForFilter([..._activeCountryFilter][0], rows);
+  } else {
+    // Multiple programs selected — aggregate
+    const agg = {};
+    _activeCountryFilter.forEach(key => {
+      getCountryDeltasForFilter(key, rows).forEach(c => {
+        if (!agg[c.name]) agg[c.name] = { name: c.name, delta: 0, st: 0, jst: 0, velSum: 0, velCount: 0 };
+        agg[c.name].delta += c.delta;
+        agg[c.name].st    += c.st;
+        agg[c.name].jst   += c.jst;
+        if (!isNaN(c.vel)) { agg[c.name].velSum += c.vel; agg[c.name].velCount++; }
+      });
+    });
+    data = Object.values(agg).map(v => ({
+      name: v.name, delta: v.delta, st: v.st, jst: v.jst,
+      vel: v.velCount ? v.velSum / v.velCount : NaN
+    })).filter(c => c.jst > 0);
+  }
   const beats  = [...data].sort((a,b) => b.delta - a.delta).slice(0, 8);
   const misses = [...data].sort((a,b) => a.delta - b.delta).slice(0, 8);
 
