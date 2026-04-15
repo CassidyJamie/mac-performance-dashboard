@@ -1820,23 +1820,41 @@ function renderAnomalies(families) {
     const hasBwd = !isNaN(bwdAvg) && bwdAvg > 0;
     const signals = [];
 
+    // ── Signal 1: Is the 5-week forecast materially different from 5-week actuals?
+    // FWD = 5-week forward forecast avg, BWD = 5-week trailing actual avg
+    // A ≥20% gap means the demand picture is shifting — worth flagging to exec
     if (hasFwd && hasBwd) {
       const d = (fwdAvg - bwdAvg) / bwdAvg;
-      if (d >=  0.20) signals.push({ type:'good',     icon:'📈', label:'Forecast Uplift',    tip:`FWD ${pctAbs(d)} above BWD avg — demand acceleration` });
-      else if (d <= -0.20) signals.push({ type:'warn', icon:'📉', label:'Forecast Decline',   tip:`FWD ${pctAbs(Math.abs(d))} below BWD avg — deceleration risk` });
+      if (d >= 0.20)
+        signals.push({ type:'good',     icon:'📈', label:'Demand Acceleration',
+          tip:`5-week forecast (${fmt(fwdAvg)}) is ${pctAbs(d)} above recent actuals (${fmt(bwdAvg)}) — forward demand picking up` });
+      else if (d <= -0.20)
+        signals.push({ type:'warn',     icon:'📉', label:'Demand Deceleration',
+          tip:`5-week forecast (${fmt(fwdAvg)}) is ${pctAbs(Math.abs(d))} below recent actuals (${fmt(bwdAvg)}) — forward demand softening` });
     }
+
+    // ── Signal 2: Did this week's actual ST land vs the 5-week trailing run rate?
+    // Tells you whether this week was an outlier relative to recent history
     if (hasBwd) {
       const d = (st - bwdAvg) / bwdAvg;
-      if (d >=  0.25) signals.push({ type:'good',     icon:'🚀', label:'Above Run Rate',      tip:`ST ${pctAbs(d)} above historical avg (${fmt(bwdAvg)})` });
-      else if (d <= -0.25) signals.push({ type:'critical', icon:'⚠️', label:'Below Run Rate', tip:`ST ${pctAbs(Math.abs(d))} below historical avg (${fmt(bwdAvg)})` });
+      if (d >= 0.20)
+        signals.push({ type:'good',     icon:'🚀', label:'Above Run Rate',
+          tip:`This week ST (${fmt(st)}) is ${pctAbs(d)} above the 5-week trailing avg (${fmt(bwdAvg)})` });
+      else if (d <= -0.20)
+        signals.push({ type:'critical', icon:'⚠️', label:'Below Run Rate',
+          tip:`This week ST (${fmt(st)}) is ${pctAbs(Math.abs(d))} below the 5-week trailing avg (${fmt(bwdAvg)})` });
     }
+
+    // ── Signal 3: Did this week's actual ST land vs the 5-week forward forecast?
+    // Tells you whether execution is tracking the plan
     if (hasFwd) {
       const d = (st - fwdAvg) / fwdAvg;
-      if (d >=  0.15) signals.push({ type:'good',     icon:'🟢', label:'Exceeding Forecast',  tip:`ST ${pctAbs(d)} above FWD plan (${fmt(fwdAvg)})` });
-      else if (d <= -0.15) signals.push({ type:'critical', icon:'🔴', label:'Missing Forecast',tip:`ST ${pctAbs(Math.abs(d))} below FWD plan (${fmt(fwdAvg)})` });
-    }
-    if (hasFwd && fwdAvg < jst * 0.90) {
-      signals.push({ type:'warn', icon:'🎯', label:'FWD Below JST', tip:`FWD avg (${fmt(fwdAvg)}) is ${pctAbs((jst-fwdAvg)/jst)} below target (${fmt(jst)})` });
+      if (d >= 0.20)
+        signals.push({ type:'good',     icon:'🟢', label:'Exceeding Plan',
+          tip:`This week ST (${fmt(st)}) is ${pctAbs(d)} above the 5-week forward forecast (${fmt(fwdAvg)})` });
+      else if (d <= -0.20)
+        signals.push({ type:'critical', icon:'🔴', label:'Tracking Below Plan',
+          tip:`This week ST (${fmt(st)}) is ${pctAbs(Math.abs(d))} below the 5-week forward forecast (${fmt(fwdAvg)})` });
     }
 
     const order = { critical:0, warn:1, good:2 };
