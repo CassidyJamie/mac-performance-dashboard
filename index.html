@@ -417,16 +417,6 @@
   <div class="section-title">Forecast Anomalies</div>
   <div id="anomalySection"></div>
 
-  <!-- Product Detail Cards -->
-  <div class="section-title">Product Detail</div>
-  <div class="product-grid" id="productGrid"></div>
-
-  <!-- Velocity chart — bottom of page -->
-  <div class="section-title">Velocity by Product Family</div>
-  <div class="chart-wrap">
-    <canvas id="velChart" height="90"></canvas>
-  </div>
-
   <!-- Trend heatmap -->
   <div class="section-title" id="trendSectionTitle" style="display:none">Performance Trend — Last <span id="trendWeekCount">0</span> Weeks</div>
   <div class="heatmap-wrap" id="trendHeatmap" style="display:none">
@@ -507,7 +497,6 @@ const SUBPRODUCTS = {
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
-let velChart = null;
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
 const zone = document.getElementById('uploadZone');
@@ -756,8 +745,6 @@ function renderDashboard(rows, cwLabel, filename) {
   renderKPIs(families, byDim);
   renderFamilyTable(families);
   renderAnomalies(families);
-  renderProductCards(families, byDim);
-  renderVelChart(families);
   renderCountryTables(rows, byDim);
   renderCountryProductView(rows);
   renderInsights(families, rows, byDim);
