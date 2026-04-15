@@ -756,7 +756,10 @@ function renderKPIs(families, byDim) {
   const kpis = [
     { label: 'Total ST', value: fmt(st), sub: `JST: ${fmt(jst)}`, cls: '' },
     { label: 'vs JST', value: `${fmtD(delta)} <span style="font-size:16px;font-weight:500;opacity:0.8">(${pct(r.pctD)})</span>`, sub: `ST ${fmt(st)} · JST ${fmt(jst)}`, cls: delta >= 0 ? 'green' : 'red' },
-    { label: 'Portfolio Velocity', value: isNaN(vel) ? '—' : pct(vel), sub: 'Blended CW-1', cls: 'blue' },
+    { label: 'Portfolio Velocity',
+      value: isNaN(vel) ? '—' : pct(vel),
+      sub: isNaN(vel) ? 'Blended CW-1' : velConstraint(vel) === 'high' ? '🔴 Highly constrained' : velConstraint(vel) === 'constrained' ? '🟡 Supply constrained' : '✅ Healthy',
+      cls: isNaN(vel) ? 'blue' : velConstraint(vel) ? 'red' : 'blue' },
     yoy !== null ? { label: 'YoY', value: pct(yoy), sub: 'CQ vs prior year', cls: yoy >= 0 ? 'green' : 'red' } : null,
     { label: 'Families Beating', value: beats, sub: 'vs JST', cls: 'green' },
     { label: 'Families Missing', value: misses, sub: 'vs JST', cls: 'red' },
@@ -795,10 +798,11 @@ function renderFamilyTable(families) {
 
     const velBar = isNaN(r.vel) ? '<span style="color:#c7c7cc">—</span>' : (() => {
       const pctNum = Math.min(r.vel * 100, 100);
-      const col    = r.vel >= 0.6 ? '#ff9500' : r.vel >= 0.4 ? '#0071e3' : '#6e6e73';
+      const col    = velConstraintColor(r.vel);
       return `<div class="pt-vel">
         <div class="pt-vel-track"><div class="pt-vel-fill" style="width:${pctNum}%;background:${col}"></div></div>
-        <span style="font-size:12px;color:#3a3a3c;min-width:30px;text-align:right">${pct(r.vel)}</span>
+        <span style="font-size:12px;font-weight:600;color:${col};min-width:30px;text-align:right">${pct(r.vel)}</span>
+        ${velConstraintBadge(r.vel)}
       </div>`;
     })();
 
@@ -1053,7 +1057,7 @@ function drawCountryTable(rows, byDim) {
 
   const tableRows = (arr) => arr.map(c => {
     const velPct = isNaN(c.vel) ? 0 : Math.min(c.vel * 100, 100);
-    const velCol = c.vel >= 0.6 ? '#ff9500' : c.vel >= 0.4 ? '#0071e3' : '#30a14e';
+    const velCol = velConstraintColor(c.vel);
     return `<tr>
       <td>${c.name}</td>
       <td class="${c.delta >= 0 ? 'pos' : 'neg'}">${fmtD(c.delta)}<span style="font-size:10px;opacity:0.7;margin-left:3px">(${c.jst > 0 ? pct(c.delta/c.jst) : '—'})</span></td>
@@ -1198,7 +1202,7 @@ function drawCountryProductCards(rows) {
 
   const tableRows = (arr) => arr.map(r => {
     const velPct = isNaN(r.vel) ? 0 : Math.min(r.vel * 100, 100);
-    const velCol = r.vel >= 0.6 ? '#ff9500' : r.vel >= 0.4 ? '#0071e3' : '#30a14e';
+    const velCol = velConstraintColor(r.vel);
     return `<tr>
       <td>
         <div style="font-weight:600;font-size:12px">${r.product}</div>
@@ -1274,13 +1278,15 @@ function renderInsights(families, rows, byDim) {
 
     // 2. Velocity signal
     if (velPct !== null) {
-      if (!isBeat && velPct >= 0.5) {
-        signals.push(`⚠️ <strong>Supply constrained</strong> — velocity ${pct(velPct)}, demand is ahead of supply`);
-        signalCls = 'warn';
+      const vc = velConstraint(velPct);
+      if (vc === 'high') {
+        signals.push(`🔴 <strong>Highly constrained</strong> — velocity ${pct(velPct)}, severely supply limited`);
+        signalCls = 'bad';
+      } else if (vc === 'constrained') {
+        signals.push(`🟡 <strong>Supply constrained</strong> — velocity ${pct(velPct)}, demand ahead of supply`);
+        if (signalCls !== 'bad') signalCls = 'warn';
       } else if (!isBeat && velPct < 0.25) {
         signals.push(`📉 <strong>Demand softness</strong> — low velocity ${pct(velPct)} driving the miss`);
-      } else if (isBeat && velPct >= 0.5) {
-        signals.push(`🔥 <strong>Strong demand</strong> — velocity ${pct(velPct)}, consider uplifting allocation`);
       } else {
         signals.push(`Velocity ${pct(velPct)}`);
       }
@@ -1951,6 +1957,29 @@ function renderAnomalies(families) {
 
 // ─── HELPER ───────────────────────────────────────────────────────────────────
 function pctAbs(n) { return isNaN(n) ? '—' : Math.abs(Math.round(n * 100)) + '%'; }
+
+// ─── VELOCITY CONSTRAINT HELPER ─────────────────────────────────────────────
+// >35% = constrained, >75% = highly constrained
+function velConstraint(vel) {
+  if (isNaN(vel) || vel <= 0) return null;
+  if (vel > 0.75) return 'high';
+  if (vel > 0.35) return 'constrained';
+  return null;
+}
+
+function velConstraintBadge(vel) {
+  const c = velConstraint(vel);
+  if (c === 'high')        return '<span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:980px;background:#fde8e8;color:#b91c1c;margin-left:5px;white-space:nowrap">🔴 High</span>';
+  if (c === 'constrained') return '<span style="display:inline-block;font-size:10px;font-weight:700;padding:1px 7px;border-radius:980px;background:#fef3c7;color:#92400e;margin-left:5px;white-space:nowrap">🟡 Constrained</span>';
+  return '';
+}
+
+function velConstraintColor(vel) {
+  if (isNaN(vel)) return '#6e6e73';
+  if (vel > 0.75) return '#d73a49';   // highly constrained — red
+  if (vel > 0.35) return '#f59e0b';   // constrained — amber
+  return '#30a14e';                    // healthy — green
+}
 
 // ─── FORMATTERS ───────────────────────────────────────────────────────────────
 function fmt(n)  { if (n >= 1000) return (n/1000).toFixed(0)+'k'; return Math.round(n).toLocaleString(); }
