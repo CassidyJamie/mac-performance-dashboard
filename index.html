@@ -332,6 +332,62 @@
   .sparkline-wrap { margin-top: 10px; }
   .sparkline-wrap canvas { display: block; }
   .sparkline-label { font-size: 10px; color: #6e6e73; margin-bottom: 3px; }
+
+  /* ── Anomaly table ────────────────────────────────────────────────────── */
+  .anomaly-wrap {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    overflow: hidden;
+  }
+  .anomaly-table { width: 100%; border-collapse: collapse; }
+  .anomaly-table thead tr { background: #f9f9fb; border-bottom: 1px solid #e5e5ea; }
+  .anomaly-table th {
+    font-size: 11px; color: #6e6e73; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.5px;
+    padding: 12px 18px; text-align: right; white-space: nowrap;
+  }
+  .anomaly-table th:first-child { text-align: left; }
+  .anomaly-table th.th-signal { text-align: left; }
+  .anomaly-table td {
+    padding: 12px 18px; text-align: right;
+    font-size: 13px; border-bottom: 1px solid #f2f2f7;
+    vertical-align: middle;
+  }
+  .anomaly-table td:first-child { text-align: left; }
+  .anomaly-table tr:last-child td { border-bottom: none; }
+
+  /* severity accent */
+  .anomaly-table tr.sev-critical { border-left: 3px solid #d73a49; }
+  .anomaly-table tr.sev-warn     { border-left: 3px solid #f59e0b; }
+  .anomaly-table tr.sev-good     { border-left: 3px solid #30a14e; }
+  .anomaly-table tr.sev-none     { border-left: 3px solid #e5e5ea; }
+
+  /* signal pill */
+  .sig-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 980px; white-space: nowrap;
+  }
+  .sig-pill.critical { background: #fde8e8; color: #b91c1c; }
+  .sig-pill.warn     { background: #fef3c7; color: #92400e; }
+  .sig-pill.good     { background: #e6f4ea; color: #1a7f37; }
+  .sig-pill.neutral  { background: #f2f2f7; color: #6e6e73; }
+
+  /* mini spark-bar for bwd vs fwd comparison */
+  .fwd-bwd-bar {
+    display: flex; align-items: center; gap: 6px;
+    justify-content: flex-end; font-size: 12px;
+  }
+  .fwd-bwd-track {
+    width: 64px; height: 6px; background: #e5e5ea;
+    border-radius: 3px; overflow: hidden; flex-shrink: 0;
+  }
+  .fwd-bwd-fill { height: 100%; border-radius: 3px; }
+
+  .anomaly-no-data {
+    padding: 20px 18px; font-size: 13px; color: #6e6e73; text-align: center;
+  }
 </style>
 </head>
 <body>
@@ -391,6 +447,10 @@
   <!-- Key Insights — pinned near top -->
   <div class="section-title">Key Insights</div>
   <div class="insights-grid" id="insightsGrid"></div>
+
+  <!-- Forecast Anomaly Signal -->
+  <div class="section-title">Forecast Anomalies</div>
+  <div id="anomalySection"></div>
 
   <!-- Performance Summary Table (replaces bar chart) -->
   <div class="section-title">Performance Summary</div>
@@ -662,8 +722,10 @@ function processData(raw, filename) {
     jst:   parseFloat(r[2]) || 0,
     delta: parseFloat(r[3]) || 0,
     pctD:  parseFloat(r[4]) || 0,
-    vel:   parseFloat(r[5]),
-    yoy:   parseFloat(r[11]) || null,
+    vel:    parseFloat(r[5]),
+    fwdAvg: parseFloat(r[6]),
+    bwdAvg: parseFloat(r[7]),
+    yoy:    parseFloat(r[11]) || null,
   })).filter(r => r.dim && r.dim !== 'nan');
 
   // Detect CW from header row col 1
@@ -716,6 +778,7 @@ function renderDashboard(rows, cwLabel, filename) {
   renderCountryTables(rows, byDim);
   renderCountryProductView(rows);
   renderInsights(families, rows, byDim);
+  renderAnomalies(families);
 }
 
 // ─── KPIs ─────────────────────────────────────────────────────────────────────
@@ -1753,6 +1816,200 @@ function setShareStatus(msg) {
   el.textContent = msg;
   setTimeout(() => { el.textContent = ''; }, 4000);
 }
+
+// ─── FORECAST ANOMALY TABLE ───────────────────────────────────────────────────
+function renderAnomalies(families) {
+  const container = document.getElementById('anomalySection');
+  const productFamilies = families.filter(f => f.key !== 'Mac');
+
+  // Build one analysis object per family
+  const analyses = productFamilies.map(f => {
+    const r = f.row;
+    const { st, jst, delta, pctD, vel, fwdAvg, bwdAvg } = r;
+
+    const hasFwd = !isNaN(fwdAvg) && fwdAvg > 0;
+    const hasBwd = !isNaN(bwdAvg) && bwdAvg > 0;
+
+    // ── Signal detection ────────────────────────────────────────────────
+    const signals = [];
+
+    // 1. FWD vs BWD divergence — is the forecast materially different from history?
+    if (hasFwd && hasBwd) {
+      const fwdVsBwd = (fwdAvg - bwdAvg) / bwdAvg; // +ve = forecast up vs history
+      if (fwdVsBwd >= 0.20) {
+        signals.push({
+          type: 'good',
+          icon: '📈',
+          label: 'Forecast Uplift',
+          detail: `FWD avg is ${pctAbs(fwdVsBwd)} above trailing BWD avg — demand acceleration expected`,
+        });
+      } else if (fwdVsBwd <= -0.20) {
+        signals.push({
+          type: 'warn',
+          icon: '📉',
+          label: 'Forecast Decline',
+          detail: `FWD avg is ${pctAbs(Math.abs(fwdVsBwd))} below trailing BWD avg — deceleration risk`,
+        });
+      }
+    }
+
+    // 2. ST vs BWD — how did actual compare to the historical run rate?
+    if (hasBwd) {
+      const stVsBwd = (st - bwdAvg) / bwdAvg;
+      if (stVsBwd >= 0.25) {
+        signals.push({
+          type: 'good',
+          icon: '🚀',
+          label: 'Above Run Rate',
+          detail: `ST is ${pctAbs(stVsBwd)} above historical BWD avg (${fmt(bwdAvg)}) — strong outperformance`,
+        });
+      } else if (stVsBwd <= -0.25) {
+        signals.push({
+          type: 'critical',
+          icon: '⚠️',
+          label: 'Below Run Rate',
+          detail: `ST is ${pctAbs(Math.abs(stVsBwd))} below historical BWD avg (${fmt(bwdAvg)}) — significant underperformance vs trend`,
+        });
+      }
+    }
+
+    // 3. ST vs FWD — did actual land vs what was forecast?
+    if (hasFwd) {
+      const stVsFwd = (st - fwdAvg) / fwdAvg;
+      if (stVsFwd <= -0.15) {
+        signals.push({
+          type: 'critical',
+          icon: '🔴',
+          label: 'Missing Forecast',
+          detail: `Actual ST is ${pctAbs(Math.abs(stVsFwd))} below FWD avg (${fmt(fwdAvg)}) — execution gap vs plan`,
+        });
+      } else if (stVsFwd >= 0.15) {
+        signals.push({
+          type: 'good',
+          icon: '🟢',
+          label: 'Exceeding Forecast',
+          detail: `Actual ST is ${pctAbs(stVsFwd)} above FWD avg (${fmt(fwdAvg)}) — ahead of plan`,
+        });
+      }
+    }
+
+    // 4. FWD < JST — forecast is already set below target (structural miss risk)
+    if (hasFwd && fwdAvg < jst * 0.90) {
+      signals.push({
+        type: 'warn',
+        icon: '🎯',
+        label: 'FWD Below JST',
+        detail: `FWD avg (${fmt(fwdAvg)}) is ${pctAbs((jst - fwdAvg) / jst)} below JST (${fmt(jst)}) — structural miss risk`,
+      });
+    }
+
+    // Severity: worst signal determines row colour
+    let severity = 'none';
+    if (signals.some(s => s.type === 'critical')) severity = 'critical';
+    else if (signals.some(s => s.type === 'warn'))     severity = 'warn';
+    else if (signals.some(s => s.type === 'good'))     severity = 'good';
+
+    return { f, r, hasFwd, hasBwd, signals, severity };
+  });
+
+  // Only show rows that have at least one signal, sorted: critical → warn → good
+  const order = { critical: 0, warn: 1, good: 2, none: 3 };
+  const flagged = analyses
+    .filter(a => a.signals.length > 0)
+    .sort((a, b) => order[a.severity] - order[b.severity]);
+
+  const hasAnyFwdBwd = analyses.some(a => a.hasFwd || a.hasBwd);
+
+  if (!hasAnyFwdBwd) {
+    container.innerHTML = `<div class="anomaly-wrap"><div class="anomaly-no-data">
+      No FWD / BWD average data found in this file — columns 6 &amp; 7 appear empty.
+    </div></div>`;
+    return;
+  }
+
+  if (!flagged.length) {
+    container.innerHTML = `<div class="anomaly-wrap"><div class="anomaly-no-data">
+      ✅ No significant forecast anomalies detected — ST is tracking within normal range of historical and forward averages.
+    </div></div>`;
+    return;
+  }
+
+  // Helper: fwd/bwd comparison mini-bar
+  function fwdBwdBar(fwdAvg, bwdAvg, hasFwd, hasBwd) {
+    if (!hasFwd || !hasBwd) return `<span style="color:#c7c7cc;font-size:12px">—</span>`;
+    const ratio  = fwdAvg / bwdAvg; // 1.0 = equal
+    // bar shows fwd relative to bwd: cap at 0–200%
+    const bwdW   = 50; // bwd always at 50% of track as baseline
+    const fwdW   = Math.min(Math.max(ratio * 50, 4), 100);
+    const fwdCol = ratio >= 1.2 ? '#30a14e' : ratio <= 0.8 ? '#d73a49' : '#0071e3';
+    const diff   = ((ratio - 1) * 100).toFixed(0);
+    const sign   = diff >= 0 ? '+' : '';
+    return `
+      <div class="fwd-bwd-bar">
+        <div style="font-size:11px;color:#6e6e73;white-space:nowrap">${fmt(bwdAvg)}</div>
+        <div style="position:relative;display:flex;align-items:center;gap:3px">
+          <span style="font-size:10px;color:#a1a1a6;white-space:nowrap">BWD</span>
+          <div class="fwd-bwd-track">
+            <div class="fwd-bwd-fill" style="width:${fwdW}%;background:${fwdCol}"></div>
+          </div>
+          <span style="font-size:10px;color:#a1a1a6;white-space:nowrap">FWD</span>
+        </div>
+        <div style="font-size:11px;min-width:36px;text-align:right;font-weight:600;color:${fwdCol}">${sign}${diff}%</div>
+        <div style="font-size:11px;color:#6e6e73;white-space:nowrap">${fmt(fwdAvg)}</div>
+      </div>`;
+  }
+
+  const rows = flagged.map(({ f, r, hasFwd, hasBwd, signals, severity }) => {
+    const topSignal = signals[0];
+    const extraCount = signals.length - 1;
+
+    // Signal pills — show all stacked
+    const pillsHtml = signals.map(s =>
+      `<span class="sig-pill ${s.type}" title="${s.detail}">${s.icon} ${s.label}</span>`
+    ).join(' ');
+
+    // Detail text — first signal's full detail
+    const detailHtml = signals.map(s =>
+      `<div style="font-size:11px;color:#6e6e73;margin-top:4px;line-height:1.5">${s.icon} ${s.detail}</div>`
+    ).join('');
+
+    const stCol  = r.delta >= 0 ? '#1a7f37' : '#b91c1c';
+
+    return `<tr class="sev-${severity}">
+      <td>
+        <div style="font-weight:600;font-size:13px;color:#1d1d1f">${f.label}</div>
+      </td>
+      <td>${fmt(r.bwdAvg && !isNaN(r.bwdAvg) ? r.bwdAvg : 0) !== '0' ? fmt(r.bwdAvg) : '<span style="color:#c7c7cc">—</span>'}</td>
+      <td>${fmt(r.fwdAvg && !isNaN(r.fwdAvg) ? r.fwdAvg : 0) !== '0' ? fmt(r.fwdAvg) : '<span style="color:#c7c7cc">—</span>'}</td>
+      <td style="color:${stCol};font-weight:600">${fmt(r.st)}</td>
+      <td>${fwdBwdBar(r.fwdAvg, r.bwdAvg, hasFwd, hasBwd)}</td>
+      <td class="th-signal">
+        <div style="display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-start">${pillsHtml}</div>
+        ${detailHtml}
+      </td>
+    </tr>`;
+  }).join('');
+
+  container.innerHTML = `
+    <div class="anomaly-wrap">
+      <table class="anomaly-table">
+        <thead>
+          <tr>
+            <th style="min-width:160px">Product</th>
+            <th>BWD Avg</th>
+            <th>FWD Avg</th>
+            <th>Actual ST</th>
+            <th style="min-width:180px;text-align:right">BWD → FWD</th>
+            <th class="th-signal" style="min-width:220px">Signal</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+}
+
+// ─── HELPER ───────────────────────────────────────────────────────────────────
+function pctAbs(n) { return isNaN(n) ? '—' : Math.abs(Math.round(n * 100)) + '%'; }
 
 // ─── FORMATTERS ───────────────────────────────────────────────────────────────
 function fmt(n)  { if (n >= 1000) return (n/1000).toFixed(0)+'k'; return Math.round(n).toLocaleString(); }
