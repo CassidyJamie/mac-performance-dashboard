@@ -1077,10 +1077,9 @@ function renderCountryProductView(rows) {
         .map(r => r.dim)
   )].sort();
 
-  if (!_activeCountryPicker.size) countries.forEach(c => _activeCountryPicker.add(c));
 
   document.getElementById('countryPickerRow').innerHTML =
-    `<div class="pill ${_activeCountryPicker.size === countries.length ? 'active' : ''}" id="pillAllCountries" onclick="selectAllCountries()">All Countries</div>` +
+    `<div class="pill ${!_activeCountryPicker.size ? 'active' : ''}" id="pillAllCountries" onclick="selectAllCountries()">All Countries</div>` +
     countries.map(c =>
       `<div class="pill ${_activeCountryPicker.has(c) ? 'active' : ''}" data-country="${c.replace(/"/g,'&quot;')}" onclick="toggleCountryPicker('${c.replace(/'/g,"\'")}')"> ${c}</div>`
     ).join('');
@@ -1092,7 +1091,6 @@ function renderCountryProductView(rows) {
 function toggleCountryPicker(country) {
   if (_activeCountryPicker.has(country)) {
     _activeCountryPicker.delete(country);
-    if (!_activeCountryPicker.size) _activeCountryPicker.add(country); // prevent empty
   } else {
     _activeCountryPicker.add(country);
   }
@@ -1100,16 +1098,18 @@ function toggleCountryPicker(country) {
     p.classList.toggle('active', _activeCountryPicker.has(p.dataset.country))
   );
   const allPills = document.querySelectorAll('#countryPickerRow .pill[data-country]');
-  const allActive = [...allPills].every(p => _activeCountryPicker.has(p.dataset.country));
+  const allActive = _activeCountryPicker.size === 0;
   document.getElementById('pillAllCountries')?.classList.toggle('active', allActive);
   drawCountryProductCards(_allRows);
 }
 
 function selectAllCountries() {
-  document.querySelectorAll('#countryPickerRow .pill[data-country]').forEach(p => {
-    _activeCountryPicker.add(p.dataset.country);
-    p.classList.add('active');
-  });
+  _activeCountryPicker.clear();
+  document.querySelectorAll('#countryPickerRow .pill[data-country]').forEach(p => p.classList.remove('active'));
+  document.getElementById('pillAllCountries')?.classList.add('active');
+  drawCountryProductCards(_allRows);
+}
+
   document.getElementById('pillAllCountries')?.classList.add('active');
   drawCountryProductCards(_allRows);
 }
@@ -1120,7 +1120,7 @@ function drawCountryProductCards(rows) {
   const allCountryList = [...new Set(
     _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim && r.dim !== 'nan').map(r => r.dim)
   )];
-  const isAll = selectedCountries.size >= allCountryList.length;
+  const isAll = selectedCountries.size === 0;
 
   // Build set of variant names (leaf level) and family-level dims
   const allSubVariants = new Set(Object.values(SUBPRODUCTS).flat());
