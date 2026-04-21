@@ -451,12 +451,7 @@
       <span style="color:#a1a1a6;font-size:13px;">Current week:</span>
       <span class="cw-badge" id="cw-badge" title="Click to rename" onclick="renameCurrentWeek()" style="cursor:pointer">CW-1</span>
     </div>
-    <label id="uploadNewBtn" style="display:none;cursor:pointer">
-      <input type="file" id="fileInputHeader" accept=".xlsx,.xls" style="display:none">
-      <span style="background:#0071e3;color:#fff;padding:7px 16px;border-radius:980px;font-size:13px;font-weight:500;white-space:nowrap">
-        ＋ Upload CW Data
-      </span>
-    </label>
+
   </div>
     <button id="adminBtn" onclick="openAdmin()"
       style="background:none;border:1.5px solid #3a3a3c;color:#a1a1a6;padding:6px 14px;border-radius:980px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap"
@@ -701,7 +696,6 @@ function clearAllHistory() {
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('shareBar').style.display = 'none';
   document.getElementById('cw-label').style.display = 'none';
-  document.getElementById('uploadNewBtn').style.display = 'none';
   document.getElementById('uploadZone').style.display = 'block';
   renderHistoryChips([]);
 }
@@ -805,7 +799,6 @@ function deleteWeek(cw) {
     document.getElementById('dashboard').style.display = 'none';
     document.getElementById('shareBar').style.display = 'none';
     document.getElementById('cw-label').style.display = 'none';
-    document.getElementById('uploadNewBtn').style.display = 'none';
     document.getElementById('uploadZone').style.display = 'block';
       _currentCW = '';
   } else if (cw === _currentCW) {
@@ -857,12 +850,6 @@ function renderDashboard(rows, cwLabel, filename) {
   const _h = loadHistory();
   const _entry = _h.find(w => w.cw === cwLabel);
   document.getElementById('cw-badge').textContent = (_entry && _entry.label) ? _entry.label : cwLabel;
-  // Show and wire the header upload button
-  const uploadNewBtn = document.getElementById('uploadNewBtn');
-  uploadNewBtn.style.display = 'block';
-  document.getElementById('fileInputHeader').onchange = e => {
-    if (e.target.files[0]) { handleFile(e.target.files[0]); e.target.value = ''; }
-  };
 
   const byDim = {};
   rows.forEach(r => { byDim[r.dim] = r; });
@@ -2227,7 +2214,6 @@ async function saveAdminWeeksToGitHub() {
     document.getElementById('dashboard').style.display = 'none';
     document.getElementById('shareBar').style.display = 'none';
     document.getElementById('cw-label').style.display = 'none';
-    document.getElementById('uploadNewBtn').style.display = 'none';
     document.getElementById('uploadZone').style.display = 'block';
     _currentCW = '';
   } else if (_adminDeleteSet.has(_currentCW) || !history.find(w => w.cw === _currentCW)) {
