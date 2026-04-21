@@ -161,22 +161,7 @@
 
   /* Country → Product view */
   /* Country-product view reuses .country-section and .country-table-wrap styles */
-  .share-bar {
-    background: #fff; border-top: 1px solid #e5e5ea;
-    padding: 12px 32px; display: flex; align-items: center; gap: 10px;
-    flex-wrap: wrap; font-size: 12px; position: sticky; bottom: 0; z-index: 10;
-    box-shadow: 0 -2px 8px rgba(0,0,0,0.06);
-  }
-  .share-bar .share-label { color: #6e6e73; font-size: 12px; margin-right: 4px; }
-  .share-btn {
-    display: inline-flex; align-items: center; gap: 5px;
-    border: 1.5px solid #e5e5ea; border-radius: 980px;
-    background: #fff; color: #1d1d1f; padding: 5px 14px;
-    font-size: 12px; font-weight: 500; cursor: pointer; transition: all 0.15s;
-  }
-  .share-btn:hover { border-color: #0071e3; color: #0071e3; }
-  .share-btn.primary { background: #0071e3; color: #fff; border-color: #0071e3; }
-  .share-btn.primary:hover { background: #0077ed; }
+
 
   /* Insight cards */
   .insights-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
@@ -504,6 +489,14 @@
         <p style="font-size:13px;color:#6e6e73;margin-bottom:14px">Mark weeks to remove, then save. Changes are pushed to GitHub and affect all users.</p>
         <div class="admin-week-list" id="adminWeekList"></div>
         <button class="admin-save-btn" id="adminSaveWeeksBtn" onclick="saveAdminWeeksToGitHub()" disabled>Save Changes to GitHub</button>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="admin-btn secondary" style="flex:1;margin:0" onclick="exportHistory()">⬇ Export weeks (.json)</button>
+          <label class="admin-btn secondary" style="flex:1;margin:0;text-align:center;cursor:pointer">
+            ⬆ Import weeks (.json)
+            <input type="file" accept=".json" style="display:none" onchange="importHistory(event)">
+          </label>
+        </div>
+        <span id="shareStatus" style="display:block;font-size:11px;color:#6e6e73;margin-top:8px;min-height:16px"></span>
       </div>
 
       <button class="admin-btn secondary" style="margin-top:12px" onclick="closeAdmin()">Cancel</button>
@@ -583,16 +576,7 @@
 
 </div>
 
-<!-- Sticky share/export bar -->
-<div class="share-bar" id="shareBar" style="display:none">
-  <span class="share-label">📤 Share history:</span>
-  <button class="share-btn primary" onclick="exportHistory()">⬇ Export weeks (.json)</button>
-  <label class="share-btn" style="cursor:pointer">
-    ⬆ Import weeks (.json)
-    <input type="file" accept=".json" style="display:none" onchange="importHistory(event)">
-  </label>
-  <span id="shareStatus" style="font-size:11px;color:#6e6e73;margin-left:6px"></span>
-</div>
+
 
 <script>
 // ─── COLUMN MAP ───────────────────────────────────────────────────────────────
@@ -694,7 +678,6 @@ function clearAllHistory() {
   document.getElementById('trendSectionTitle').style.display = 'none';
   document.getElementById('trendHeatmap').style.display = 'none';
   document.getElementById('dashboard').style.display = 'none';
-  document.getElementById('shareBar').style.display = 'none';
   document.getElementById('cw-label').style.display = 'none';
   document.getElementById('uploadZone').style.display = 'block';
   renderHistoryChips([]);
@@ -797,7 +780,6 @@ function deleteWeek(cw) {
     document.getElementById('trendSectionTitle').style.display = 'none';
     document.getElementById('trendHeatmap').style.display = 'none';
     document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('shareBar').style.display = 'none';
     document.getElementById('cw-label').style.display = 'none';
     document.getElementById('uploadZone').style.display = 'block';
       _currentCW = '';
@@ -844,7 +826,6 @@ function processData(raw, filename) {
 function renderDashboard(rows, cwLabel, filename) {
   document.getElementById('uploadZone').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
-  document.getElementById('shareBar').style.display = 'flex';
   document.getElementById('cw-label').style.display = 'block';
   // Show custom label if user has renamed this week
   const _h = loadHistory();
@@ -2212,7 +2193,6 @@ async function saveAdminWeeksToGitHub() {
   if (!history.length) {
     // No weeks left — go back to upload screen
     document.getElementById('dashboard').style.display = 'none';
-    document.getElementById('shareBar').style.display = 'none';
     document.getElementById('cw-label').style.display = 'none';
     document.getElementById('uploadZone').style.display = 'block';
     _currentCW = '';
