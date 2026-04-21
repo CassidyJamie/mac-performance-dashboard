@@ -601,7 +601,8 @@ const FAMILIES = [
   { key: 'Mini',       label: 'Mac Mini',        match: r => r.dim === 'Mac Mini' },
   { key: 'Studio',     label: 'Mac Studio',      match: r => r.dim === 'Mac Studio' },
   { key: 'iMac',       label: 'iMac 24',         match: r => r.dim === 'iMac 24' },
-  { key: 'Access',     label: 'Accessories',     match: r => r.dim === 'Accessories' },
+  { key: 'StudioDisp',    label: 'Studio Display',     match: r => r.dim === 'Studio Display J327' },
+  { key: 'StudioDispXDR', label: 'Studio Display XDR', match: r => r.dim === 'Studio Display XDR' },
 ];
 
 // Sub-products to expand per family
@@ -615,7 +616,8 @@ const SUBPRODUCTS = {
   Mini:   ['Mac Mini M4'],
   Studio: ['Mac Studio M3/M4'],
   iMac:   ['iMac 24 M4 High','iMac 24 M4 Low'],
-  Access: ['Studio Display J327','Studio Display XDR'],
+  StudioDisp:    [],
+  StudioDispXDR: [],
 };
 
 // ─── STATE ────────────────────────────────────────────────────────────────────
