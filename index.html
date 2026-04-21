@@ -482,6 +482,12 @@
           <div class="icon">📊</div>
           <p>Drop .xlsx here or click to browse</p>
         </div>
+        <!-- Name + confirm row — shown after file is parsed -->
+        <div id="adminUploadConfirm" style="display:none;margin-top:14px">
+          <label style="font-size:12px;color:#a1a1a6;display:block;margin-bottom:6px">Week name <span style="color:#6e6e73">(auto-detected — edit if needed)</span></label>
+          <input id="adminWeekName" class="admin-input" type="text" placeholder="e.g. CQWk3" style="margin-bottom:10px">
+          <button class="admin-save-btn" id="adminConfirmUploadBtn" onclick="confirmAdminUpload()">Upload &amp; Save to GitHub</button>
+        </div>
       </div>
 
       <!-- Manage panel -->
@@ -2093,7 +2099,11 @@ function closeAdmin() {
   document.getElementById('adminOverlay').classList.remove('open');
   document.getElementById('adminUploadStatus').textContent = '';
   document.getElementById('adminUploadStatus').className = 'admin-status';
+  document.getElementById('adminUploadConfirm').style.display = 'none';
+  document.getElementById('adminFile').value = '';
   _adminDeleteSet.clear();
+  _adminPendingRows = null;
+  _adminPendingCW   = null;
 }
 
 function checkAdminPassword() {
@@ -2209,9 +2219,14 @@ async function saveAdminWeeksToGitHub() {
   setTimeout(closeAdmin, 2000);
 }
 
+// Staged parsed data waiting for name confirmation
+let _adminPendingRows = null;
+let _adminPendingCW   = null;
+
 function handleAdminFile(file) {
   if (!file) return;
-  setAdminStatus('⏳ Processing file…', '');
+  setAdminStatus('⏳ Reading file…', '');
+  document.getElementById('adminUploadConfirm').style.display = 'none';
 
   const reader = new FileReader();
   reader.onload = e => {
@@ -2220,7 +2235,7 @@ function handleAdminFile(file) {
       const ws  = wb.Sheets[wb.SheetNames[0]];
       const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
 
-      // Parse rows (same logic as main processData)
+      // Parse rows
       const rows = raw.slice(1).map(r => ({
         dim:    r[0] ? String(r[0]).trim() : '',
         st:     parseFloat(r[1]) || 0,
@@ -2233,29 +2248,62 @@ function handleAdminFile(file) {
         yoy:    parseFloat(r[11]) || null,
       })).filter(r => r.dim && r.dim !== 'nan');
 
+      // Auto-detect CW label from header
       const hdr     = raw[0] ? String(raw[0][1] || '') : '';
       const cwMatch = hdr.match(/CW[\-\s]?(\d+)/i);
-      const cwLabel = cwMatch ? `CW-${cwMatch[1]}` : `CW-${Date.now()}`;
+      const detected = cwMatch ? `CW-${cwMatch[1]}` : '';
 
-      setAdminStatus('⏳ Saving to history…', '');
+      // Stash parsed data and show the name/confirm row
+      _adminPendingRows = rows;
+      _adminPendingCW   = detected;
 
-      // Merge into existing history
-      const history = loadHistory();
-      const idx     = history.findIndex(w => w.cw === cwLabel);
-      const entry   = { cw: cwLabel, ts: Date.now(), rows };
-      if (idx >= 0) history[idx] = entry; else history.push(entry);
-      history.sort((a, b) => (a.ts || 0) - (b.ts || 0));
-      if (history.length > 8) history.splice(0, history.length - 8);
-      try { localStorage.setItem(LS_KEY, JSON.stringify(history)); } catch(e) {}
-
-      // Push to GitHub
-      setAdminStatus('⏳ Pushing to GitHub…', '');
-      pushHistoryToGitHub(history, cwLabel);
+      const nameInput = document.getElementById('adminWeekName');
+      nameInput.value = detected;
+      document.getElementById('adminUploadConfirm').style.display = 'block';
+      setAdminStatus('✏️ Confirm or edit the week name, then upload.', '');
+      nameInput.focus();
+      nameInput.select();
     } catch(err) {
       setAdminStatus('❌ Failed to read file: ' + err.message, 'err');
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+function confirmAdminUpload() {
+  if (!_adminPendingRows) return;
+
+  const nameRaw = document.getElementById('adminWeekName').value.trim();
+  if (!nameRaw) {
+    document.getElementById('adminWeekName').focus();
+    setAdminStatus('⚠️ Please enter a name for this week.', 'err');
+    return;
+  }
+
+  // Use the typed name as the display label; use a sanitised version as the cw key
+  const cwKey   = nameRaw.replace(/\s+/g, '-');
+  const cwLabel = nameRaw;
+
+  document.getElementById('adminConfirmUploadBtn').disabled = true;
+  setAdminStatus('⏳ Saving to history…', '');
+
+  // Merge into existing history
+  const history = loadHistory();
+  const idx     = history.findIndex(w => w.cw === cwKey);
+  const entry   = { cw: cwKey, label: cwLabel, ts: Date.now(), rows: _adminPendingRows };
+  if (idx >= 0) history[idx] = entry; else history.push(entry);
+  history.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+  if (history.length > 8) history.splice(0, history.length - 8);
+  try { localStorage.setItem(LS_KEY, JSON.stringify(history)); } catch(e) {}
+
+  // Push to GitHub
+  setAdminStatus('⏳ Pushing to GitHub…', '');
+  pushHistoryToGitHub(history, cwKey).then(() => {
+    document.getElementById('adminConfirmUploadBtn').disabled = false;
+    document.getElementById('adminUploadConfirm').style.display = 'none';
+    _adminPendingRows = null;
+    _adminPendingCW   = null;
+  });
 }
 
 async function pushHistoryToGitHub(history, cwLabel) {
