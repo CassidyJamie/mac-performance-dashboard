@@ -1006,28 +1006,35 @@ function renderFamilyTable(families, rows) {
   // When a geo filter is active, override each family row with geo-scoped aggregates
   function geoScopedRow(f) {
     if (_activeGeoFilter === '__all__' || !rows) return f.row;
-    // For Mac Total, aggregate all product-level geo rows
+
+    // Mac Total: sum the geo header row for every product family
     if (f.key === 'Mac') {
-      const geoRows = rows.filter(r => r.geo === _activeGeoFilter && ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Mac' && !SALES_GEOS.includes(r.dim));
-      if (!geoRows.length) return f.row;
-      const st = geoRows.reduce((s,r)=>s+r.st,0);
-      const jst = geoRows.reduce((s,r)=>s+r.jst,0);
-      const delta = geoRows.reduce((s,r)=>s+r.delta,0);
-      return { ...f.row, st, jst, delta, pctD: jst ? delta/jst : 0 };
+      let st = 0, jst = 0, delta = 0;
+      _families.filter(ff => ff.key !== 'Mac').forEach(ff => {
+        const scoped = geoScopedRow(ff);
+        if (scoped) { st += scoped.st; jst += scoped.jst; delta += scoped.delta; }
+      });
+      return { ...f.row, st, jst, delta, pctD: jst ? delta / jst : 0, vel: NaN };
     }
-    // For a product family, find the geo row under this product
-    const geoRow = rows.find(r => r.dim === _activeGeoFilter && r.geo === _activeGeoFilter &&
-      (() => {
-        // Check that this geo row appears under the right product block
-        const idx = rows.indexOf(r);
-        for (let i = idx-1; i >= 0; i--) {
-          if (f.match(rows[i])) return true;
-          if (ALL_PRODUCT_NAMES.has(rows[i].dim) && !SALES_GEOS.includes(rows[i].dim) && !f.match(rows[i])) return false;
-        }
-        return false;
-      })()
-    );
-    return geoRow ? { ...f.row, st: geoRow.st, jst: geoRow.jst, delta: geoRow.delta, pctD: geoRow.pctD, vel: geoRow.vel } : f.row;
+
+    // Find the index of the family's own header row
+    const familyIdx = rows.findIndex(r => f.match(r));
+    if (familyIdx === -1) return f.row;
+
+    // Scan forward from the family row to find the matching geo header row,
+    // stopping if we hit another product family header (not a sub-product of this family)
+    const subLabels = new Set([rows[familyIdx].dim, ...(SUBPRODUCTS[f.key] || [])]);
+    for (let i = familyIdx + 1; i < rows.length; i++) {
+      const r = rows[i];
+      // Hit a new top-level product that isn't part of this family — stop
+      if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
+      // Found the geo header row for this family
+      if (r.dim === _activeGeoFilter) {
+        return { ...f.row, st: r.st, jst: r.jst, delta: r.delta, pctD: r.pctD, vel: r.vel };
+      }
+    }
+    // Geo not present for this product — return zeros
+    return { ...f.row, st: 0, jst: 0, delta: 0, pctD: 0, vel: NaN };
   }
 
   function row(f, isSummary) {
