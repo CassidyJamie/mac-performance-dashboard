@@ -924,25 +924,37 @@ function renderGeoInsights(rows) {
   if (!container) return;
 
   const cards = SALES_GEOS.map(geo => {
-    // All country-level rows for this geo (not the geo header row itself, not product names)
-    const countryRows = rows.filter(r =>
-      r.geo === geo && !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
-    );
-    if (!countryRows.length) return null;
+    // Geo header rows — one per product family (dim === geo, sitting under a product)
+    const geoHeaderRows = rows.filter(r => r.dim === geo && r.geo === geo);
+    if (!geoHeaderRows.length) return null;
 
-    // Aggregate across all products for this geo
-    const st    = countryRows.reduce((s,r) => s+r.st,    0);
-    const jst   = countryRows.reduce((s,r) => s+r.jst,   0);
-    const delta = countryRows.reduce((s,r) => s+r.delta,  0);
-    const velRows = countryRows.filter(r => !isNaN(r.vel));
+    // Total across all product families for this geo
+    const st    = geoHeaderRows.reduce((s,r) => s+r.st,    0);
+    const jst   = geoHeaderRows.reduce((s,r) => s+r.jst,   0);
+    const delta = geoHeaderRows.reduce((s,r) => s+r.delta,  0);
+    const velRows = geoHeaderRows.filter(r => !isNaN(r.vel) && r.vel > 0);
     const vel   = velRows.length ? velRows.reduce((s,r) => s+r.vel, 0) / velRows.length : NaN;
     const pctD  = jst ? delta / jst : 0;
     const isBeat = delta >= 0;
 
-    // Top 2 beating & missing countries
-    const sorted     = [...countryRows].sort((a,b) => b.delta - a.delta);
-    const topBeats   = sorted.filter(r => r.delta > 0).slice(0,2);
-    const topMisses  = sorted.filter(r => r.delta < 0).reverse().slice(0,2);
+    // Top 2 beating & missing PRODUCTS for this geo (using the geo header rows per product)
+    // Map each geo header row back to its product family label
+    const productDeltas = geoHeaderRows.map(r => {
+      // Walk backwards from this row to find the nearest product family header
+      const idx = rows.indexOf(r);
+      let productLabel = null;
+      for (let i = idx - 1; i >= 0; i--) {
+        if (ALL_PRODUCT_NAMES.has(rows[i].dim) && !SALES_GEOS.includes(rows[i].dim)) {
+          productLabel = rows[i].dim;
+          break;
+        }
+      }
+      return { product: productLabel || r.dim, delta: r.delta, jst: r.jst };
+    }).filter(p => p.product && p.jst > 0);
+
+    const sorted    = [...productDeltas].sort((a,b) => b.delta - a.delta);
+    const topBeats  = sorted.filter(p => p.delta > 0).slice(0,2);
+    const topMisses = sorted.filter(p => p.delta < 0).reverse().slice(0,2);
 
     const vc = velConstraint(vel);
     let signalCls = isBeat ? 'good' : 'bad';
@@ -954,8 +966,8 @@ function renderGeoInsights(rows) {
       else if (vc === 'constrained') { signals.push(`🟡 <strong>Supply constrained</strong> — velocity ${pct(vel)}`); if (signalCls !== 'bad') signalCls = 'warn'; }
       else                      { signals.push(`Velocity ${pct(vel)}`); }
     }
-    if (topBeats.length)  signals.push(`🟢 ${topBeats.map(r=>`${r.dim} <span class="pos">${fmtD(r.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
-    if (topMisses.length) signals.push(`🔴 ${topMisses.map(r=>`${r.dim} <span class="neg">${fmtD(r.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
+    if (topBeats.length)  signals.push(`🟢 ${topBeats.map(p=>`${p.product} <span class="pos">${fmtD(p.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
+    if (topMisses.length) signals.push(`🔴 ${topMisses.map(p=>`${p.product} <span class="neg">${fmtD(p.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
 
     return { cls: signalCls, title: geo, body: signals.join('<br>') };
   }).filter(Boolean);
