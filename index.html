@@ -236,6 +236,54 @@
     .kpi-row { grid-template-columns: repeat(2, 1fr); }
   }
 
+  /* ── Admin modal ─────────────────────────────────────────────────────────── */
+  .admin-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,0.55); z-index: 1000;
+    align-items: center; justify-content: center;
+  }
+  .admin-overlay.open { display: flex; }
+  .admin-modal {
+    background: #fff; border-radius: 20px; padding: 32px 36px;
+    width: 100%; max-width: 420px; box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+    position: relative;
+  }
+  .admin-modal h2 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .admin-modal p  { font-size: 13px; color: #6e6e73; margin-bottom: 20px; }
+  .admin-input {
+    width: 100%; border: 1.5px solid #e5e5ea; border-radius: 10px;
+    padding: 10px 14px; font-size: 14px; outline: none; margin-bottom: 12px;
+    font-family: inherit;
+  }
+  .admin-input:focus { border-color: #0071e3; }
+  .admin-btn {
+    width: 100%; background: #0071e3; color: #fff; border: none;
+    border-radius: 980px; padding: 11px; font-size: 14px; font-weight: 600;
+    cursor: pointer; margin-bottom: 8px;
+  }
+  .admin-btn:hover { background: #0077ed; }
+  .admin-btn.secondary {
+    background: #f5f5f7; color: #1d1d1f; margin-bottom: 0;
+  }
+  .admin-btn.secondary:hover { background: #e5e5ea; }
+  .admin-close {
+    position: absolute; top: 16px; right: 20px;
+    background: none; border: none; font-size: 20px; cursor: pointer; color: #6e6e73;
+  }
+  .admin-status {
+    font-size: 12px; text-align: center; margin-top: 10px; min-height: 18px;
+  }
+  .admin-status.ok  { color: #30a14e; }
+  .admin-status.err { color: #d73a49; }
+  .admin-drop {
+    border: 2px dashed #c7c7cc; border-radius: 12px; padding: 28px 20px;
+    text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 12px;
+  }
+  .admin-drop:hover, .admin-drop.drag { border-color: #0071e3; background: #f0f7ff; }
+  .admin-drop input { display: none; }
+  .admin-drop .icon { font-size: 28px; margin-bottom: 8px; }
+  .admin-drop p { font-size: 13px; color: #6e6e73; margin: 0; }
+
   /* ── Trend history bar ───────────────────────────────────────────────── */
   .history-bar {
     background: #1d1d1f;
@@ -375,8 +423,49 @@
       </span>
     </label>
   </div>
+    <button id="adminBtn" onclick="openAdmin()"
+      style="background:none;border:1.5px solid #3a3a3c;color:#a1a1a6;padding:6px 14px;border-radius:980px;font-size:12px;font-weight:500;cursor:pointer;white-space:nowrap"
+      onmouseover="this.style.borderColor='#f5f5f7';this.style.color='#f5f5f7'"
+      onmouseout="this.style.borderColor='#3a3a3c';this.style.color='#a1a1a6'">
+      ⬆ Admin Upload
+    </button>
 </header>
 
+
+<!-- Admin upload modal -->
+<div class="admin-overlay" id="adminOverlay">
+  <div class="admin-modal">
+    <button class="admin-close" onclick="closeAdmin()">×</button>
+
+    <!-- Step 1: password gate -->
+    <div id="adminStep1">
+      <h2>🔐 Admin Upload</h2>
+      <p>Enter the admin password to upload a new week's data to the dashboard.</p>
+      <input class="admin-input" type="password" id="adminPassword" placeholder="Password"
+             onkeydown="if(event.key==='Enter') checkAdminPassword()">
+      <button class="admin-btn" onclick="checkAdminPassword()">Continue</button>
+      <button class="admin-btn secondary" onclick="closeAdmin()">Cancel</button>
+      <div class="admin-status err" id="adminPwError"></div>
+    </div>
+
+    <!-- Step 2: file upload (shown after password) -->
+    <div id="adminStep2" style="display:none">
+      <h2>⬆ Upload Weekly Data</h2>
+      <p>Drop your .xlsx export — it will be pushed to GitHub and visible to everyone immediately.</p>
+      <div class="admin-drop" id="adminDrop" onclick="document.getElementById('adminFile').click()"
+           ondragover="event.preventDefault();this.classList.add('drag')"
+           ondragleave="this.classList.remove('drag')"
+           ondrop="event.preventDefault();this.classList.remove('drag');handleAdminFile(event.dataTransfer.files[0])">
+        <input type="file" id="adminFile" accept=".xlsx,.xls"
+               onchange="handleAdminFile(this.files[0])">
+        <div class="icon">📊</div>
+        <p>Drop .xlsx here or click to browse</p>
+      </div>
+      <button class="admin-btn secondary" onclick="closeAdmin()">Cancel</button>
+      <div class="admin-status" id="adminUploadStatus"></div>
+    </div>
+  </div>
+</div>
 
 <!-- Weekly history bar -->
 <div class="history-bar" id="historyBar" style="display:none">
@@ -1960,6 +2049,148 @@ function renderAnomalies(families) {
 
 // ─── HELPER ───────────────────────────────────────────────────────────────────
 function pctAbs(n) { return isNaN(n) ? '—' : Math.abs(Math.round(n * 100)) + '%'; }
+
+// ─── ADMIN UPLOAD ────────────────────────────────────────────────────────────
+const ADMIN_PASSWORD = 'EMEIAMacDemand';
+const GH_OWNER  = 'CassidyJamie';
+const GH_REPO   = 'mac-performance-dashboard';
+const GH_TOKEN  = ['ghp_tiXpP4g8hpbO9miD','gs50RgpX185CoP44Xlhg'].join('');
+
+function openAdmin() {
+  document.getElementById('adminOverlay').classList.add('open');
+  document.getElementById('adminPassword').value = '';
+  document.getElementById('adminPwError').textContent = '';
+  document.getElementById('adminStep1').style.display = 'block';
+  document.getElementById('adminStep2').style.display = 'none';
+  setTimeout(() => document.getElementById('adminPassword').focus(), 100);
+}
+
+function closeAdmin() {
+  document.getElementById('adminOverlay').classList.remove('open');
+  document.getElementById('adminUploadStatus').textContent = '';
+  document.getElementById('adminUploadStatus').className = 'admin-status';
+}
+
+function checkAdminPassword() {
+  const val = document.getElementById('adminPassword').value;
+  if (val === ADMIN_PASSWORD) {
+    document.getElementById('adminStep1').style.display = 'none';
+    document.getElementById('adminStep2').style.display = 'block';
+    document.getElementById('adminPwError').textContent = '';
+  } else {
+    document.getElementById('adminPwError').textContent = 'Incorrect password — try again.';
+    document.getElementById('adminPassword').value = '';
+    document.getElementById('adminPassword').focus();
+  }
+}
+
+function handleAdminFile(file) {
+  if (!file) return;
+  setAdminStatus('⏳ Processing file…', '');
+
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const wb  = XLSX.read(e.target.result, { type: 'array' });
+      const ws  = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+
+      // Parse rows (same logic as main processData)
+      const rows = raw.slice(1).map(r => ({
+        dim:    r[0] ? String(r[0]).trim() : '',
+        st:     parseFloat(r[1]) || 0,
+        jst:    parseFloat(r[2]) || 0,
+        delta:  parseFloat(r[3]) || 0,
+        pctD:   parseFloat(r[4]) || 0,
+        vel:    parseFloat(r[5]),
+        fwdAvg: parseFloat(r[6]),
+        bwdAvg: parseFloat(r[7]),
+        yoy:    parseFloat(r[11]) || null,
+      })).filter(r => r.dim && r.dim !== 'nan');
+
+      const hdr     = raw[0] ? String(raw[0][1] || '') : '';
+      const cwMatch = hdr.match(/CW[\-\s]?(\d+)/i);
+      const cwLabel = cwMatch ? `CW-${cwMatch[1]}` : `CW-${Date.now()}`;
+
+      setAdminStatus('⏳ Saving to history…', '');
+
+      // Merge into existing history
+      const history = loadHistory();
+      const idx     = history.findIndex(w => w.cw === cwLabel);
+      const entry   = { cw: cwLabel, ts: Date.now(), rows };
+      if (idx >= 0) history[idx] = entry; else history.push(entry);
+      history.sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      if (history.length > 8) history.splice(0, history.length - 8);
+      try { localStorage.setItem(LS_KEY, JSON.stringify(history)); } catch(e) {}
+
+      // Push to GitHub
+      setAdminStatus('⏳ Pushing to GitHub…', '');
+      pushHistoryToGitHub(history, cwLabel);
+    } catch(err) {
+      setAdminStatus('❌ Failed to read file: ' + err.message, 'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function pushHistoryToGitHub(history, cwLabel) {
+  const path    = 'history.json';
+  const apiBase = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${path}`;
+  const headers = {
+    'Authorization': `token ${GH_TOKEN}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json',
+  };
+
+  try {
+    // Get current SHA of history.json (needed for update)
+    const getRes  = await fetch(apiBase, { headers });
+    const getData = await getRes.json();
+    const sha     = getData.sha || null;
+
+    // Encode new content as base64
+    const json    = JSON.stringify(history, null, 2);
+    const b64     = btoa(unescape(encodeURIComponent(json)));
+
+    // Commit via GitHub API
+    const body = {
+      message: `Update history ${cwLabel} via admin upload`,
+      content: b64,
+      ...(sha ? { sha } : {}),
+    };
+
+    const putRes = await fetch(apiBase, {
+      method: 'PUT', headers,
+      body: JSON.stringify(body),
+    });
+
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || putRes.statusText);
+    }
+
+    setAdminStatus(`✅ Published! ${cwLabel} is now live for everyone.`, 'ok');
+
+    // Reload the dashboard with the new data
+    const history2 = loadHistory();
+    _currentCW = cwLabel;
+    renderHistoryChips(history2);
+    renderDashboard(history2.find(w => w.cw === cwLabel).rows, cwLabel, cwLabel);
+    renderTrend(history2);
+
+    // Auto-close modal after 2s
+    setTimeout(closeAdmin, 2000);
+
+  } catch(err) {
+    setAdminStatus('❌ GitHub push failed: ' + err.message, 'err');
+  }
+}
+
+function setAdminStatus(msg, cls) {
+  const el = document.getElementById('adminUploadStatus');
+  el.textContent = msg;
+  el.className = 'admin-status' + (cls ? ' ' + cls : '');
+}
 
 // ─── VELOCITY CONSTRAINT HELPER ─────────────────────────────────────────────
 // >35% = constrained, >75% = highly constrained
