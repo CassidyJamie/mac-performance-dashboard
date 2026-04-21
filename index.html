@@ -547,8 +547,28 @@
   <div class="insights-grid" id="insightsGrid"></div>
 
   <!-- Performance Summary Table -->
-  <div class="section-title">Performance Summary</div>
+  <div class="section-title" style="justify-content:space-between;align-items:center">
+    <span style="display:flex;align-items:center;gap:8px">Performance Summary
+      <span style="flex:unset;height:unset;background:none;font-size:13px;font-weight:400;color:#8e8ea0;text-transform:none;letter-spacing:0" id="geoFilterLabel"></span>
+    </span>
+    <div class="filter-select-wrap" style="margin:0">
+      <span class="filter-select-label">Sales Geo:</span>
+      <select class="filter-select" id="geoFilterSelect" onchange="onGeoFilterChange(this.value)" style="min-width:120px">
+        <option value="__all__">All</option>
+        <option value="Central">Central</option>
+        <option value="FNBL">FNBL</option>
+        <option value="India">India</option>
+        <option value="META">META</option>
+        <option value="North">North</option>
+        <option value="SHIP">SHIP</option>
+      </select>
+    </div>
+  </div>
   <div class="perf-table-wrap" id="perfTableWrap"></div>
+
+  <!-- Sales Geo Insights -->
+  <div class="section-title">Sales Geo Insights</div>
+  <div class="insights-grid" id="geoInsightsGrid"></div>
 
   <!-- Forecast Anomaly Signal -->
   <div class="section-title">Forecast Anomalies</div>
@@ -819,17 +839,24 @@ let _currentCW = '';
 
 // ─── PARSE ────────────────────────────────────────────────────────────────────
 function processData(raw, filename) {
-  const rows = raw.slice(1).map(r => ({
-    dim:   r[0] ? String(r[0]).trim() : '',
-    st:    parseFloat(r[1]) || 0,
-    jst:   parseFloat(r[2]) || 0,
-    delta: parseFloat(r[3]) || 0,
-    pctD:  parseFloat(r[4]) || 0,
-    vel:    parseFloat(r[5]),
-    fwdAvg: parseFloat(r[6]),
-    bwdAvg: parseFloat(r[7]),
-    yoy:    parseFloat(r[11]) || null,
-  })).filter(r => r.dim && r.dim !== 'nan');
+  // Walk rows, tracking current geo context
+  let currentGeo = null;
+  const rows = raw.slice(1).map(r => {
+    const dim = r[0] ? String(r[0]).trim() : '';
+    if (SALES_GEOS.includes(dim)) currentGeo = dim;
+    return {
+      dim,
+      geo:    SALES_GEOS.includes(dim) ? dim : currentGeo,
+      st:    parseFloat(r[1]) || 0,
+      jst:   parseFloat(r[2]) || 0,
+      delta: parseFloat(r[3]) || 0,
+      pctD:  parseFloat(r[4]) || 0,
+      vel:    parseFloat(r[5]),
+      fwdAvg: parseFloat(r[6]),
+      bwdAvg: parseFloat(r[7]),
+      yoy:    parseFloat(r[11]) || null,
+    };
+  }).filter(r => r.dim && r.dim !== 'nan');
 
   // Detect CW from header row col 1
   const hdr = raw[0] ? String(raw[0][1] || '') : '';
@@ -866,13 +893,78 @@ function renderDashboard(rows, cwLabel, filename) {
   _families = families;
   _activeCountryFilter = new Set();
   _activeCountryPicker = new Set();
+  _activeGeoFilter     = '__all__';
+
+  // Reset geo dropdown
+  const geoSel = document.getElementById('geoFilterSelect');
+  if (geoSel) geoSel.value = '__all__';
+  const geoLabel = document.getElementById('geoFilterLabel');
+  if (geoLabel) geoLabel.textContent = '';
 
   renderKPIs(families, byDim);
-  renderFamilyTable(families);
+  renderFamilyTable(families, rows);
   renderAnomalies(families);
   renderCountryTables(rows, byDim);
   renderCountryProductView(rows);
   renderInsights(families, rows, byDim);
+  renderGeoInsights(rows);
+}
+
+// ─── GEO FILTER ──────────────────────────────────────────────────────────────
+function onGeoFilterChange(val) {
+  _activeGeoFilter = val;
+  const label = document.getElementById('geoFilterLabel');
+  if (label) label.textContent = val === '__all__' ? '' : `— ${val}`;
+  renderFamilyTable(_families, _allRows);
+}
+
+// ─── SALES GEO INSIGHTS ──────────────────────────────────────────────────────
+function renderGeoInsights(rows) {
+  const container = document.getElementById('geoInsightsGrid');
+  if (!container) return;
+
+  const cards = SALES_GEOS.map(geo => {
+    // All country-level rows for this geo (not the geo header row itself, not product names)
+    const countryRows = rows.filter(r =>
+      r.geo === geo && !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
+    );
+    if (!countryRows.length) return null;
+
+    // Aggregate across all products for this geo
+    const st    = countryRows.reduce((s,r) => s+r.st,    0);
+    const jst   = countryRows.reduce((s,r) => s+r.jst,   0);
+    const delta = countryRows.reduce((s,r) => s+r.delta,  0);
+    const velRows = countryRows.filter(r => !isNaN(r.vel));
+    const vel   = velRows.length ? velRows.reduce((s,r) => s+r.vel, 0) / velRows.length : NaN;
+    const pctD  = jst ? delta / jst : 0;
+    const isBeat = delta >= 0;
+
+    // Top 2 beating & missing countries
+    const sorted     = [...countryRows].sort((a,b) => b.delta - a.delta);
+    const topBeats   = sorted.filter(r => r.delta > 0).slice(0,2);
+    const topMisses  = sorted.filter(r => r.delta < 0).reverse().slice(0,2);
+
+    const vc = velConstraint(vel);
+    let signalCls = isBeat ? 'good' : 'bad';
+    const signals = [];
+    signals.push(`<strong>${isBeat ? 'Beat' : 'Missed'} JST by ${fmtD(delta)} <span style="color:${isBeat?'#30a14e':'#d73a49'}">(${pct(pctD)})</span></strong> &nbsp;·&nbsp; ST ${fmt(st)} vs JST ${fmt(jst)}`);
+
+    if (!isNaN(vel)) {
+      if (vc === 'high')        { signals.push(`🔴 <strong>Highly constrained</strong> — velocity ${pct(vel)}`); signalCls = 'bad'; }
+      else if (vc === 'constrained') { signals.push(`🟡 <strong>Supply constrained</strong> — velocity ${pct(vel)}`); if (signalCls !== 'bad') signalCls = 'warn'; }
+      else                      { signals.push(`Velocity ${pct(vel)}`); }
+    }
+    if (topBeats.length)  signals.push(`🟢 ${topBeats.map(r=>`${r.dim} <span class="pos">${fmtD(r.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
+    if (topMisses.length) signals.push(`🔴 ${topMisses.map(r=>`${r.dim} <span class="neg">${fmtD(r.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
+
+    return { cls: signalCls, title: geo, body: signals.join('<br>') };
+  }).filter(Boolean);
+
+  container.innerHTML = cards.map(c => `
+    <div class="insight-card ${c.cls}">
+      <div class="title">${c.title}</div>
+      <div class="body">${c.body}</div>
+    </div>`).join('');
 }
 
 // ─── KPIs ─────────────────────────────────────────────────────────────────────
@@ -907,12 +999,40 @@ function renderKPIs(families, byDim) {
 }
 
 // ─── PERFORMANCE SUMMARY TABLE ───────────────────────────────────────────────
-function renderFamilyTable(families) {
+function renderFamilyTable(families, rows) {
   const mac  = families.find(f => f.key === 'Mac');
   const rest = families.filter(f => f.key !== 'Mac');
 
+  // When a geo filter is active, override each family row with geo-scoped aggregates
+  function geoScopedRow(f) {
+    if (_activeGeoFilter === '__all__' || !rows) return f.row;
+    // For Mac Total, aggregate all product-level geo rows
+    if (f.key === 'Mac') {
+      const geoRows = rows.filter(r => r.geo === _activeGeoFilter && ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Mac' && !SALES_GEOS.includes(r.dim));
+      if (!geoRows.length) return f.row;
+      const st = geoRows.reduce((s,r)=>s+r.st,0);
+      const jst = geoRows.reduce((s,r)=>s+r.jst,0);
+      const delta = geoRows.reduce((s,r)=>s+r.delta,0);
+      return { ...f.row, st, jst, delta, pctD: jst ? delta/jst : 0 };
+    }
+    // For a product family, find the geo row under this product
+    const geoRow = rows.find(r => r.dim === _activeGeoFilter && r.geo === _activeGeoFilter &&
+      (() => {
+        // Check that this geo row appears under the right product block
+        const idx = rows.indexOf(r);
+        for (let i = idx-1; i >= 0; i--) {
+          if (f.match(rows[i])) return true;
+          if (ALL_PRODUCT_NAMES.has(rows[i].dim) && !SALES_GEOS.includes(rows[i].dim) && !f.match(rows[i])) return false;
+        }
+        return false;
+      })()
+    );
+    return geoRow ? { ...f.row, st: geoRow.st, jst: geoRow.jst, delta: geoRow.delta, pctD: geoRow.pctD, vel: geoRow.vel } : f.row;
+  }
+
   function row(f, isSummary) {
-    const r    = f.row;
+    const r    = (geoScopedRow(f)) || f.row;
+    if (!r) return '';
     const absPct = Math.abs(r.pctD); // absolute % vs JST (already a decimal, e.g. 0.12 = 12%)
 
     // Materiality band — applies symmetrically to beats and misses
@@ -1050,16 +1170,19 @@ function renderProductCards(families, byDim) {
 }
 
 // ─── SHARED PRODUCT NAME SET ─────────────────────────────────────────────────
+const SALES_GEOS = ['Central','FNBL','India','META','North','SHIP'];
+
 const ALL_PRODUCT_NAMES = new Set([
   'Mac','iMac 24','iMac 24 M4 High','iMac 24 M4 Low','Mac Mini','Mac Mini M4','Mac Studio','Mac Studio M3/M4',
   'MacBook Air 13','MacBook Air 15','MacBook Neo 13','MacBook Pro 14',
   'MacBook Pro 15/16 Retina','MBA 13 M4','MBA 13 M5','MBA 15 M4','MBA 15 M5',
   'Neo 13','MBP 14 M4 High','MBP 14 M5 High','MBP 14 M5 Low','MBP 16 M4','MBP 16 M5',
   'Accessories','Studio Display','Studio Display J327','Studio Display XDR','MacBook Pro 16',
+  ...SALES_GEOS,
 ]);
 
 // ─── COUNTRY TABLE (filterable) ───────────────────────────────────────────────
-let _allRows = [], _families = [], _activeCountryFilter = new Set(), _activeCountryPicker = new Set();
+let _allRows = [], _families = [], _activeCountryFilter = new Set(), _activeCountryPicker = new Set(), _activeGeoFilter = '__all__';
 
 function renderCountryTables(rows, byDim) {
   _allRows = rows;
@@ -2230,17 +2353,23 @@ function handleAdminFile(file) {
       const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
 
       // Parse rows
-      const rows = raw.slice(1).map(r => ({
-        dim:    r[0] ? String(r[0]).trim() : '',
-        st:     parseFloat(r[1]) || 0,
-        jst:    parseFloat(r[2]) || 0,
-        delta:  parseFloat(r[3]) || 0,
-        pctD:   parseFloat(r[4]) || 0,
-        vel:    parseFloat(r[5]),
-        fwdAvg: parseFloat(r[6]),
-        bwdAvg: parseFloat(r[7]),
-        yoy:    parseFloat(r[11]) || null,
-      })).filter(r => r.dim && r.dim !== 'nan');
+      let _cGeo = null;
+      const rows = raw.slice(1).map(r => {
+        const dim = r[0] ? String(r[0]).trim() : '';
+        if (SALES_GEOS.includes(dim)) _cGeo = dim;
+        return {
+          dim,
+          geo:    SALES_GEOS.includes(dim) ? dim : _cGeo,
+          st:     parseFloat(r[1]) || 0,
+          jst:    parseFloat(r[2]) || 0,
+          delta:  parseFloat(r[3]) || 0,
+          pctD:   parseFloat(r[4]) || 0,
+          vel:    parseFloat(r[5]),
+          fwdAvg: parseFloat(r[6]),
+          bwdAvg: parseFloat(r[7]),
+          yoy:    parseFloat(r[11]) || null,
+        };
+      }).filter(r => r.dim && r.dim !== 'nan');
 
       // Auto-detect CW label from header
       const hdr     = raw[0] ? String(raw[0][1] || '') : '';
