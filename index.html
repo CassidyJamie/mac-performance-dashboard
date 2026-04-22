@@ -570,6 +570,10 @@
   <div class="section-title">Sales Geo Insights</div>
   <div class="insights-grid" id="geoInsightsGrid"></div>
 
+  <!-- Sales Geo Performance Summary -->
+  <div class="section-title">Sales Geo Performance Summary</div>
+  <div class="perf-table-wrap" id="geoSummaryWrap"></div>
+
   <!-- Forecast Anomaly Signal -->
   <div class="section-title">Forecast Anomalies</div>
   <div id="anomalySection"></div>
@@ -908,6 +912,7 @@ function renderDashboard(rows, cwLabel, filename) {
   renderCountryProductView(rows);
   renderInsights(families, rows, byDim);
   renderGeoInsights(rows);
+  renderGeoSummaryTable(rows);
 }
 
 // ─── GEO FILTER ──────────────────────────────────────────────────────────────
@@ -977,6 +982,90 @@ function renderGeoInsights(rows) {
       <div class="title">${c.title}</div>
       <div class="body">${c.body}</div>
     </div>`).join('');
+}
+
+// ─── SALES GEO PERFORMANCE SUMMARY TABLE ────────────────────────────────────
+function renderGeoSummaryTable(rows) {
+  const wrap = document.getElementById('geoSummaryWrap');
+  if (!wrap) return;
+
+  // Build one data row per geo
+  const geoRows = SALES_GEOS.map(geo => {
+    const geoHeaderRows = rows.filter(r => r.dim === geo && r.geo === geo);
+    if (!geoHeaderRows.length) return null;
+
+    const st    = geoHeaderRows.reduce((s,r) => s+r.st,    0);
+    const jst   = geoHeaderRows.reduce((s,r) => s+r.jst,   0);
+    const delta = geoHeaderRows.reduce((s,r) => s+r.delta,  0);
+    const pctD  = jst ? delta / jst : 0;
+    const velRows = geoHeaderRows.filter(r => !isNaN(r.vel) && r.vel > 0);
+    const vel   = velRows.length ? velRows.reduce((s,r) => s+r.vel, 0) / velRows.length : NaN;
+    return { geo, st, jst, delta, pctD, vel };
+  }).filter(Boolean);
+
+  if (!geoRows.length) { wrap.innerHTML = ''; return; }
+
+  // Totals row
+  const totalST    = geoRows.reduce((s,r) => s+r.st,    0);
+  const totalJST   = geoRows.reduce((s,r) => s+r.jst,   0);
+  const totalDelta = geoRows.reduce((s,r) => s+r.delta,  0);
+  const totalPctD  = totalJST ? totalDelta / totalJST : 0;
+
+  function tableRow(label, st, jst, delta, pctD, vel, isSummary) {
+    const absPct = Math.abs(pctD);
+    const band   = absPct < 0.05 ? 'green' : absPct <= 0.20 ? 'amber' : 'red';
+    const rowCls = isSummary ? `pt-summary pt-${band}` : `pt-${band}`;
+    const numCol = band === 'green' ? '#1a7f37' : band === 'amber' ? '#92400e' : '#b91c1c';
+    const arrow  = delta >= 0 ? '▲' : '▼';
+
+    const velBar = isNaN(vel) ? '<span style="color:#c7c7cc">—</span>' : (() => {
+      const pctNum = Math.min(vel * 100, 100);
+      const col    = velConstraintColor(vel);
+      return `<div class="pt-vel">
+        <div class="pt-vel-track"><div class="pt-vel-fill" style="width:${pctNum}%;background:${col}"></div></div>
+        <span style="font-size:12px;font-weight:600;color:${col};min-width:30px;text-align:right">${pct(vel)}</span>
+        ${velConstraintBadge(vel)}
+      </div>`;
+    })();
+
+    return `<tr class="${rowCls}">
+      <td><div class="pt-name">${label}</div></td>
+      <td>${fmt(jst)}</td>
+      <td>${fmt(st)}</td>
+      <td><span class="pt-badge ${band}">${arrow} ${pct(pctD)}</span></td>
+      <td style="color:${numCol};font-weight:600">${fmtD(delta)}</td>
+      <td style="color:${numCol};font-weight:600">${pct(pctD)}</td>
+      <td>${velBar}</td>
+    </tr>`;
+  }
+
+  const bodyRows = geoRows
+    .sort((a,b) => b.delta - a.delta)
+    .map(r => tableRow(r.geo, r.st, r.jst, r.delta, r.pctD, r.vel, false))
+    .join('');
+
+  wrap.innerHTML = `
+    <table class="perf-table">
+      <colgroup>
+        <col style="width:16%">
+        <col style="width:13%">
+        <col style="width:13%">
+        <col style="width:11%">
+        <col style="width:13%">
+        <col style="width:11%">
+        <col style="width:23%">
+      </colgroup>
+      <thead>
+        <tr>
+          <th style="text-align:left">Sales Geo</th>
+          <th>JST</th><th>ST</th><th>Status</th><th>Δ JST</th><th>% vs JST</th><th>Velocity</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${tableRow('All Geos', totalST, totalJST, totalDelta, totalPctD, NaN, true)}
+        ${bodyRows}
+      </tbody>
+    </table>`;
 }
 
 // ─── KPIs ─────────────────────────────────────────────────────────────────────
