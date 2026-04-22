@@ -750,14 +750,24 @@ document.getElementById('fileInput').addEventListener('change', e => handleFile(
 // ─── FILE HANDLER ─────────────────────────────────────────────────────────────
 function handleFile(file) {
   if (!file) return;
+  if (typeof XLSX === 'undefined') {
+    alert('Error: XLSX library not loaded. Please check your internet connection and reload the page.');
+    return;
+  }
   const reader = new FileReader();
   reader.onload = e => {
-    const wb = XLSX.read(e.target.result, { type: 'array' });
-    const ws = wb.Sheets[wb.SheetNames[0]];
-    const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
-    processData(raw, file.name);
+    try {
+      const wb = XLSX.read(e.target.result, { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, { header: 1, defval: null });
+      processData(raw, file.name);
+    } catch(err) {
+      alert('Failed to read file: ' + err.message);
+    }
   };
+  reader.onerror = () => alert('Failed to read file. Please try again.');
   reader.readAsArrayBuffer(file);
+}
 }
 
 // ─── PARSE ────────────────────────────────────────────────────────────────────
@@ -2561,6 +2571,10 @@ let _adminPendingCW   = null;
 
 function handleAdminFile(file) {
   if (!file) return;
+  if (typeof XLSX === 'undefined') {
+    setAdminStatus('❌ XLSX library not loaded — check internet connection and reload.', 'err');
+    return;
+  }
   setAdminStatus('⏳ Reading file…', '');
   document.getElementById('adminUploadConfirm').style.display = 'none';
 
