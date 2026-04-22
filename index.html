@@ -71,7 +71,7 @@
   .cw-badge:hover { background: rgba(255,255,255,0.25); }
   .cw-badge::after { content: ' ✎'; font-size: 10px; opacity: 0.6; }
 
-  .dashboard { padding: 0 32px 48px; display: none; }
+  .dashboard { padding: 0 32px 48px; }
 
   /* KPI row */
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 28px; }
@@ -408,7 +408,24 @@
   .sparkline-wrap canvas { display: block; }
   .sparkline-label { font-size: 10px; color: #8e8ea0; margin-bottom: 3px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; }
 
-  /* ── Anomaly table ────────────────────────────────────────────────────── */
+  /* ── Tab navigation ─────────────────────────────────────────────────── */
+  .tab-nav {
+    display: flex; gap: 4px; padding: 0 32px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    overflow-x: auto; -webkit-overflow-scrolling: touch;
+  }
+  .tab-nav::-webkit-scrollbar { display: none; }
+  .tab-btn {
+    padding: 12px 20px; font-size: 13px; font-weight: 500;
+    color: #8e8ea0; background: none; border: none; cursor: pointer;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s; font-family: inherit;
+  }
+  .tab-btn:hover { color: #f5f5f7; }
+  .tab-btn.active { color: #f5f5f7; border-bottom-color: #0071e3; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
   .anomaly-wrap { background:#fff; border-radius:18px; box-shadow:0 1px 3px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06); overflow:hidden; }
   .anomaly-table { width:100%; border-collapse:collapse; table-layout:fixed; }
   .anomaly-table thead tr { background:#f9f9fb; border-bottom:1px solid #f0f0f5; }
@@ -537,86 +554,98 @@
 </div>
 
 <!-- Dashboard (hidden until file loaded) -->
-<div class="dashboard" id="dashboard">
+<div id="dashboard" style="display:none">
 
-  <!-- KPIs -->
-  <div class="kpi-row" id="kpiRow"></div>
+  <!-- Tab navigation -->
+  <nav class="tab-nav" id="tabNav">
+    <button class="tab-btn active" onclick="switchTab('overview')">Overview</button>
+    <button class="tab-btn" onclick="switchTab('products')">Products</button>
+    <button class="tab-btn" onclick="switchTab('geo')">Sales Geo</button>
+    <button class="tab-btn" onclick="switchTab('country')">Country</button>
+    <button class="tab-btn" onclick="switchTab('trend')">Trend</button>
+  </nav>
 
-  <!-- Key Insights — pinned near top -->
-  <div class="section-title">Key Insights</div>
-  <div class="insights-grid" id="insightsGrid"></div>
-
-  <!-- Performance Summary Table -->
-  <div class="section-title" style="justify-content:space-between;align-items:center">
-    <span style="display:flex;align-items:center;gap:8px">Performance Summary
-      <span style="flex:unset;height:unset;background:none;font-size:13px;font-weight:400;color:#8e8ea0;text-transform:none;letter-spacing:0" id="geoFilterLabel"></span>
-    </span>
-    <div class="filter-select-wrap" style="margin:0">
-      <span class="filter-select-label">Sales Geo:</span>
-      <select class="filter-select" id="geoFilterSelect" onchange="onGeoFilterChange(this.value)" style="min-width:120px">
-        <option value="__all__">All</option>
-        <option value="Central">Central</option>
-        <option value="FNBL">FNBL</option>
-        <option value="India">India</option>
-        <option value="META">META</option>
-        <option value="North">North</option>
-        <option value="SHIP">SHIP</option>
-      </select>
-    </div>
+  <!-- ── OVERVIEW ───────────────────────────────────────────────────────── -->
+  <div class="tab-panel active dashboard" id="tab-overview">
+    <div class="kpi-row" id="kpiRow"></div>
+    <div class="section-title">Key Insights</div>
+    <div class="insights-grid" id="insightsGrid"></div>
+    <div class="section-title">Forecast Anomalies</div>
+    <div id="anomalySection"></div>
   </div>
-  <div class="perf-table-wrap" id="perfTableWrap"></div>
 
-  <!-- Sales Geo Insights -->
-  <div class="section-title">Sales Geo Insights</div>
-  <div class="insights-grid" id="geoInsightsGrid"></div>
-
-  <!-- Sales Geo Performance Summary -->
-  <div class="section-title">Sales Geo Performance Summary</div>
-  <div class="perf-table-wrap" id="geoSummaryWrap"></div>
-
-  <!-- Forecast Anomaly Signal -->
-  <div class="section-title">Forecast Anomalies</div>
-  <div id="anomalySection"></div>
-
-  <!-- Trend heatmap -->
-  <div class="section-title" id="trendSectionTitle" style="display:none">Performance Trend — Last <span id="trendWeekCount">0</span> Weeks</div>
-  <div class="heatmap-wrap" id="trendHeatmap" style="display:none">
-    <!-- View tabs -->
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
-      <div style="display:flex;background:#f5f5f7;border-radius:8px;padding:3px;gap:2px">
-        <button id="trendTabProduct" onclick="setTrendTab('product')"
-          style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
-          Product Family
-        </button>
-        <button id="trendTabCountry" onclick="setTrendTab('country')"
-          style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:#6e6e73">
-          By Country
-        </button>
-      </div>
-      <!-- Country tab: product filter -->
-      <div id="trendCountryFilter" style="display:none;align-items:center;gap:6px;flex-wrap:wrap">
-        <span style="font-size:11px;color:#6e6e73;white-space:nowrap">Filter by product:</span>
-        <div class="filter-row" id="trendProductPills" style="margin:0"></div>
+  <!-- ── PRODUCTS ──────────────────────────────────────────────────────── -->
+  <div class="tab-panel dashboard" id="tab-products">
+    <div class="section-title" style="justify-content:space-between;align-items:center">
+      <span style="display:flex;align-items:center;gap:8px">Performance Summary
+        <span style="flex:unset;height:unset;background:none;font-size:13px;font-weight:400;color:#8e8ea0;text-transform:none;letter-spacing:0" id="geoFilterLabel"></span>
+      </span>
+      <div class="filter-select-wrap" style="margin:0">
+        <span class="filter-select-label">Sales Geo:</span>
+        <select class="filter-select" id="geoFilterSelect" onchange="onGeoFilterChange(this.value)" style="min-width:120px">
+          <option value="__all__">All</option>
+          <option value="Central">Central</option>
+          <option value="FNBL">FNBL</option>
+          <option value="India">India</option>
+          <option value="META">META</option>
+          <option value="North">North</option>
+          <option value="SHIP">SHIP</option>
+        </select>
       </div>
     </div>
-    <div id="heatmapInner"></div>
+    <div class="perf-table-wrap" id="perfTableWrap"></div>
+    <div class="section-title" style="margin-top:28px">Product Cards</div>
+    <div class="product-grid" id="productGrid"></div>
   </div>
 
-  <!-- Top beats & misses — filterable by product -->
-  <div class="section-title">Top Country Beats &amp; Misses</div>
-  <div class="filter-select-wrap">
-    <span class="filter-select-label">Filter by product:</span>
-    <select class="filter-select" id="countryFilterRow" onchange="onCountryFilterChange(this.value)"></select>
+  <!-- ── GEO ───────────────────────────────────────────────────────────── -->
+  <div class="tab-panel dashboard" id="tab-geo">
+    <div class="section-title">Sales Geo Insights</div>
+    <div class="insights-grid" id="geoInsightsGrid"></div>
+    <div class="section-title">Sales Geo Performance Summary</div>
+    <div class="perf-table-wrap" id="geoSummaryWrap"></div>
   </div>
-  <div class="country-section" id="countrySection"></div>
 
-  <!-- Country → Product inverse view -->
-  <div class="section-title">Country View — Performance by Product</div>
-  <div class="filter-select-wrap">
-    <span class="filter-select-label">Select country:</span>
-    <select class="filter-select" id="countryPickerRow" onchange="onCountryPickerChange(this.value)"></select>
+  <!-- ── COUNTRY ───────────────────────────────────────────────────────── -->
+  <div class="tab-panel dashboard" id="tab-country">
+    <div class="section-title">Top Country Beats &amp; Misses</div>
+    <div class="filter-select-wrap">
+      <span class="filter-select-label">Filter by product:</span>
+      <select class="filter-select" id="countryFilterRow" onchange="onCountryFilterChange(this.value)"></select>
+    </div>
+    <div class="country-section" id="countrySection"></div>
+    <div class="section-title">Country View — Performance by Product</div>
+    <div class="filter-select-wrap">
+      <span class="filter-select-label">Select country:</span>
+      <select class="filter-select" id="countryPickerRow" onchange="onCountryPickerChange(this.value)"></select>
+    </div>
+    <div id="countryProductSection"></div>
   </div>
-  <div id="countryProductSection"></div>
+
+  <!-- ── TREND ─────────────────────────────────────────────────────────── -->
+  <div class="tab-panel dashboard" id="tab-trend">
+    <div class="section-title" id="trendSectionTitle" style="display:none">Performance Trend — Last <span id="trendWeekCount">0</span> Weeks</div>
+    <div class="heatmap-wrap" id="trendHeatmap" style="display:none">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        <div style="display:flex;background:#f5f5f7;border-radius:8px;padding:3px;gap:2px">
+          <button id="trendTabProduct" onclick="setTrendTab('product')"
+            style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+            Product Family
+          </button>
+          <button id="trendTabCountry" onclick="setTrendTab('country')"
+            style="border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:#6e6e73">
+            By Country
+          </button>
+        </div>
+        <div id="trendCountryFilter" style="display:none;align-items:center;gap:6px;flex-wrap:wrap">
+          <span style="font-size:11px;color:#6e6e73;white-space:nowrap">Filter by product:</span>
+          <div class="filter-row" id="trendProductPills" style="margin:0"></div>
+        </div>
+      </div>
+      <div id="heatmapInner"></div>
+    </div>
+    <div id="sparklineSection"></div>
+  </div>
 
 </div>
 
@@ -721,8 +750,6 @@ function saveWeek(cwLabel, rows) {
 function clearAllHistory() {
   localStorage.removeItem(LS_KEY);
   _currentCW = '';
-  document.getElementById('trendSectionTitle').style.display = 'none';
-  document.getElementById('trendHeatmap').style.display = 'none';
   document.getElementById('dashboard').style.display = 'none';
   document.getElementById('cw-label').style.display = 'none';
   document.getElementById('uploadZone').style.display = 'block';
@@ -823,8 +850,6 @@ function deleteWeek(cw) {
   renderTrend(history);
   if (!history.length) {
     // No weeks left — go back to upload screen
-    document.getElementById('trendSectionTitle').style.display = 'none';
-    document.getElementById('trendHeatmap').style.display = 'none';
     document.getElementById('dashboard').style.display = 'none';
     document.getElementById('cw-label').style.display = 'none';
     document.getElementById('uploadZone').style.display = 'block';
@@ -875,11 +900,31 @@ function processData(raw, filename) {
   renderTrend(history);
 }
 
+// ─── TAB NAVIGATION ──────────────────────────────────────────────────────────
+function switchTab(name) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('tab-' + name);
+  if (panel) panel.classList.add('active');
+  // Mark the matching button active
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick') === `switchTab('${name}')`) b.classList.add('active');
+  });
+  // Trend tab: re-render heatmap so canvas sizes are correct after display:none
+  if (name === 'trend') {
+    document.getElementById('trendSectionTitle').style.display = 'flex';
+    document.getElementById('trendHeatmap').style.display = 'block';
+    renderTrend(loadHistory());
+  }
+}
+
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 function renderDashboard(rows, cwLabel, filename) {
   document.getElementById('uploadZone').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   document.getElementById('cw-label').style.display = 'block';
+  // Always land on overview when new data loads
+  switchTab('overview');
   // Show custom label if user has renamed this week
   const _h = loadHistory();
   const _entry = _h.find(w => w.cw === cwLabel);
