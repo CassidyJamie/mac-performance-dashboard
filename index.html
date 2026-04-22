@@ -822,10 +822,21 @@ function renderHistoryChips(history) {
   if (!history.length) { bar.style.display = 'none'; return; }
   bar.style.display = 'flex';
   chips.innerHTML = history.map(w => `
-    <div class="hw-chip ${w.cw === _currentCW ? 'active-week' : ''}" data-cw="${w.cw}">
-      <span class="hw-name" ondblclick="startRename('${w.cw}')" title="Double-click to rename">${w.label || w.cw}</span>
-      <span class="hw-del" onclick="deleteWeek('${w.cw}')" title="Remove">×</span>
+    <div class="hw-chip ${w.cw === _currentCW ? 'active-week' : ''}" data-cw="${w.cw}"
+         onclick="loadWeek('${w.cw.replace(/'/g,"\\'")}')">
+      <span class="hw-name" ondblclick="event.stopPropagation();startRename('${w.cw}')" title="Double-click to rename">${w.label || w.cw}</span>
+      <span class="hw-del" onclick="event.stopPropagation();deleteWeek('${w.cw}')" title="Remove">×</span>
     </div>`).join('');
+}
+
+function loadWeek(cw) {
+  const history = loadHistory().map(w => ({ ...w, rows: migrateRows(w.rows || []) }));
+  const week = history.find(w => w.cw === cw);
+  if (!week) return;
+  _currentCW = cw;
+  renderHistoryChips(history);
+  renderDashboard(week.rows, cw, week.label || cw);
+  renderTrend(history);
 }
 
 function startRename(cw) {
@@ -906,21 +917,21 @@ function renameCurrentWeek() {
 function deleteWeek(cw) {
   const history = loadHistory().filter(w => w.cw !== cw);
   try { localStorage.setItem(LS_KEY, JSON.stringify(history)); } catch(e) {}
-  renderHistoryChips(history);
-  renderTrend(history);
+  const migrated = history.map(w => ({ ...w, rows: migrateRows(w.rows || []) }));
+  renderHistoryChips(migrated);
+  renderTrend(migrated);
   if (!history.length) {
-    // No weeks left — go back to upload screen
     document.getElementById('dashboard').style.display = 'none';
     document.getElementById('cw-label').style.display = 'none';
     document.getElementById('uploadZone').style.display = 'block';
-      _currentCW = '';
+    _currentCW = '';
   } else if (cw === _currentCW) {
-    // Deleted the active week — load the most recent remaining week
-    const latest = [...history].sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
+    const latest = [...migrated].sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
     _currentCW = latest.cw;
-    renderHistoryChips(history);
+    renderHistoryChips(migrated);
     renderDashboard(latest.rows, latest.cw, latest.label || latest.cw);
-    renderTrend(history);
+    renderTrend(migrated);
+  }
   }
 }
 
@@ -1391,6 +1402,23 @@ function renderProductCards(families, byDim) {
 
 // ─── SHARED PRODUCT NAME SET ─────────────────────────────────────────────────
 const SALES_GEOS = ['Central','FNBL','India','META','North','SHIP'];
+
+// ─── MIGRATE OLD ROWS ────────────────────────────────────────────────────────
+// Backfills geo + CQ fields on rows saved before those fields were added
+function migrateRows(rows) {
+  let currentGeo = null;
+  return rows.map(r => {
+    const dim = r.dim || '';
+    if (SALES_GEOS.includes(dim)) currentGeo = dim;
+    return {
+      ...r,
+      geo:   r.geo   !== undefined ? r.geo   : (SALES_GEOS.includes(dim) ? dim : currentGeo),
+      jstCQ: r.jstCQ !== undefined ? r.jstCQ : 0,
+      ecfCQ: r.ecfCQ !== undefined ? r.ecfCQ : 0,
+      jvECF: r.jvECF !== undefined ? r.jvECF : 0,
+    };
+  });
+}
 
 const ALL_PRODUCT_NAMES = new Set([
   'Mac','iMac 24','iMac 24 M4 High','iMac 24 M4 Low','Mac Mini','Mac Mini M4','Mac Studio','Mac Studio M3/M4',
@@ -2170,6 +2198,8 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
 
   function applyHistory(history) {
     if (!history.length) return;
+    // Backfill geo + CQ fields on any old rows that predate those features
+    history = history.map(w => ({ ...w, rows: migrateRows(w.rows || []) }));
     renderHistoryChips(history);
     if (history.length >= 2) renderTrend(history);
     const latest = [...history].sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
@@ -2215,9 +2245,8 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
 })();
 
 function viewSavedData() {
-  const history = loadHistory();
+  const history = loadHistory().map(w => ({ ...w, rows: migrateRows(w.rows || []) }));
   if (!history.length) return;
-  // Load the most recent week into the dashboard
   const latest = [...history].sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
   _currentCW = latest.cw;
   renderHistoryChips(history);
