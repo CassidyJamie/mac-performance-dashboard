@@ -715,7 +715,7 @@ const FAMILIES = [
   { key: 'Neo',        label: 'MacBook Neo',     match: r => r.dim === 'MacBook Neo 13' },
   { key: 'MBP14M5H',  label: 'MBP 14 M5 High',      match: r => r.dim === 'MBP 14 M5 High' },
   { key: 'MBP14M5L',  label: 'MBP 14 M5 Low',        match: r => r.dim === 'MBP 14 M5 Low' },
-  { key: 'MBP16',      label: 'MacBook Pro 16',  match: r => r.dim.includes('15/16') || r.dim === 'MacBook Pro 16' },
+  { key: 'MBP16',      label: 'MacBook Pro 16',  match: r => (r.dim||'').includes('15/16') || r.dim === 'MacBook Pro 16' },
   { key: 'Mini',       label: 'Mac Mini',        match: r => r.dim === 'Mac Mini' },
   { key: 'Studio',     label: 'Mac Studio',      match: r => r.dim === 'Mac Studio' },
   { key: 'iMac',       label: 'iMac 24',         match: r => r.dim === 'iMac 24' },
@@ -1406,17 +1406,19 @@ const SALES_GEOS = ['Central','FNBL','India','META','North','SHIP'];
 // Backfills geo + CQ fields on rows saved before those fields were added
 function migrateRows(rows) {
   let currentGeo = null;
-  return rows.map(r => {
-    const dim = r.dim || '';
-    if (SALES_GEOS.includes(dim)) currentGeo = dim;
-    return {
-      ...r,
-      geo:   r.geo   !== undefined ? r.geo   : (SALES_GEOS.includes(dim) ? dim : currentGeo),
-      jstCQ: r.jstCQ !== undefined ? r.jstCQ : 0,
-      ecfCQ: r.ecfCQ !== undefined ? r.ecfCQ : 0,
-      jvECF: r.jvECF !== undefined ? r.jvECF : 0,
-    };
-  });
+  return rows
+    .filter(r => r.dim && r.dim !== 'nan')
+    .map(r => {
+      const dim = r.dim || '';
+      if (SALES_GEOS.includes(dim)) currentGeo = dim;
+      return {
+        ...r,
+        geo:   r.geo   !== undefined ? r.geo   : (SALES_GEOS.includes(dim) ? dim : currentGeo),
+        jstCQ: r.jstCQ !== undefined ? r.jstCQ : 0,
+        ecfCQ: r.ecfCQ !== undefined ? r.ecfCQ : 0,
+        jvECF: r.jvECF !== undefined ? r.jvECF : 0,
+      };
+    });
 }
 
 const ALL_PRODUCT_NAMES = new Set([
