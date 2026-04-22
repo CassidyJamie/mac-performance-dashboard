@@ -563,6 +563,7 @@
     <button class="tab-btn" onclick="switchTab('geo')">Sales Geo</button>
     <button class="tab-btn" onclick="switchTab('country')">Country</button>
     <button class="tab-btn" onclick="switchTab('trend')">Trend</button>
+    <button class="tab-btn" onclick="switchTab('cqforecast')">CQ Forecast</button>
   </nav>
 
   <!-- ── OVERVIEW ───────────────────────────────────────────────────────── -->
@@ -644,7 +645,57 @@
       </div>
       <div id="heatmapInner"></div>
     </div>
-    <div id="sparklineSection"></div>
+  <!-- ── CQ FORECAST ──────────────────────────────────────────────────────── -->
+  <div class="tab-panel dashboard" id="tab-cqforecast">
+    <!-- Controls row -->
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:4px">
+      <!-- View toggle -->
+      <div style="display:flex;background:#f0f0f5;border-radius:10px;padding:3px;gap:2px">
+        <button id="cqViewProduct" onclick="setCQView('product')"
+          style="border:none;border-radius:8px;padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:#fff;color:#1d1d1f;box-shadow:0 1px 3px rgba(0,0,0,0.1)">
+          By Product
+        </button>
+        <button id="cqViewGeo" onclick="setCQView('geo')"
+          style="border:none;border-radius:8px;padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#8e8ea0">
+          By Geo
+        </button>
+        <button id="cqViewCountry" onclick="setCQView('country')"
+          style="border:none;border-radius:8px;padding:6px 16px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;background:transparent;color:#8e8ea0">
+          By Country
+        </button>
+      </div>
+      <!-- Geo filter (shown in Product + Country views) -->
+      <div id="cqGeoWrap" class="filter-select-wrap" style="margin:0">
+        <span class="filter-select-label">Sales Geo:</span>
+        <select class="filter-select" id="cqGeoSelect" onchange="renderCQTable()" style="min-width:120px">
+          <option value="__all__">All</option>
+          <option value="Central">Central</option>
+          <option value="FNBL">FNBL</option>
+          <option value="India">India</option>
+          <option value="META">META</option>
+          <option value="North">North</option>
+          <option value="SHIP">SHIP</option>
+        </select>
+      </div>
+      <!-- Country filter (shown in Product view only) -->
+      <div id="cqCountryWrap" class="filter-select-wrap" style="margin:0">
+        <span class="filter-select-label">Country:</span>
+        <select class="filter-select" id="cqCountrySelect" onchange="renderCQTable()" style="min-width:160px"></select>
+      </div>
+      <!-- Anomalies only toggle -->
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#8e8ea0;cursor:pointer;margin-left:auto">
+        <input type="checkbox" id="cqAnomalyOnly" onchange="renderCQTable()" style="accent-color:#0071e3;width:14px;height:14px">
+        Anomalies only
+      </label>
+    </div>
+    <!-- Anomaly legend -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;margin-top:8px">
+      <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d73a49"></span> JST vs ECF &gt;±20%</span>
+      <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b"></span> YoY &lt;−30%</span>
+      <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#30a14e"></span> YoY &gt;+50%</span>
+      <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#6e6e73"></span> ECF = 0, JST &gt; 0</span>
+    </div>
+    <div class="perf-table-wrap" id="cqTableWrap"></div>
   </div>
 
 </div>
@@ -883,7 +934,10 @@ function processData(raw, filename) {
       vel:    parseFloat(r[5]),
       fwdAvg: parseFloat(r[6]),
       bwdAvg: parseFloat(r[7]),
-      yoy:    parseFloat(r[11]) || null,
+      jstCQ:  parseFloat(r[8]) || 0,
+      ecfCQ:  parseFloat(r[9]) || 0,
+      jvECF:  parseFloat(r[10]) || 0,
+      yoy:    parseFloat(r[11]) ?? null,
     };
   }).filter(r => r.dim && r.dim !== 'nan');
 
@@ -906,15 +960,16 @@ function switchTab(name) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   const panel = document.getElementById('tab-' + name);
   if (panel) panel.classList.add('active');
-  // Mark the matching button active
   document.querySelectorAll('.tab-btn').forEach(b => {
     if (b.getAttribute('onclick') === `switchTab('${name}')`) b.classList.add('active');
   });
-  // Trend tab: re-render heatmap so canvas sizes are correct after display:none
   if (name === 'trend') {
     document.getElementById('trendSectionTitle').style.display = 'flex';
     document.getElementById('trendHeatmap').style.display = 'block';
     renderTrend(loadHistory());
+  }
+  if (name === 'cqforecast') {
+    setCQView(_cqView);
   }
 }
 
@@ -958,6 +1013,7 @@ function renderDashboard(rows, cwLabel, filename) {
   renderInsights(families, rows, byDim);
   renderGeoInsights(rows);
   renderGeoSummaryTable(rows);
+  setCQView('product'); // initialise CQ tab filters and table
 }
 
 // ─── GEO FILTER ──────────────────────────────────────────────────────────────
@@ -2520,7 +2576,10 @@ function handleAdminFile(file) {
           vel:    parseFloat(r[5]),
           fwdAvg: parseFloat(r[6]),
           bwdAvg: parseFloat(r[7]),
-          yoy:    parseFloat(r[11]) || null,
+          jstCQ:  parseFloat(r[8]) || 0,
+          ecfCQ:  parseFloat(r[9]) || 0,
+          jvECF:  parseFloat(r[10]) || 0,
+          yoy:    parseFloat(r[11]) ?? null,
         };
       }).filter(r => r.dim && r.dim !== 'nan');
 
@@ -2638,7 +2697,213 @@ async function pushHistoryToGitHub(history, cwLabel) {
   }
 }
 
-function setAdminStatus(msg, cls) {
+// ─── CQ FORECAST TAB ────────────────────────────────────────────────────────
+let _cqView = 'product'; // 'product' | 'geo' | 'country'
+
+function setCQView(view) {
+  _cqView = view;
+  ['product','geo','country'].forEach(v => {
+    const btn = document.getElementById('cqView' + v.charAt(0).toUpperCase() + v.slice(1));
+    if (btn) {
+      btn.style.background    = v === view ? '#fff' : 'transparent';
+      btn.style.color         = v === view ? '#1d1d1f' : '#8e8ea0';
+      btn.style.boxShadow     = v === view ? '0 1px 3px rgba(0,0,0,0.1)' : 'none';
+    }
+  });
+  // Geo filter: hidden in geo view (geo IS the row); country filter only in product view
+  document.getElementById('cqGeoWrap').style.display     = view === 'geo'     ? 'none' : 'flex';
+  document.getElementById('cqCountryWrap').style.display = view === 'product' ? 'flex' : 'none';
+  renderCQTable();
+}
+
+function cqAnomalyFlags(jstCQ, ecfCQ, jvECF, yoy) {
+  const flags = [];
+  const pctVar = ecfCQ > 0 ? jvECF / ecfCQ : null;
+  if (pctVar !== null && Math.abs(pctVar) > 0.20) flags.push({ type: 'var',   label: `JST vs ECF ${pctVar>0?'+':''}${Math.round(pctVar*100)}%`, color: '#d73a49' });
+  if (ecfCQ === 0 && jstCQ > 0)                   flags.push({ type: 'noecf', label: 'No ECF',                                                  color: '#6e6e73' });
+  if (yoy !== null && yoy < -0.30)                 flags.push({ type: 'yoyd',  label: `YoY ${Math.round(yoy*100)}%`,                            color: '#f59e0b' });
+  if (yoy !== null && yoy > 0.50)                  flags.push({ type: 'yoyu',  label: `YoY +${Math.round(yoy*100)}%`,                           color: '#30a14e' });
+  return flags;
+}
+
+function renderCQTable() {
+  const wrap        = document.getElementById('cqTableWrap');
+  const geoFilter   = document.getElementById('cqGeoSelect')?.value    || '__all__';
+  const ctryFilter  = document.getElementById('cqCountrySelect')?.value || '__all__';
+  const anomalyOnly = document.getElementById('cqAnomalyOnly')?.checked || false;
+  if (!wrap || !_allRows.length) return;
+
+  // ── HELPER: aggregate CQ fields from a set of rows ──────────────────────
+  function agg(rows) {
+    const jstCQ = rows.reduce((s,r) => s + (r.jstCQ||0), 0);
+    const ecfCQ = rows.reduce((s,r) => s + (r.ecfCQ||0), 0);
+    const jvECF = jstCQ - ecfCQ;
+    // Average YoY weighted by JST CQ (skip nulls)
+    const yoyRows = rows.filter(r => r.yoy !== null && !isNaN(r.yoy) && r.jstCQ > 0);
+    const yoy = yoyRows.length
+      ? yoyRows.reduce((s,r) => s + r.yoy * r.jstCQ, 0) / yoyRows.reduce((s,r) => s + r.jstCQ, 0)
+      : null;
+    return { jstCQ, ecfCQ, jvECF, yoy };
+  }
+
+  // ── TABLE ROW HTML ───────────────────────────────────────────────────────
+  function trow(label, sublabel, jstCQ, ecfCQ, jvECF, yoy, isSummary) {
+    const pctVar   = ecfCQ > 0 ? jvECF / ecfCQ : null;
+    const varColor = pctVar === null ? '#8e8ea0' : Math.abs(pctVar) > 0.20 ? '#d73a49' : Math.abs(pctVar) > 0.10 ? '#f59e0b' : '#30a14e';
+    const yoyColor = yoy === null ? '#8e8ea0' : yoy < -0.30 ? '#f59e0b' : yoy > 0.50 ? '#30a14e' : yoy < 0 ? '#d73a49' : '#30a14e';
+    const flags    = cqAnomalyFlags(jstCQ, ecfCQ, jvECF, yoy);
+    const flagHtml = flags.map(f =>
+      `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:980px;background:${f.color}22;color:${f.color};margin:1px 2px;white-space:nowrap">
+        <span style="width:6px;height:6px;border-radius:50%;background:${f.color};display:inline-block"></span>${f.label}
+       </span>`
+    ).join('');
+    const rowCls = isSummary ? 'pt-summary' : '';
+    return `<tr class="${rowCls}" ${flags.length ? `style="background:rgba(215,58,73,0.03)"` : ''}>
+      <td style="text-align:left">
+        <div style="font-weight:${isSummary?700:600};font-size:13px">${label}</div>
+        ${sublabel ? `<div style="font-size:10px;color:#8e8ea0;margin-top:1px">${sublabel}</div>` : ''}
+        ${flagHtml ? `<div style="margin-top:4px">${flagHtml}</div>` : ''}
+      </td>
+      <td>${fmt(jstCQ)}</td>
+      <td>${fmt(ecfCQ)}</td>
+      <td style="color:${varColor};font-weight:700">${fmtD(jvECF)}</td>
+      <td style="color:${varColor};font-weight:700">${pctVar === null ? '—' : (pctVar >= 0 ? '+' : '') + Math.round(pctVar*100) + '%'}</td>
+      <td style="color:${yoyColor};font-weight:700">${yoy === null ? '—' : (yoy >= 0 ? '+' : '') + Math.round(yoy*100) + '%'}</td>
+    </tr>`;
+  }
+
+  const thead = `<thead><tr>
+    <th style="text-align:left;min-width:200px">Name</th>
+    <th>JST CQ</th><th>ECF CQ</th><th>JST vs ECF Δ</th><th>JST vs ECF %</th><th>CQ YoY %</th>
+  </tr></thead>`;
+
+  let bodyRows = [];
+  let summaryRow = '';
+
+  // ── BY PRODUCT ────────────────────────────────────────────────────────────
+  if (_cqView === 'product') {
+    // Populate country dropdown for selected geo
+    const ctryEl = document.getElementById('cqCountrySelect');
+    const allCountries = [...new Set(
+      _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
+        && (geoFilter === '__all__' || r.geo === geoFilter))
+        .map(r => r.dim)
+    )].sort();
+    const prevCtry = ctryEl.value;
+    ctryEl.innerHTML = `<option value="__all__">All Countries</option>` +
+      allCountries.map(c => `<option value="${c}" ${c===prevCtry?'selected':''}>${c}</option>`).join('');
+
+    _families.filter(f => f.key !== 'Mac').forEach(f => {
+      // Find the product family's header row
+      const fIdx = _allRows.findIndex(r => f.match(r));
+      if (fIdx === -1) return;
+
+      const subLabels = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[f.key]||[])]);
+
+      // Collect relevant rows under this family matching geo + country filters
+      let captured = false;
+      const matchRows = [];
+      for (let i = fIdx + 1; i < _allRows.length; i++) {
+        const r = _allRows[i];
+        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
+        if (SALES_GEOS.includes(r.dim)) { captured = (geoFilter === '__all__' || r.dim === geoFilter); continue; }
+        if (!captured) continue;
+        if (ALL_PRODUCT_NAMES.has(r.dim)) continue; // sub-product header
+        if (r.dim === 'Russia' || r.dim === 'nan') continue;
+        if (ctryFilter !== '__all__' && r.dim !== ctryFilter) continue;
+        matchRows.push(r);
+      }
+      if (!matchRows.length) return;
+      const a = agg(matchRows);
+      if (!a.jstCQ && !a.ecfCQ) return;
+      const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+      if (anomalyOnly && !flags.length) return;
+      const sublabel = geoFilter !== '__all__' ? geoFilter : ctryFilter !== '__all__' ? ctryFilter : '';
+      bodyRows.push(trow(f.label, sublabel, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false));
+    });
+
+    // Summary across all products for current filter
+    const allMatch = _allRows.filter(r =>
+      !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
+      && (geoFilter === '__all__' || r.geo === geoFilter)
+      && (ctryFilter === '__all__' || r.dim === ctryFilter)
+    );
+    const sa = agg(allMatch);
+    summaryRow = trow('All Products', '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true);
+  }
+
+  // ── BY GEO ────────────────────────────────────────────────────────────────
+  else if (_cqView === 'geo') {
+    // Hide country wrap already done by setCQView
+    SALES_GEOS.forEach(geo => {
+      const geoRows = _allRows.filter(r =>
+        r.dim === geo && r.geo === geo // geo header rows
+      );
+      if (!geoRows.length) return;
+      const a = agg(geoRows);
+      if (!a.jstCQ && !a.ecfCQ) return;
+      const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+      if (anomalyOnly && !flags.length) return;
+      bodyRows.push(trow(geo, '', a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false));
+    });
+    const allGeoRows = _allRows.filter(r => r.dim === r.geo && SALES_GEOS.includes(r.dim));
+    const sa = agg(allGeoRows);
+    summaryRow = trow('All Geos', '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true);
+  }
+
+  // ── BY COUNTRY ────────────────────────────────────────────────────────────
+  else if (_cqView === 'country') {
+    const countries = [...new Set(
+      _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
+        && (geoFilter === '__all__' || r.geo === geoFilter))
+        .map(r => r.dim)
+    )].sort();
+
+    countries.forEach(country => {
+      const cRows = _allRows.filter(r => r.dim === country
+        && (geoFilter === '__all__' || r.geo === geoFilter)
+      );
+      if (!cRows.length) return;
+      const a = agg(cRows);
+      if (!a.jstCQ && !a.ecfCQ) return;
+      const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+      if (anomalyOnly && !flags.length) return;
+      // sublabel = geo name(s) for this country
+      const geos = [...new Set(cRows.map(r => r.geo).filter(Boolean))].join(', ');
+      bodyRows.push(trow(country, geos, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false));
+    });
+    const allCRows = _allRows.filter(r =>
+      !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
+      && (geoFilter === '__all__' || r.geo === geoFilter)
+    );
+    const sa = agg(allCRows);
+    summaryRow = trow('All Countries', geoFilter !== '__all__' ? geoFilter : '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true);
+  }
+
+  if (!bodyRows.length && anomalyOnly) {
+    wrap.innerHTML = `<div style="padding:32px;text-align:center;font-size:13px;color:#8e8ea0">✅ No anomalies found for the current selection.</div>`;
+    return;
+  }
+
+  // Sort body rows by absolute JST vs ECF delta descending
+  const sortedBody = bodyRows.sort ? bodyRows : bodyRows;
+
+  wrap.innerHTML = `
+    <table class="perf-table" style="table-layout:auto">
+      <colgroup>
+        <col style="width:28%">
+        <col style="width:12%"><col style="width:12%">
+        <col style="width:12%"><col style="width:12%"><col style="width:12%">
+      </colgroup>
+      ${thead}
+      <tbody>
+        ${summaryRow}
+        ${bodyRows.join('')}
+      </tbody>
+    </table>`;
+}
+
+// ─── ADMIN STATUS ────────────────────────────────────────────────────────────
   const el = document.getElementById('adminUploadStatus');
   el.textContent = msg;
   el.className = 'admin-status' + (cls ? ' ' + cls : '');
