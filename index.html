@@ -768,7 +768,6 @@ function handleFile(file) {
   reader.onerror = () => alert('Failed to read file. Please try again.');
   reader.readAsArrayBuffer(file);
 }
-}
 
 // ─── PARSE ────────────────────────────────────────────────────────────────────
 // ─── REMOTE HISTORY CONFIG ───────────────────────────────────────────────────
@@ -2925,6 +2924,7 @@ function renderCQTable() {
 }
 
 // ─── ADMIN STATUS ────────────────────────────────────────────────────────────
+function setAdminStatus(msg, cls) {
   const el = document.getElementById('adminUploadStatus');
   el.textContent = msg;
   el.className = 'admin-status' + (cls ? ' ' + cls : '');
