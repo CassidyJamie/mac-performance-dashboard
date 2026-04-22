@@ -985,10 +985,10 @@ function switchTab(name) {
 
 // ─── RENDER ───────────────────────────────────────────────────────────────────
 function renderDashboard(rows, cwLabel, filename) {
+  // Always show dashboard and hide upload zone first — before anything else
   document.getElementById('uploadZone').style.display = 'none';
   document.getElementById('dashboard').style.display = 'block';
   document.getElementById('cw-label').style.display = 'block';
-  // Always land on overview when new data loads
   switchTab('overview');
   // Show custom label if user has renamed this week
   const _h = loadHistory();
@@ -1020,12 +1020,12 @@ function renderDashboard(rows, cwLabel, filename) {
   renderProductCards(families, byDim);
   renderVelChart(families);
   renderAnomalies(families);
-  renderCountryTables(rows, byDim);
+  renderCountryTables(rows, byDim);   // sets _allRows
   renderCountryProductView(rows);
   renderInsights(families, rows, byDim);
   renderGeoInsights(rows);
   renderGeoSummaryTable(rows);
-  setCQView('product');
+  try { setCQView('product'); } catch(e) { console.warn('CQ init:', e); }
 }
 
 // ─── GEO FILTER ──────────────────────────────────────────────────────────────
@@ -2175,11 +2175,7 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
     if (history.length >= 2) renderTrend(history);
     const latest = [...history].sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
     _currentCW = latest.cw;
-    try {
-      renderDashboard(latest.rows, latest.cw, latest.label || latest.cw);
-    } catch(e) {
-      console.error('renderDashboard error:', e);
-    }
+    renderDashboard(latest.rows, latest.cw, latest.label || latest.cw);
     renderTrend(history);
   }
 
