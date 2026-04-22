@@ -937,7 +937,7 @@ function processData(raw, filename) {
       jstCQ:  parseFloat(r[8]) || 0,
       ecfCQ:  parseFloat(r[9]) || 0,
       jvECF:  parseFloat(r[10]) || 0,
-      yoy:    parseFloat(r[11]) ?? null,
+      yoy:    parseFloat(r[11]) || null,
     };
   }).filter(r => r.dim && r.dim !== 'nan');
 
@@ -1007,13 +1007,15 @@ function renderDashboard(rows, cwLabel, filename) {
 
   renderKPIs(families, byDim);
   renderFamilyTable(families, rows);
+  renderProductCards(families, byDim);
+  renderVelChart(families);
   renderAnomalies(families);
   renderCountryTables(rows, byDim);
   renderCountryProductView(rows);
   renderInsights(families, rows, byDim);
   renderGeoInsights(rows);
   renderGeoSummaryTable(rows);
-  setCQView('product'); // initialise CQ tab filters and table
+  setCQView('product');
 }
 
 // ─── GEO FILTER ──────────────────────────────────────────────────────────────
@@ -2161,10 +2163,13 @@ function renderSparklines(data, cwLabels, labelMap) { labelMap = labelMap || {};
     if (!history.length) return;
     renderHistoryChips(history);
     if (history.length >= 2) renderTrend(history);
-    // Auto-load the most recent week straight into the dashboard
     const latest = [...history].sort((a, b) => (b.ts || 0) - (a.ts || 0))[0];
     _currentCW = latest.cw;
-    renderDashboard(latest.rows, latest.cw, latest.label || latest.cw);
+    try {
+      renderDashboard(latest.rows, latest.cw, latest.label || latest.cw);
+    } catch(e) {
+      console.error('renderDashboard error:', e);
+    }
     renderTrend(history);
   }
 
@@ -2584,7 +2589,7 @@ function handleAdminFile(file) {
           jstCQ:  parseFloat(r[8]) || 0,
           ecfCQ:  parseFloat(r[9]) || 0,
           jvECF:  parseFloat(r[10]) || 0,
-          yoy:    parseFloat(r[11]) ?? null,
+          yoy:    parseFloat(r[11]) || null,
         };
       }).filter(r => r.dim && r.dim !== 'nan');
 
@@ -2710,14 +2715,15 @@ function setCQView(view) {
   ['product','geo','country'].forEach(v => {
     const btn = document.getElementById('cqView' + v.charAt(0).toUpperCase() + v.slice(1));
     if (btn) {
-      btn.style.background    = v === view ? '#fff' : 'transparent';
-      btn.style.color         = v === view ? '#1d1d1f' : '#8e8ea0';
-      btn.style.boxShadow     = v === view ? '0 1px 3px rgba(0,0,0,0.1)' : 'none';
+      btn.style.background = v === view ? '#fff' : 'transparent';
+      btn.style.color      = v === view ? '#1d1d1f' : '#8e8ea0';
+      btn.style.boxShadow  = v === view ? '0 1px 3px rgba(0,0,0,0.1)' : 'none';
     }
   });
-  // Geo filter: hidden in geo view (geo IS the row); country filter only in product view
-  document.getElementById('cqGeoWrap').style.display     = view === 'geo'     ? 'none' : 'flex';
-  document.getElementById('cqCountryWrap').style.display = view === 'product' ? 'flex' : 'none';
+  const geoWrap   = document.getElementById('cqGeoWrap');
+  const ctryWrap  = document.getElementById('cqCountryWrap');
+  if (geoWrap)  geoWrap.style.display  = view === 'geo'     ? 'none' : 'flex';
+  if (ctryWrap) ctryWrap.style.display = view === 'product' ? 'flex' : 'none';
   renderCQTable();
 }
 
