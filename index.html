@@ -3212,27 +3212,7 @@ function renderCQInsights() {
       const a = agg(rows); _buildCQInsightCard(cards, geo, null, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
     });
   } else if (_cqView === "country") {
-    const prodFilter2 = document.getElementById("cqProductSelect")?.value || "__all__";
-    function getCtryRows2(country) {
-      if (prodFilter2 === "__all__") return _allRows.filter(r => r.dim===country && (geoFilter==="__all__" || r.geo===geoFilter));
-      const fam = _families.find(f => f.key===prodFilter2); if (!fam) return [];
-      const fIdx = _allRows.findIndex(r => fam.match(r)); if (fIdx===-1) return [];
-      const sub = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[fam.key]||[])]);
-      let captured = false; const out = [];
-      for (let i=fIdx+1; i<_allRows.length; i++) {
-        const r = _allRows[i];
-        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !sub.has(r.dim)) break;
-        if (SALES_GEOS.includes(r.dim)) { captured = (geoFilter==="__all__" || r.dim===geoFilter); continue; }
-        if (!captured || ALL_PRODUCT_NAMES.has(r.dim) || r.dim==="Russia" || r.dim==="nan") continue;
-        if (r.dim===country) out.push(r);
-      }
-      return out;
-    }
-    const countries = [...new Set(_allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim!=="Russia" && r.dim!=="nan" && (geoFilter==="__all__" || r.geo===geoFilter)).map(r => r.dim))].sort();
-    countries.forEach(country => {
-      const rows = getCtryRows2(country); if (!rows.length) return;
-      const a = agg(rows); _buildCQInsightCard(cards, country, null, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
-    });
+    // No insights on Country view — table is sufficient
   } else {
     _families.filter(f => f.key !== "Mac").forEach(f => {
       const fIdx = _allRows.findIndex(r => f.match(r)); if (fIdx===-1) return;
