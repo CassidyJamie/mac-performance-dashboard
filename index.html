@@ -698,8 +698,12 @@
       <span id="cqDrillLabel" style="font-size:13px;font-weight:600;color:#1d1d1f"></span>
       <span style="font-size:12px;color:#8e8ea0">— Products breakdown</span>
     </div>
-    <!-- Anomaly legend -->
-    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;margin-top:8px">
+    <!-- CQ Key Insights -->
+    <div class="section-title" id="cqInsightsTitle" style="display:none">Key Insights</div>
+    <div class="insights-grid" id="cqInsightsGrid" style="margin-bottom:24px"></div>
+    <!-- CQ Forecast detail -->
+    <div class="section-title" id="cqTableTitle" style="margin-top:0">CQ Forecast Detail</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:12px;margin-top:-8px">
       <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#d73a49"></span> JST vs ECF &gt;±20%</span>
       <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b"></span> YoY &lt;−30%</span>
       <span style="font-size:11px;color:#8e8ea0;display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#30a14e"></span> YoY &gt;+50%</span>
@@ -2816,6 +2820,8 @@ function renderCQTable() {
   const anomalyOnly = document.getElementById('cqAnomalyOnly')?.checked || false;
   if (!wrap || !_allRows.length) return;
 
+  renderCQInsights();
+
   // ── Breadcrumb visibility ─────────────────────────────────────────────────
   const breadcrumb = document.getElementById('cqDrillBreadcrumb');
   const drillLabel = document.getElementById('cqDrillLabel');
@@ -2838,38 +2844,21 @@ function renderCQTable() {
     return { jstCQ, ecfCQ, jvECF, yoy };
   }
 
-  // ── TABLE ROW HTML ───────────────────────────────────────────────────────
-  // drillArgs: if provided, makes the row clickable to drill in
+  // ── TABLE ROW HTML ─────────────────────────────────────────────
   function trow(label, sublabel, jstCQ, ecfCQ, jvECF, yoy, isSummary, drillArgs) {
     const pctVar   = ecfCQ > 0 ? jvECF / ecfCQ : null;
     const varColor = pctVar === null ? '#8e8ea0' : Math.abs(pctVar) > 0.20 ? '#d73a49' : Math.abs(pctVar) > 0.10 ? '#f59e0b' : '#30a14e';
     const yoyColor = yoy === null ? '#8e8ea0' : yoy < -0.30 ? '#f59e0b' : yoy > 0.50 ? '#30a14e' : yoy < 0 ? '#d73a49' : '#30a14e';
-    const flags    = cqAnomalyFlags(jstCQ, ecfCQ, jvECF, yoy);
-    const flagHtml = flags.map(f =>
-      `<span style="display:inline-flex;align-items:center;gap:3px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:980px;background:${f.color}22;color:${f.color};margin:1px 2px;white-space:nowrap">
-        <span style="width:6px;height:6px;border-radius:50%;background:${f.color};display:inline-block"></span>${f.label}
-       </span>`
-    ).join('');
-    const rowCls = isSummary ? 'pt-summary' : '';
-
-    // Drill-down affordance — chevron + hover highlight on clickable rows
+    const rowCls   = isSummary ? 'pt-summary' : '';
     const drillable  = drillArgs && !isSummary;
-    const drillClick = drillable ? `onclick="cqDrillInto('${drillArgs.type}','${drillArgs.value.replace(/'/g,"\\'")}')"` : '';
-    const drillStyle = drillable
-      ? 'cursor:pointer;transition:background 0.12s;'
-      : '';
-    const drillHover = drillable
-      ? 'onmouseover="this.style.background=\'#f5f5f9\'" onmouseout="this.style.background=\'\'"'
-      : '';
-    const chevron    = drillable
-      ? `<span style="font-size:11px;color:#0071e3;margin-left:6px;opacity:0.7">▸ Products</span>`
-      : '';
-
-    return `<tr class="${rowCls}" style="${drillStyle}${flags.length && !drillable ? 'background:rgba(215,58,73,0.03)' : ''}" ${drillClick} ${drillHover}>
+    const drillClick = drillable ? `onclick="cqDrillInto('${drillArgs.type}','${drillArgs.value.replace(/'/g,"\\'")}'"` : '';
+    const drillStyle = drillable ? 'cursor:pointer;transition:background 0.12s;' : '';
+    const drillHover = drillable ? 'onmouseover="this.style.background=\'#f5f5f9\'" onmouseout="this.style.background=\'\'"' : '';
+    const chevron    = drillable ? `<span style="font-size:11px;color:#0071e3;margin-left:6px;opacity:0.7">▸ Products</span>` : '';
+    return `<tr class="${rowCls}" style="${drillStyle}" ${drillClick} ${drillHover}>
       <td style="text-align:left">
         <div style="font-weight:${isSummary?700:600};font-size:13px">${label}${chevron}</div>
         ${sublabel ? `<div style="font-size:10px;color:#8e8ea0;margin-top:1px">${sublabel}</div>` : ''}
-        ${flagHtml ? `<div style="margin-top:4px">${flagHtml}</div>` : ''}
       </td>
       <td>${fmt(jstCQ)}</td>
       <td>${fmt(ecfCQ)}</td>
@@ -2878,7 +2867,6 @@ function renderCQTable() {
       <td style="color:${yoyColor};font-weight:700">${yoy === null ? '—' : (yoy >= 0 ? '+' : '') + Math.round(yoy*100) + '%'}</td>
     </tr>`;
   }
-
   const thead = `<thead><tr>
     <th style="text-align:left;min-width:200px">Name</th>
     <th>JST CQ</th><th>ECF CQ</th><th>JST vs ECF Δ</th><th>JST vs ECF %</th><th>CQ YoY %</th>
@@ -3045,6 +3033,120 @@ function renderCQTable() {
 }
 
 // ─── ADMIN STATUS ────────────────────────────────────────────────────────────
+// ─── CQ KEY INSIGHTS ────────────────────────────────────────────────────────────────────────────────
+function renderCQInsights() {
+  const grid  = document.getElementById('cqInsightsGrid');
+  const title = document.getElementById('cqInsightsTitle');
+  if (!grid || !_allRows.length) return;
+  const geoFilter  = document.getElementById('cqGeoSelect')?.value    || '__all__';
+  const ctryFilter = document.getElementById('cqCountrySelect')?.value || '__all__';
+  function agg(rows) {
+    const jstCQ = rows.reduce((s,r) => s + (r.jstCQ||0), 0);
+    const ecfCQ = rows.reduce((s,r) => s + (r.ecfCQ||0), 0);
+    const jvECF = jstCQ - ecfCQ;
+    const yr = rows.filter(r => r.yoy !== null && !isNaN(r.yoy) && r.jstCQ > 0);
+    const yoy = yr.length ? yr.reduce((s,r) => s + r.yoy*r.jstCQ, 0) / yr.reduce((s,r) => s + r.jstCQ, 0) : null;
+    return { jstCQ, ecfCQ, jvECF, yoy };
+  }
+  const cards = [];
+  if (_cqDrill) {
+    const { type, value } = _cqDrill;
+    _families.filter(f => f.key !== "Mac").forEach(f => {
+      const fIdx = _allRows.findIndex(r => f.match(r)); if (fIdx===-1) return;
+      const subLabels = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[f.key]||[])]);
+      let captured = false; const matchRows = [];
+      for (let i = fIdx+1; i < _allRows.length; i++) {
+        const r = _allRows[i];
+        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
+        if (SALES_GEOS.includes(r.dim)) { captured = type==="geo" ? r.dim===value : true; continue; }
+        if (!captured || ALL_PRODUCT_NAMES.has(r.dim) || r.dim==="Russia" || r.dim==="nan") continue;
+        if (type==="country" && r.dim!==value) continue;
+        matchRows.push(r);
+      }
+      if (!matchRows.length) return;
+      const a = agg(matchRows);
+      _buildCQInsightCard(cards, f.label, value, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+    });
+  } else if (_cqView === "geo") {
+    SALES_GEOS.forEach(geo => {
+      const rows = _allRows.filter(r => r.dim===geo && r.geo===geo); if (!rows.length) return;
+      const a = agg(rows); _buildCQInsightCard(cards, geo, null, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+    });
+  } else if (_cqView === "country") {
+    const countries = [...new Set(_allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim!=="Russia" && r.dim!=="nan" && (geoFilter==="__all__" || r.geo===geoFilter)).map(r => r.dim))].sort();
+    countries.forEach(country => {
+      const rows = _allRows.filter(r => r.dim===country && (geoFilter==="__all__" || r.geo===geoFilter)); if (!rows.length) return;
+      const a = agg(rows); _buildCQInsightCard(cards, country, null, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+    });
+  } else {
+    _families.filter(f => f.key !== "Mac").forEach(f => {
+      const fIdx = _allRows.findIndex(r => f.match(r)); if (fIdx===-1) return;
+      const subLabels = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[f.key]||[])]);
+      let captured = false; const matchRows = [];
+      for (let i = fIdx+1; i < _allRows.length; i++) {
+        const r = _allRows[i];
+        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
+        if (SALES_GEOS.includes(r.dim)) { captured = (geoFilter==="__all__" || r.dim===geoFilter); continue; }
+        if (!captured || ALL_PRODUCT_NAMES.has(r.dim) || r.dim==="Russia" || r.dim==="nan") continue;
+        if (ctryFilter!=="__all__" && r.dim!==ctryFilter) continue;
+        matchRows.push(r);
+      }
+      if (!matchRows.length) return;
+      const a = agg(matchRows);
+      const ctx = geoFilter!=="__all__" ? geoFilter : ctryFilter!=="__all__" ? ctryFilter : null;
+      _buildCQInsightCard(cards, f.label, ctx, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+    });
+  }
+  const flagged = cards.filter(card => card.flags.length > 0);
+  if (!flagged.length) { title.style.display="none"; grid.innerHTML=""; return; }
+  const sevOrd = { critical:0, warn:1, good:2 };
+  flagged.sort((a,b) => (sevOrd[a.severity]??9)-(sevOrd[b.severity]??9));
+  title.style.display = "flex";
+  grid.innerHTML = flagged.map(card => {
+    const cls  = card.severity==="critical" ? "bad" : card.severity==="warn" ? "warn" : "good";
+    const ctx  = card.context ? `<span style="font-size:11px;color:#8e8ea0;margin-left:6px;font-weight:400">${card.context}</span>` : '';
+    const body = card.flags.map(f =>
+      `<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:5px">
+        <span style="font-size:13px;flex-shrink:0">${f.icon}</span>
+        <span style="font-size:12px;color:#3a3a3c;line-height:1.55">${f.text}</span>
+      </div>`
+    ).join('');
+    return `<div class="insight-card ${cls}"><div class="title">${card.name}${ctx}</div><div class="body">${body}</div></div>`;
+  }).join('');
+}
+
+function _buildCQInsightCard(cards, name, context, jstCQ, ecfCQ, jvECF, yoy) {
+  if (!jstCQ && !ecfCQ) return;
+  const pctVar = ecfCQ > 0 ? jvECF / ecfCQ : null;
+  const flags  = [];
+  if (pctVar !== null && Math.abs(pctVar) > 0.20) {
+    const dir  = pctVar > 0 ? "above" : "below";
+    const risk = pctVar > 0 ? "Overforecast risk" : "Shortfall risk";
+    flags.push({ icon: pctVar>0 ? "🔺" : "🔻",
+      text: `<strong>JST ${pctVar>0?"+":""}${Math.round(pctVar*100)}% vs ECF</strong> — JST CQ (${fmt(jstCQ)}) is ${Math.abs(Math.round(pctVar*100))}% ${dir} ECF (${fmt(ecfCQ)}). ${risk} — review alignment.`,
+      severity: "critical" });
+  }
+  if (ecfCQ === 0 && jstCQ > 0) {
+    flags.push({ icon: "⚠️",
+      text: `<strong>No ECF set</strong> — JST CQ is ${fmt(jstCQ)} but ECF is zero. Forecast may be missing or not yet submitted.`,
+      severity: "warn" });
+  }
+  if (yoy !== null && yoy < -0.30) {
+    flags.push({ icon: "📉",
+      text: `<strong>YoY decline ${Math.round(yoy*100)}%</strong> — CQ tracking significantly below prior year. Demand or supply headwinds may need review.`,
+      severity: "warn" });
+  }
+  if (yoy !== null && yoy > 0.50) {
+    flags.push({ icon: "📈",
+      text: `<strong>Strong YoY growth +${Math.round(yoy*100)}%</strong> — CQ tracking well above prior year. Verify supply cover and upside opportunity.`,
+      severity: "good" });
+  }
+  if (!flags.length) return;
+  const sevOrd = { critical:0, warn:1, good:2 };
+  const severity = [...flags].sort((a,b)=>(sevOrd[a.severity]??9)-(sevOrd[b.severity]??9))[0].severity;
+  cards.push({ name, context, flags, severity });
+}
+
 function setAdminStatus(msg, cls) {
   const el = document.getElementById('adminUploadStatus');
   el.textContent = msg;
