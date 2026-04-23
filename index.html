@@ -571,6 +571,8 @@
     <div class="kpi-row" id="kpiRow"></div>
     <div class="section-title">Key Insights</div>
     <div class="insights-grid" id="insightsGrid"></div>
+    <div class="section-title" id="topProductsTitle" style="display:none">Top Product Callouts</div>
+    <div class="insights-grid" id="topProductsGrid" style="margin-bottom:24px"></div>
     <div class="section-title">Forecast Anomalies</div>
     <div id="anomalySection"></div>
   </div>
@@ -603,6 +605,8 @@
   <div class="tab-panel dashboard" id="tab-geo">
     <div class="section-title">Sales Geo Insights</div>
     <div class="insights-grid" id="geoInsightsGrid"></div>
+    <div class="section-title" id="geoTopProductsTitle" style="display:none">Top Products by Geo</div>
+    <div class="insights-grid" id="geoTopProductsGrid" style="margin-bottom:24px"></div>
     <div class="section-title">Sales Geo Performance Summary</div>
     <div class="perf-table-wrap" id="geoSummaryWrap"></div>
   </div>
@@ -1121,10 +1125,8 @@ function renderGeoInsights(rows) {
       else if (vc === 'constrained') { signals.push(`🟡 <strong>Supply constrained</strong> — velocity ${pct(vel)}`); if (signalCls !== 'bad') signalCls = 'warn'; }
       else                      { signals.push(`Velocity ${pct(vel)}`); }
     }
-    if (topBeats.length)  signals.push(`🟢 ${topBeats.map(p=>`${p.product} <span class="pos">${fmtD(p.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
-    if (topMisses.length) signals.push(`🔴 ${topMisses.map(p=>`${p.product} <span class="neg">${fmtD(p.delta)}</span>`).join(' &nbsp;·&nbsp; ')}`);
-
-    return { cls: signalCls, title: geo, body: signals.join('<br>') };
+    // topBeats / topMisses go into separate product callout cards, not the main signal
+    return { cls: signalCls, title: geo, body: signals.join('<br>'), topBeats, topMisses };
   }).filter(Boolean);
 
   container.innerHTML = cards.map(c => `
@@ -1132,6 +1134,33 @@ function renderGeoInsights(rows) {
       <div class="title">${c.title}</div>
       <div class="body">${c.body}</div>
     </div>`).join('');
+
+  // Render top-product callout cards
+  const tpGrid  = document.getElementById('geoTopProductsGrid');
+  const tpTitle = document.getElementById('geoTopProductsTitle');
+  const tpCards = cards.flatMap(c => {
+    const out = [];
+    if (c.topBeats.length)  out.push({ cls:'good', title:`${c.title} — Top Beats`,  items: c.topBeats  });
+    if (c.topMisses.length) out.push({ cls:'bad',  title:`${c.title} — Top Misses`, items: c.topMisses });
+    return out;
+  });
+  if (tpGrid && tpTitle) {
+    if (tpCards.length) {
+      tpTitle.style.display = 'flex';
+      tpGrid.innerHTML = tpCards.map(tp => {
+        const rows = tp.items.map(p =>
+          `<div style="display:flex;align-items:baseline;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f5f5f9">
+            <span style="font-size:12px;color:#3a3a3c">${p.product}</span>
+            <span style="font-size:12px;font-weight:700;color:${p.delta>=0?'#1a7f37':'#b91c1c'}">${fmtD(p.delta)}<span style="font-size:10px;opacity:0.7;margin-left:4px">(${p.jst>0?pct(p.delta/p.jst):'—'})</span></span>
+          </div>`
+        ).join('');
+        return `<div class="insight-card ${tp.cls}"><div class="title">${tp.title}</div><div class="body" style="margin-top:8px">${rows}</div></div>`;
+      }).join('');
+    } else {
+      tpTitle.style.display = 'none';
+      tpGrid.innerHTML = '';
+    }
+  }
 }
 
 // ─── SALES GEO PERFORMANCE SUMMARY TABLE ────────────────────────────────────
@@ -1837,6 +1866,7 @@ function renderInsights(families, rows, byDim) {
       <div class="title">${i.title}</div>
       <div class="body">${i.body}</div>
     </div>`).join('');
+  renderTopProducts(families, rows);
 }
 
 
@@ -2332,6 +2362,67 @@ function setShareStatus(msg) {
 }
 
 // ─── FORECAST ANOMALY TABLE ───────────────────────────────────────────────────
+// ─── TOP PRODUCT CALLOUTS (Overview tab) ─────────────────────────────────────────────
+function renderTopProducts(families, rows) {
+  const grid  = document.getElementById('topProductsGrid');
+  const title = document.getElementById('topProductsTitle');
+  if (!grid || !title) return;
+
+  // Helper: get sorted country deltas for a family
+  function getDeltas(fKey, fDim) {
+    const subLabels = new Set([fDim, ...(SUBPRODUCTS[fKey] || [])]);
+    const agg = {};
+    let capture = false;
+    rows.forEach(r => {
+      if (subLabels.has(r.dim)) { capture = true; return; }
+      if (ALL_PRODUCT_NAMES.has(r.dim) && !subLabels.has(r.dim)) { capture = false; return; }
+      if (capture && !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim) {
+        agg[r.dim] = (agg[r.dim] || { delta:0, jst:0 });
+        agg[r.dim].delta += r.delta;
+        agg[r.dim].jst   += r.jst;
+      }
+    });
+    return Object.entries(agg).filter(([,v]) => v.jst > 0).sort((a,b) => b[1].delta - a[1].delta);
+  }
+
+  const cards = [];
+  families.filter(f => f.key !== 'Mac').forEach(f => {
+    const r = f.row;
+    if (!r) return;
+    const sorted  = getDeltas(f.key, r.dim);
+    const beats   = sorted.filter(([,v]) => v.delta > 0).slice(0, 3)
+                          .map(([n,v]) => ({ name:n, delta:v.delta, jst:v.jst }));
+    const misses  = sorted.filter(([,v]) => v.delta < 0).reverse().slice(0, 3)
+                          .map(([n,v]) => ({ name:n, delta:v.delta, jst:v.jst }));
+    if (beats.length || misses.length) {
+      cards.push({ family: f.label, beats, misses });
+    }
+  });
+
+  if (!cards.length) { title.style.display = 'none'; grid.innerHTML = ''; return; }
+
+  title.style.display = 'flex';
+  grid.innerHTML = cards.map(card => {
+    const beatRows = card.beats.map(p =>
+      `<div style="display:flex;align-items:baseline;justify-content:space-between;padding:3px 0;border-bottom:1px solid #f0f7f2">
+        <span style="font-size:12px;color:#3a3a3c">${p.name}</span>
+        <span style="font-size:12px;font-weight:700;color:#1a7f37">${fmtD(p.delta)}<span style="font-size:10px;opacity:0.6;margin-left:4px">(${p.jst>0?pct(p.delta/p.jst):'—'})</span></span>
+      </div>`
+    ).join('');
+    const missRows = card.misses.map(p =>
+      `<div style="display:flex;align-items:baseline;justify-content:space-between;padding:3px 0;border-bottom:1px solid #fdf0f0">
+        <span style="font-size:12px;color:#3a3a3c">${p.name}</span>
+        <span style="font-size:12px;font-weight:700;color:#b91c1c">${fmtD(p.delta)}<span style="font-size:10px;opacity:0.6;margin-left:4px">(${p.jst>0?pct(p.delta/p.jst):'—'})</span></span>
+      </div>`
+    ).join('');
+    const sections = [];
+    if (beatRows)  sections.push(`<div style="margin-bottom:${card.misses.length?10:0}px"><div style="font-size:10px;font-weight:700;color:#1a7f37;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">🟢 Top Beats</div>${beatRows}</div>`);
+    if (missRows)  sections.push(`<div><div style="font-size:10px;font-weight:700;color:#b91c1c;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px">🔴 Top Misses</div>${missRows}</div>`);
+    const cls = card.beats.length && card.misses.length ? '' : card.beats.length ? 'good' : 'bad';
+    return `<div class="insight-card ${cls}"><div class="title">${card.family}</div><div class="body" style="margin-top:8px">${sections.join('')}</div></div>`;
+  }).join('');
+}
+
 function renderAnomalies(families) {
   const container = document.getElementById('anomalySection');
   const products  = families.filter(f => f.key !== 'Mac');
@@ -2851,7 +2942,7 @@ function renderCQTable() {
     const yoyColor = yoy === null ? '#8e8ea0' : yoy < -0.30 ? '#f59e0b' : yoy > 0.50 ? '#30a14e' : yoy < 0 ? '#d73a49' : '#30a14e';
     const rowCls   = isSummary ? 'pt-summary' : '';
     const drillable  = drillArgs && !isSummary;
-    const drillClick = drillable ? `onclick="cqDrillInto('${drillArgs.type}','${drillArgs.value.replace(/'/g,"\\'")}'"` : '';
+    const drillClick = drillable ? `onclick="cqDrillInto('${drillArgs.type}','${drillArgs.value.replace(/'/g,"\\'")}' )"` : '';
     const drillStyle = drillable ? 'cursor:pointer;transition:background 0.12s;' : '';
     const drillHover = drillable ? 'onmouseover="this.style.background=\'#f5f5f9\'" onmouseout="this.style.background=\'\'"' : '';
     const chevron    = drillable ? `<span style="font-size:11px;color:#0071e3;margin-left:6px;opacity:0.7">▸ Products</span>` : '';
