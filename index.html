@@ -669,7 +669,7 @@
       <!-- Geo filter (shown in Product + Country views) -->
       <div id="cqGeoWrap" class="filter-select-wrap" style="margin:0">
         <span class="filter-select-label">Sales Geo:</span>
-        <select class="filter-select" id="cqGeoSelect" onchange="renderCQTable()" style="min-width:120px">
+        <select class="filter-select" id="cqGeoSelect" onchange="onCQGeoChange(this.value)" style="min-width:120px">
           <option value="__all__">All</option>
           <option value="Central">Central</option>
           <option value="FNBL">FNBL</option>
@@ -682,13 +682,21 @@
       <!-- Country filter (shown in Product view only) -->
       <div id="cqCountryWrap" class="filter-select-wrap" style="margin:0">
         <span class="filter-select-label">Country:</span>
-        <select class="filter-select" id="cqCountrySelect" onchange="renderCQTable()" style="min-width:160px"></select>
+        <select class="filter-select" id="cqCountrySelect" onchange="onCQCountryChange(this.value)" style="min-width:160px"></select>
       </div>
       <!-- Anomalies only toggle -->
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#8e8ea0;cursor:pointer;margin-left:auto">
         <input type="checkbox" id="cqAnomalyOnly" onchange="renderCQTable()" style="accent-color:#0071e3;width:14px;height:14px">
         Anomalies only
       </label>
+    </div>
+    <!-- Drill-down breadcrumb (shown when drilling into a geo or country) -->
+    <div id="cqDrillBreadcrumb" style="display:none;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+      <button onclick="cqDrillBack()" style="background:none;border:1.5px solid #e5e5ea;border-radius:8px;padding:5px 12px;font-size:12px;font-weight:600;color:#0071e3;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:5px">
+        ← Back
+      </button>
+      <span id="cqDrillLabel" style="font-size:13px;font-weight:600;color:#1d1d1f"></span>
+      <span style="font-size:12px;color:#8e8ea0">— Products breakdown</span>
     </div>
     <!-- Anomaly legend -->
     <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;margin-top:8px">
@@ -2750,9 +2758,11 @@ async function pushHistoryToGitHub(history, cwLabel) {
 
 // ─── CQ FORECAST TAB ────────────────────────────────────────────────────────
 let _cqView = 'product'; // 'product' | 'geo' | 'country'
+let _cqDrill = null;     // { type: 'geo'|'country', value: 'Central'|'Austria' } or null
 
 function setCQView(view) {
   _cqView = view;
+  _cqDrill = null; // clear any drill-down when switching top-level view
   ['product','geo','country'].forEach(v => {
     const btn = document.getElementById('cqView' + v.charAt(0).toUpperCase() + v.slice(1));
     if (btn) {
@@ -2765,6 +2775,27 @@ function setCQView(view) {
   const ctryWrap  = document.getElementById('cqCountryWrap');
   if (geoWrap)  geoWrap.style.display  = view === 'geo'     ? 'none' : 'flex';
   if (ctryWrap) ctryWrap.style.display = view === 'product' ? 'flex' : 'none';
+  renderCQTable();
+}
+
+function onCQGeoChange(val) {
+  _cqDrill = null; // geo dropdown change always resets drill
+  renderCQTable();
+}
+
+function onCQCountryChange(val) {
+  _cqDrill = null;
+  renderCQTable();
+}
+
+// Called when user clicks a Geo or Country row to drill into its product breakdown
+function cqDrillInto(type, value) {
+  _cqDrill = { type, value };
+  renderCQTable();
+}
+
+function cqDrillBack() {
+  _cqDrill = null;
   renderCQTable();
 }
 
@@ -2785,12 +2816,21 @@ function renderCQTable() {
   const anomalyOnly = document.getElementById('cqAnomalyOnly')?.checked || false;
   if (!wrap || !_allRows.length) return;
 
+  // ── Breadcrumb visibility ─────────────────────────────────────────────────
+  const breadcrumb = document.getElementById('cqDrillBreadcrumb');
+  const drillLabel = document.getElementById('cqDrillLabel');
+  if (_cqDrill) {
+    breadcrumb.style.display = 'flex';
+    drillLabel.textContent   = _cqDrill.value;
+  } else {
+    breadcrumb.style.display = 'none';
+  }
+
   // ── HELPER: aggregate CQ fields from a set of rows ──────────────────────
   function agg(rows) {
     const jstCQ = rows.reduce((s,r) => s + (r.jstCQ||0), 0);
     const ecfCQ = rows.reduce((s,r) => s + (r.ecfCQ||0), 0);
     const jvECF = jstCQ - ecfCQ;
-    // Average YoY weighted by JST CQ (skip nulls)
     const yoyRows = rows.filter(r => r.yoy !== null && !isNaN(r.yoy) && r.jstCQ > 0);
     const yoy = yoyRows.length
       ? yoyRows.reduce((s,r) => s + r.yoy * r.jstCQ, 0) / yoyRows.reduce((s,r) => s + r.jstCQ, 0)
@@ -2799,7 +2839,8 @@ function renderCQTable() {
   }
 
   // ── TABLE ROW HTML ───────────────────────────────────────────────────────
-  function trow(label, sublabel, jstCQ, ecfCQ, jvECF, yoy, isSummary) {
+  // drillArgs: if provided, makes the row clickable to drill in
+  function trow(label, sublabel, jstCQ, ecfCQ, jvECF, yoy, isSummary, drillArgs) {
     const pctVar   = ecfCQ > 0 ? jvECF / ecfCQ : null;
     const varColor = pctVar === null ? '#8e8ea0' : Math.abs(pctVar) > 0.20 ? '#d73a49' : Math.abs(pctVar) > 0.10 ? '#f59e0b' : '#30a14e';
     const yoyColor = yoy === null ? '#8e8ea0' : yoy < -0.30 ? '#f59e0b' : yoy > 0.50 ? '#30a14e' : yoy < 0 ? '#d73a49' : '#30a14e';
@@ -2810,9 +2851,23 @@ function renderCQTable() {
        </span>`
     ).join('');
     const rowCls = isSummary ? 'pt-summary' : '';
-    return `<tr class="${rowCls}" ${flags.length ? `style="background:rgba(215,58,73,0.03)"` : ''}>
+
+    // Drill-down affordance — chevron + hover highlight on clickable rows
+    const drillable  = drillArgs && !isSummary;
+    const drillClick = drillable ? `onclick="cqDrillInto('${drillArgs.type}','${drillArgs.value.replace(/'/g,"\\'")}')"` : '';
+    const drillStyle = drillable
+      ? 'cursor:pointer;transition:background 0.12s;'
+      : '';
+    const drillHover = drillable
+      ? 'onmouseover="this.style.background=\'#f5f5f9\'" onmouseout="this.style.background=\'\'"'
+      : '';
+    const chevron    = drillable
+      ? `<span style="font-size:11px;color:#0071e3;margin-left:6px;opacity:0.7">▸ Products</span>`
+      : '';
+
+    return `<tr class="${rowCls}" style="${drillStyle}${flags.length && !drillable ? 'background:rgba(215,58,73,0.03)' : ''}" ${drillClick} ${drillHover}>
       <td style="text-align:left">
-        <div style="font-weight:${isSummary?700:600};font-size:13px">${label}</div>
+        <div style="font-weight:${isSummary?700:600};font-size:13px">${label}${chevron}</div>
         ${sublabel ? `<div style="font-size:10px;color:#8e8ea0;margin-top:1px">${sublabel}</div>` : ''}
         ${flagHtml ? `<div style="margin-top:4px">${flagHtml}</div>` : ''}
       </td>
@@ -2832,8 +2887,52 @@ function renderCQTable() {
   let bodyRows = [];
   let summaryRow = '';
 
+  // ── DRILL-DOWN: product breakdown for a specific geo or country ──────────
+  if (_cqDrill) {
+    const { type, value } = _cqDrill;
+
+    _families.filter(f => f.key !== 'Mac').forEach(f => {
+      const fIdx = _allRows.findIndex(r => f.match(r));
+      if (fIdx === -1) return;
+      const subLabels = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[f.key]||[])]);
+
+      let captured = false;
+      const matchRows = [];
+      for (let i = fIdx + 1; i < _allRows.length; i++) {
+        const r = _allRows[i];
+        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
+        if (SALES_GEOS.includes(r.dim)) {
+          captured = (type === 'geo') ? r.dim === value : true; // for country drill, enable inside all geos
+          continue;
+        }
+        if (!captured) continue;
+        if (ALL_PRODUCT_NAMES.has(r.dim)) continue;
+        if (r.dim === 'Russia' || r.dim === 'nan') continue;
+        if (type === 'country' && r.dim !== value) continue;
+        matchRows.push(r);
+      }
+      if (!matchRows.length) return;
+      const a = agg(matchRows);
+      if (!a.jstCQ && !a.ecfCQ) return;
+      const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
+      if (anomalyOnly && !flags.length) return;
+      bodyRows.push(trow(f.label, '', a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false, null));
+    });
+
+    // Summary row for the drill context
+    let drillAllRows;
+    if (type === 'geo') {
+      drillAllRows = _allRows.filter(r =>
+        !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan' && r.geo === value
+      );
+    } else {
+      drillAllRows = _allRows.filter(r => r.dim === value && !ALL_PRODUCT_NAMES.has(r.dim));
+    }
+    const sa = agg(drillAllRows);
+    summaryRow = trow(`All Products — ${value}`, type === 'geo' ? 'Sales Geo' : 'Country', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true, null);
+
   // ── BY PRODUCT ────────────────────────────────────────────────────────────
-  if (_cqView === 'product') {
+  } else if (_cqView === 'product') {
     // Populate country dropdown for selected geo
     const ctryEl = document.getElementById('cqCountrySelect');
     const allCountries = [...new Set(
@@ -2846,13 +2945,10 @@ function renderCQTable() {
       allCountries.map(c => `<option value="${c}" ${c===prevCtry?'selected':''}>${c}</option>`).join('');
 
     _families.filter(f => f.key !== 'Mac').forEach(f => {
-      // Find the product family's header row
       const fIdx = _allRows.findIndex(r => f.match(r));
       if (fIdx === -1) return;
-
       const subLabels = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[f.key]||[])]);
 
-      // Collect relevant rows under this family matching geo + country filters
       let captured = false;
       const matchRows = [];
       for (let i = fIdx + 1; i < _allRows.length; i++) {
@@ -2860,7 +2956,7 @@ function renderCQTable() {
         if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
         if (SALES_GEOS.includes(r.dim)) { captured = (geoFilter === '__all__' || r.dim === geoFilter); continue; }
         if (!captured) continue;
-        if (ALL_PRODUCT_NAMES.has(r.dim)) continue; // sub-product header
+        if (ALL_PRODUCT_NAMES.has(r.dim)) continue;
         if (r.dim === 'Russia' || r.dim === 'nan') continue;
         if (ctryFilter !== '__all__' && r.dim !== ctryFilter) continue;
         matchRows.push(r);
@@ -2871,40 +2967,34 @@ function renderCQTable() {
       const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
       if (anomalyOnly && !flags.length) return;
       const sublabel = geoFilter !== '__all__' ? geoFilter : ctryFilter !== '__all__' ? ctryFilter : '';
-      bodyRows.push(trow(f.label, sublabel, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false));
+      bodyRows.push(trow(f.label, sublabel, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false, null));
     });
 
-    // Summary across all products for current filter
     const allMatch = _allRows.filter(r =>
       !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
       && (geoFilter === '__all__' || r.geo === geoFilter)
       && (ctryFilter === '__all__' || r.dim === ctryFilter)
     );
     const sa = agg(allMatch);
-    summaryRow = trow('All Products', '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true);
-  }
+    summaryRow = trow('All Products', '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true, null);
 
   // ── BY GEO ────────────────────────────────────────────────────────────────
-  else if (_cqView === 'geo') {
-    // Hide country wrap already done by setCQView
+  } else if (_cqView === 'geo') {
     SALES_GEOS.forEach(geo => {
-      const geoRows = _allRows.filter(r =>
-        r.dim === geo && r.geo === geo // geo header rows
-      );
+      const geoRows = _allRows.filter(r => r.dim === geo && r.geo === geo);
       if (!geoRows.length) return;
       const a = agg(geoRows);
       if (!a.jstCQ && !a.ecfCQ) return;
       const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
       if (anomalyOnly && !flags.length) return;
-      bodyRows.push(trow(geo, '', a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false));
+      bodyRows.push(trow(geo, 'Click to see products ▸', a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false, { type: 'geo', value: geo }));
     });
     const allGeoRows = _allRows.filter(r => r.dim === r.geo && SALES_GEOS.includes(r.dim));
     const sa = agg(allGeoRows);
-    summaryRow = trow('All Geos', '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true);
-  }
+    summaryRow = trow('All Geos', '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true, null);
 
   // ── BY COUNTRY ────────────────────────────────────────────────────────────
-  else if (_cqView === 'country') {
+  } else if (_cqView === 'country') {
     const countries = [...new Set(
       _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
         && (geoFilter === '__all__' || r.geo === geoFilter))
@@ -2920,16 +3010,15 @@ function renderCQTable() {
       if (!a.jstCQ && !a.ecfCQ) return;
       const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
       if (anomalyOnly && !flags.length) return;
-      // sublabel = geo name(s) for this country
       const geos = [...new Set(cRows.map(r => r.geo).filter(Boolean))].join(', ');
-      bodyRows.push(trow(country, geos, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false));
+      bodyRows.push(trow(country, geos + ' · Click to see products ▸', a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false, { type: 'country', value: country }));
     });
     const allCRows = _allRows.filter(r =>
       !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
       && (geoFilter === '__all__' || r.geo === geoFilter)
     );
     const sa = agg(allCRows);
-    summaryRow = trow('All Countries', geoFilter !== '__all__' ? geoFilter : '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true);
+    summaryRow = trow('All Countries', geoFilter !== '__all__' ? geoFilter : '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true, null);
   }
 
   if (!bodyRows.length && anomalyOnly) {
