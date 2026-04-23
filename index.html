@@ -645,6 +645,8 @@
       </div>
       <div id="heatmapInner"></div>
     </div>
+  </div>
+
   <!-- ── CQ FORECAST ──────────────────────────────────────────────────────── -->
   <div class="tab-panel dashboard" id="tab-cqforecast">
     <!-- Controls row -->
@@ -738,7 +740,21 @@ const SUBPRODUCTS = {
   StudioDispXDR: [],
 };
 
+// ─── SHARED CONSTANTS (must be defined before any render function) ────────────
+const SALES_GEOS = ['Central','FNBL','India','META','North','SHIP'];
+
+const ALL_PRODUCT_NAMES = new Set([
+  'Mac','iMac 24','iMac 24 M4 High','iMac 24 M4 Low','Mac Mini','Mac Mini M4','Mac Studio','Mac Studio M3/M4',
+  'MacBook Air 13','MacBook Air 15','MacBook Neo 13','MacBook Pro 14',
+  'MacBook Pro 15/16 Retina','MBA 13 M4','MBA 13 M5','MBA 15 M4','MBA 15 M5',
+  'Neo 13','MBP 14 M4 High','MBP 14 M5 High','MBP 14 M5 Low','MBP 16 M4','MBP 16 M5',
+  'Accessories','Studio Display','Studio Display J327','Studio Display XDR','MacBook Pro 16',
+  ...SALES_GEOS,
+]);
+
 // ─── STATE ────────────────────────────────────────────────────────────────────
+let _allRows = [], _families = [], _activeCountryFilter = new Set(), _activeCountryPicker = new Set(), _activeGeoFilter = '__all__';
+let velChart;
 
 // ─── DRAG & DROP ──────────────────────────────────────────────────────────────
 const zone = document.getElementById('uploadZone');
@@ -1399,9 +1415,6 @@ function renderProductCards(families, byDim) {
   }).join('');
 }
 
-// ─── SHARED PRODUCT NAME SET ─────────────────────────────────────────────────
-const SALES_GEOS = ['Central','FNBL','India','META','North','SHIP'];
-
 // ─── MIGRATE OLD ROWS ────────────────────────────────────────────────────────
 // Backfills geo + CQ fields on rows saved before those fields were added
 function migrateRows(rows) {
@@ -1421,18 +1434,7 @@ function migrateRows(rows) {
     });
 }
 
-const ALL_PRODUCT_NAMES = new Set([
-  'Mac','iMac 24','iMac 24 M4 High','iMac 24 M4 Low','Mac Mini','Mac Mini M4','Mac Studio','Mac Studio M3/M4',
-  'MacBook Air 13','MacBook Air 15','MacBook Neo 13','MacBook Pro 14',
-  'MacBook Pro 15/16 Retina','MBA 13 M4','MBA 13 M5','MBA 15 M4','MBA 15 M5',
-  'Neo 13','MBP 14 M4 High','MBP 14 M5 High','MBP 14 M5 Low','MBP 16 M4','MBP 16 M5',
-  'Accessories','Studio Display','Studio Display J327','Studio Display XDR','MacBook Pro 16',
-  ...SALES_GEOS,
-]);
-
 // ─── COUNTRY TABLE (filterable) ───────────────────────────────────────────────
-let _allRows = [], _families = [], _activeCountryFilter = new Set(), _activeCountryPicker = new Set(), _activeGeoFilter = '__all__';
-
 function renderCountryTables(rows, byDim) {
   _allRows = rows;
 
