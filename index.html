@@ -688,6 +688,11 @@
         <span class="filter-select-label">Country:</span>
         <select class="filter-select" id="cqCountrySelect" onchange="onCQCountryChange(this.value)" style="min-width:160px"></select>
       </div>
+      <!-- Product filter (shown in Country view only) -->
+      <div id="cqProductWrap" class="filter-select-wrap" style="margin:0;display:none">
+        <span class="filter-select-label">Product:</span>
+        <select class="filter-select" id="cqProductSelect" onchange="onCQCountryProductChange(this.value)" style="min-width:180px"></select>
+      </div>
       <!-- Anomalies only toggle -->
       <label style="display:flex;align-items:center;gap:6px;font-size:12px;font-weight:600;color:#8e8ea0;cursor:pointer;margin-left:auto">
         <input type="checkbox" id="cqAnomalyOnly" onchange="renderCQTable()" style="accent-color:#0071e3;width:14px;height:14px">
@@ -2868,8 +2873,10 @@ function setCQView(view) {
   });
   const geoWrap   = document.getElementById('cqGeoWrap');
   const ctryWrap  = document.getElementById('cqCountryWrap');
+  const prodWrap  = document.getElementById('cqProductWrap');
   if (geoWrap)  geoWrap.style.display  = view === 'geo'     ? 'none' : 'flex';
   if (ctryWrap) ctryWrap.style.display = view === 'product' ? 'flex' : 'none';
+  if (prodWrap) prodWrap.style.display = view === 'country' ? 'flex' : 'none';
   renderCQTable();
 }
 
@@ -2879,6 +2886,11 @@ function onCQGeoChange(val) {
 }
 
 function onCQCountryChange(val) {
+  _cqDrill = null;
+  renderCQTable();
+}
+
+function onCQCountryProductChange(val) {
   _cqDrill = null;
   renderCQTable();
 }
@@ -3074,6 +3086,39 @@ function renderCQTable() {
 
   // ── BY COUNTRY ────────────────────────────────────────────────────────────
   } else if (_cqView === 'country') {
+    // Populate product dropdown
+    const prodEl  = document.getElementById('cqProductSelect');
+    const prevProd = prodEl ? prodEl.value : '__all__';
+    if (prodEl) {
+      prodEl.innerHTML = '<option value="__all__">All Products</option>' +
+        _families.filter(f => f.key !== 'Mac').map(f =>
+          `<option value="${f.key}" ${f.key===prevProd?'selected':''}>\u200e${f.label}</option>`
+        ).join('');
+    }
+    const prodFilter = (prodEl && prodEl.value !== '__all__') ? prodEl.value : '__all__';
+
+    // Helper: get CQ-scoped rows for a country, optionally filtered to one product family
+    function getCountryCQRows(country) {
+      if (prodFilter === '__all__') {
+        return _allRows.filter(r => r.dim === country && (geoFilter === '__all__' || r.geo === geoFilter));
+      }
+      // Walk under the matching product family only
+      const fam = _families.find(f => f.key === prodFilter);
+      if (!fam) return [];
+      const fIdx = _allRows.findIndex(r => fam.match(r));
+      if (fIdx === -1) return [];
+      const subLabels = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[fam.key]||[])]);
+      let captured = false; const matchRows = [];
+      for (let i = fIdx + 1; i < _allRows.length; i++) {
+        const r = _allRows[i];
+        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !subLabels.has(r.dim)) break;
+        if (SALES_GEOS.includes(r.dim)) { captured = (geoFilter === '__all__' || r.dim === geoFilter); continue; }
+        if (!captured || ALL_PRODUCT_NAMES.has(r.dim) || r.dim === 'Russia' || r.dim === 'nan') continue;
+        if (r.dim === country) matchRows.push(r);
+      }
+      return matchRows;
+    }
+
     const countries = [...new Set(
       _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
         && (geoFilter === '__all__' || r.geo === geoFilter))
@@ -3081,23 +3126,26 @@ function renderCQTable() {
     )].sort();
 
     countries.forEach(country => {
-      const cRows = _allRows.filter(r => r.dim === country
-        && (geoFilter === '__all__' || r.geo === geoFilter)
-      );
+      const cRows = getCountryCQRows(country);
       if (!cRows.length) return;
       const a = agg(cRows);
       if (!a.jstCQ && !a.ecfCQ) return;
       const flags = cqAnomalyFlags(a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
       if (anomalyOnly && !flags.length) return;
       const geos = [...new Set(cRows.map(r => r.geo).filter(Boolean))].join(', ');
-      bodyRows.push(trow(country, geos + ' · Click to see products ▸', a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false, { type: 'country', value: country }));
+      const sublabel = (geos ? geos + ' · ' : '') + 'Click to see products ▸';
+      bodyRows.push(trow(country, sublabel, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy, false, { type: 'country', value: country }));
     });
-    const allCRows = _allRows.filter(r =>
-      !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan'
-      && (geoFilter === '__all__' || r.geo === geoFilter)
-    );
+
+    // Summary row scoped to current product filter
+    const allCRows = prodFilter === '__all__'
+      ? _allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim !== 'Russia' && r.dim !== 'nan' && (geoFilter === '__all__' || r.geo === geoFilter))
+      : countries.flatMap(country => getCountryCQRows(country));
     const sa = agg(allCRows);
-    summaryRow = trow('All Countries', geoFilter !== '__all__' ? geoFilter : '', sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true, null);
+    const sumLabel = prodFilter !== '__all__'
+      ? (_families.find(f=>f.key===prodFilter)?.label || '')
+      : (geoFilter !== '__all__' ? geoFilter : '');
+    summaryRow = trow('All Countries', sumLabel, sa.jstCQ, sa.ecfCQ, sa.jvECF, sa.yoy, true, null);
   }
 
   if (!bodyRows.length && anomalyOnly) {
@@ -3164,9 +3212,25 @@ function renderCQInsights() {
       const a = agg(rows); _buildCQInsightCard(cards, geo, null, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
     });
   } else if (_cqView === "country") {
+    const prodFilter2 = document.getElementById("cqProductSelect")?.value || "__all__";
+    function getCtryRows2(country) {
+      if (prodFilter2 === "__all__") return _allRows.filter(r => r.dim===country && (geoFilter==="__all__" || r.geo===geoFilter));
+      const fam = _families.find(f => f.key===prodFilter2); if (!fam) return [];
+      const fIdx = _allRows.findIndex(r => fam.match(r)); if (fIdx===-1) return [];
+      const sub = new Set([_allRows[fIdx].dim, ...(SUBPRODUCTS[fam.key]||[])]);
+      let captured = false; const out = [];
+      for (let i=fIdx+1; i<_allRows.length; i++) {
+        const r = _allRows[i];
+        if (ALL_PRODUCT_NAMES.has(r.dim) && !SALES_GEOS.includes(r.dim) && !sub.has(r.dim)) break;
+        if (SALES_GEOS.includes(r.dim)) { captured = (geoFilter==="__all__" || r.dim===geoFilter); continue; }
+        if (!captured || ALL_PRODUCT_NAMES.has(r.dim) || r.dim==="Russia" || r.dim==="nan") continue;
+        if (r.dim===country) out.push(r);
+      }
+      return out;
+    }
     const countries = [...new Set(_allRows.filter(r => !ALL_PRODUCT_NAMES.has(r.dim) && r.dim!=="Russia" && r.dim!=="nan" && (geoFilter==="__all__" || r.geo===geoFilter)).map(r => r.dim))].sort();
     countries.forEach(country => {
-      const rows = _allRows.filter(r => r.dim===country && (geoFilter==="__all__" || r.geo===geoFilter)); if (!rows.length) return;
+      const rows = getCtryRows2(country); if (!rows.length) return;
       const a = agg(rows); _buildCQInsightCard(cards, country, null, a.jstCQ, a.ecfCQ, a.jvECF, a.yoy);
     });
   } else {
